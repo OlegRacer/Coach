@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
-import useOnline from '../lib/useOnline.js';
+import Media from '../components/Media.jsx';
+import YouTubePlayer from '../components/YouTubePlayer.jsx';
 import { getExercise, getMuscles } from '../data/api.js';
 
 export default function Exercise() {
   const { id } = useParams();
-  const online = useOnline();
   const [ex, setEx] = useState(null);
   const [muscles, setMuscles] = useState([]);
 
@@ -30,20 +30,7 @@ export default function Exercise() {
     <main className="page">
       <TopBar title={ex.title} to={`/section/${ex.category}`} />
 
-      <div className="video">
-        {ex.video && online ? (
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${ex.video}`}
-            title={ex.title}
-            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        ) : (
-          <div className="video-empty">
-            {ex.video ? 'Відео доступне лише онлайн' : 'Відео ще не додано'}
-          </div>
-        )}
-      </div>
+      <Media src={ex.preview} title={ex.title} />
 
       <section className="card">
         <div className="row between">
@@ -63,6 +50,13 @@ export default function Exercise() {
           ))}
         </div>
       </section>
+
+      {ex.video && (
+        <section className="stack">
+          <h2 className="h2 section-title">Відео</h2>
+          <YouTubePlayer id={ex.video} title={ex.videoTitle || 'Дивитись відео'} />
+        </section>
+      )}
     </main>
   );
 }

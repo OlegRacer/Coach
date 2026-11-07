@@ -3,8 +3,13 @@
     "id": "pushup",
     "title": "Віджимання",
     "category": "fitness",
-    "muscles": ["chest", "shoulders", "triceps"],
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps"
+    ],
     "sets": "3 × 12",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   },
@@ -12,17 +17,25 @@
     "id": "squat",
     "title": "Присідання",
     "category": "fitness",
-    "muscles": ["quads", "glutes"],
+    "muscles": [
+      "quads",
+      "glutes"
+    ],
     "sets": "4 × 10",
+    "preview": "media/squat-demo.mp4",
     "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "description": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "videoTitle": "Дивитись повне тренування"
   },
   {
     "id": "plank",
     "title": "Планка",
     "category": "fitness",
-    "muscles": ["abs"],
+    "muscles": [
+      "abs"
+    ],
     "sets": "3 × 45 с",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   },
@@ -30,8 +43,11 @@
     "id": "mfr-quads",
     "title": "МФР квадрицепсів",
     "category": "mfr",
-    "muscles": ["quads"],
+    "muscles": [
+      "quads"
+    ],
     "sets": "1–2 хв на ногу",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   },
@@ -39,8 +55,11 @@
     "id": "mfr-back",
     "title": "МФР верху спини",
     "category": "mfr",
-    "muscles": ["back"],
+    "muscles": [
+      "back"
+    ],
     "sets": "1–2 хв",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   },
@@ -48,8 +67,12 @@
     "id": "hip-opener",
     "title": "Відкриття тазостегнових",
     "category": "mobility",
-    "muscles": ["glutes", "quads"],
+    "muscles": [
+      "glutes",
+      "quads"
+    ],
     "sets": "2 × 30 с",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   },
@@ -57,8 +80,12 @@
     "id": "thoracic-rotation",
     "title": "Ротація грудного відділу",
     "category": "mobility",
-    "muscles": ["back", "shoulders"],
+    "muscles": [
+      "back",
+      "shoulders"
+    ],
     "sets": "2 × 10",
+    "preview": "",
     "video": "",
     "description": "ПРИКЛАД. Замініть на свій опис техніки."
   }
