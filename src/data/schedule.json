@@ -1,0 +1,23 @@
+[
+  {
+    "day": 1,
+    "time": "18:00",
+    "duration": 60,
+    "title": "session.strength",
+    "place": "place.gym"
+  },
+  {
+    "day": 3,
+    "time": "18:00",
+    "duration": 60,
+    "title": "session.strength",
+    "place": "place.gym"
+  },
+  {
+    "day": 6,
+    "time": "11:00",
+    "duration": 60,
+    "title": "session.mobilityMfr",
+    "place": "place.gym"
+  }
+]
