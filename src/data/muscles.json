@@ -1,0 +1,10 @@
+[
+  { "id": "shoulders", "name": "Плечі" },
+  { "id": "chest", "name": "Груди" },
+  { "id": "biceps", "name": "Біцепс" },
+  { "id": "triceps", "name": "Трицепс" },
+  { "id": "abs", "name": "Прес" },
+  { "id": "back", "name": "Спина" },
+  { "id": "glutes", "name": "Сідниці" },
+  { "id": "quads", "name": "Квадрицепси" }
+]

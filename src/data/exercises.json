@@ -1,0 +1,65 @@
+[
+  {
+    "id": "pushup",
+    "title": "Віджимання",
+    "category": "fitness",
+    "muscles": ["chest", "shoulders", "triceps"],
+    "sets": "3 × 12",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "squat",
+    "title": "Присідання",
+    "category": "fitness",
+    "muscles": ["quads", "glutes"],
+    "sets": "4 × 10",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "plank",
+    "title": "Планка",
+    "category": "fitness",
+    "muscles": ["abs"],
+    "sets": "3 × 45 с",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "mfr-quads",
+    "title": "МФР квадрицепсів",
+    "category": "mfr",
+    "muscles": ["quads"],
+    "sets": "1–2 хв на ногу",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "mfr-back",
+    "title": "МФР верху спини",
+    "category": "mfr",
+    "muscles": ["back"],
+    "sets": "1–2 хв",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "hip-opener",
+    "title": "Відкриття тазостегнових",
+    "category": "mobility",
+    "muscles": ["glutes", "quads"],
+    "sets": "2 × 30 с",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  },
+  {
+    "id": "thoracic-rotation",
+    "title": "Ротація грудного відділу",
+    "category": "mobility",
+    "muscles": ["back", "shoulders"],
+    "sets": "2 × 10",
+    "video": "",
+    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+  }
+]
