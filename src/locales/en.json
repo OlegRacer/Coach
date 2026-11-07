@@ -9,7 +9,6 @@
   "home.scheduleAria": "Training schedule",
   "home.fullSchedule": "Full schedule",
   "home.sections": "Sections",
-  "home.language": "Language",
   "cat.fitness.title": "Fitness exercises",
   "cat.fitness.hint": "Strength and cardio with video",
   "cat.mfr.title": "Foam rolling",
@@ -76,5 +75,8 @@
   "ex.plank.sets": "3 × 45 s",
   "ex.mfr-quads.sets": "1–2 min per leg",
   "ex.mfr-back.sets": "1–2 min",
-  "ex.hip-opener.sets": "2 × 30 s"
+  "ex.hip-opener.sets": "2 × 30 s",
+  "settings.title": "Settings",
+  "settings.close": "Close",
+  "settings.language": "Language"
 }

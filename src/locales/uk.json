@@ -9,7 +9,6 @@
   "home.scheduleAria": "Розклад тренувань",
   "home.fullSchedule": "Весь розклад",
   "home.sections": "Розділи",
-  "home.language": "Мова",
   "cat.fitness.title": "Вправи фітнес",
   "cat.fitness.hint": "Силові та кардіо з відео",
   "cat.mfr.title": "МФР ролл",
@@ -72,5 +71,8 @@
   "ex.hip-opener.title": "Відкриття тазостегнових",
   "ex.hip-opener.description": "ПРИКЛАД. Замініть на свій опис техніки.",
   "ex.thoracic-rotation.title": "Ротація грудного відділу",
-  "ex.thoracic-rotation.description": "ПРИКЛАД. Замініть на свій опис техніки."
+  "ex.thoracic-rotation.description": "ПРИКЛАД. Замініть на свій опис техніки.",
+  "settings.title": "Налаштування",
+  "settings.close": "Закрити",
+  "settings.language": "Мова"
 }

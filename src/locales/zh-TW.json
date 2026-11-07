@@ -9,7 +9,6 @@
   "home.scheduleAria": "訓練課表",
   "home.fullSchedule": "完整課表",
   "home.sections": "分類",
-  "home.language": "語言",
   "cat.fitness.title": "健身動作",
   "cat.fitness.hint": "肌力與有氧，附示範影片",
   "cat.mfr.title": "滾筒放鬆",
@@ -76,5 +75,8 @@
   "ex.plank.sets": "3 × 45 秒",
   "ex.mfr-quads.sets": "每側 1–2 分鐘",
   "ex.mfr-back.sets": "1–2 分鐘",
-  "ex.hip-opener.sets": "2 × 30 秒"
+  "ex.hip-opener.sets": "2 × 30 秒",
+  "settings.title": "設定",
+  "settings.close": "關閉",
+  "settings.language": "語言"
 }

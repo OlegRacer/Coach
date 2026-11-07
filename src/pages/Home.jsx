@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
-import LangSwitcher from '../components/LangSwitcher.jsx';
+import SettingsSheet from '../components/SettingsSheet.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useI18n } from '../i18n/index.jsx';
 import { getSchedule } from '../data/api.js';
@@ -18,6 +18,7 @@ export default function Home() {
   const { t, locale } = useI18n();
   const online = useOnline();
   const [schedule, setSchedule] = useState([]);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   useEffect(() => {
     getSchedule().then(setSchedule);
   }, []);
@@ -37,7 +38,15 @@ export default function Home() {
           <div className="muted small">{t('home.todayDate', { date: dateLabel })}</div>
           <h1 className="title">{t('home.title')}</h1>
         </div>
-        <LangSwitcher />
+        <button
+          type="button"
+          className="icon-btn"
+          aria-label={t('settings.title')}
+          aria-haspopup="dialog"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <Icon name="settings" size={24} />
+        </button>
       </div>
 
       {!online && (
@@ -105,6 +114,8 @@ export default function Home() {
           </Link>
         ))}
       </div>
+
+      <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </main>
   );
 }

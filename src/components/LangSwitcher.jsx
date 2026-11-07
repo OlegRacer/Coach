@@ -3,7 +3,7 @@ import { LANGS, useI18n } from '../i18n/index.jsx';
 export default function LangSwitcher() {
   const { lang, setLang, t } = useI18n();
   return (
-    <div className="lang" role="group" aria-label={t('home.language')}>
+    <div className="lang" role="group" aria-label={t('settings.language')}>
       {LANGS.map((l) => (
         <button
           key={l.code}
