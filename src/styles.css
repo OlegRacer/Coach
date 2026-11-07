@@ -146,3 +146,11 @@ h1, h2, p { margin: 0; }
 }
 .yt-label { position: relative; padding: 14px 16px; font-size: 15px; font-weight: 700; color: #fff; }
 .yt-thumb:disabled .yt-play { display: none; }
+
+.lang { display: flex; background: #1b1d22; border-radius: 999px; padding: 3px; gap: 2px; flex: none; }
+.lang-btn {
+  border: 0; background: transparent; color: var(--muted); font-weight: 700; font-size: 13px;
+  min-height: 38px; min-width: 44px; padding: 0 10px; border-radius: 999px;
+}
+.lang-btn.active { background: var(--accent); color: var(--on-accent); }
+.pill { align-self: flex-start; }

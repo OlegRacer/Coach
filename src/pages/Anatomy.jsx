@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
+import { useI18n } from '../i18n/index.jsx';
 import { getExercises, getMuscles } from '../data/api.js';
 
 // Спрощена схема-заготовка. Пізніше замініть на повноцінний SVG:
@@ -17,6 +18,7 @@ const SHAPES = [
 ];
 
 export default function Anatomy() {
+  const { t, tEx } = useI18n();
   const [params, setParams] = useSearchParams();
   const selected = params.get('m');
   const [muscles, setMuscles] = useState([]);
@@ -35,10 +37,10 @@ export default function Anatomy() {
 
   return (
     <main className="page">
-      <TopBar title="Анатомія тіла" />
+      <TopBar title={t('anatomy.title')} />
 
       <div className="card">
-        <svg viewBox="0 0 200 270" className="body-svg" role="img" aria-label="Схема тіла">
+        <svg viewBox="0 0 200 270" className="body-svg" role="img" aria-label={t('anatomy.bodyAria')}>
           <circle cx="100" cy="30" r="16" fill="#22242A" />
           <rect x="88" y="44" width="24" height="12" fill="#22242A" />
           {SHAPES.filter((s) => s.id !== 'back').map((s) => (
@@ -50,7 +52,7 @@ export default function Anatomy() {
             />
           ))}
         </svg>
-        <p className="muted small">Натисніть на м'яз або виберіть зі списку нижче.</p>
+        <p className="muted small">{t('anatomy.tap')}</p>
         <div className="chips">
           {muscles.map((m) => (
             <button
@@ -59,7 +61,7 @@ export default function Anatomy() {
               className={'chip' + (selected === m.id ? ' active' : '')}
               onClick={() => pick(m.id)}
             >
-              {m.name}
+              {t(`muscle.${m.id}`)}
             </button>
           ))}
         </div>
@@ -67,18 +69,18 @@ export default function Anatomy() {
 
       {selected && (
         <section className="stack">
-          <h2 className="h2 section-title">Вправи: {current ? current.name : ''}</h2>
+          <h2 className="h2 section-title">{t('anatomy.exercisesFor', { name: current ? t(`muscle.${current.id}`) : '' })}</h2>
           <div className="list">
             {items.map((e) => (
               <Link key={e.id} to={`/exercise/${e.id}`} className="list-item">
                 <span className="list-main">
-                  <span className="list-title">{e.title}</span>
-                  <span className="muted small">{e.sets}</span>
+                  <span className="list-title">{tEx(e, 'title')}</span>
+                  <span className="muted small">{tEx(e, 'sets')}</span>
                 </span>
               </Link>
             ))}
           </div>
-          {!items.length && <p className="muted">Для цього м'яза вправ ще немає.</p>}
+          {!items.length && <p className="muted">{t('anatomy.noExercises')}</p>}
         </section>
       )}
     </main>

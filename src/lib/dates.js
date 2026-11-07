@@ -1,5 +1,4 @@
-export const DAY_SHORT = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
-export const DAY_LONG = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', "П'ятниця", 'Субота', 'Неділя'];
+// Назви днів тижня лежать у locales (day.short.N, day.long.N).
 
 // День тижня 1..7 (Пн = 1)
 export function weekdayOf(date) {

@@ -1,7 +1,6 @@
 [
   {
     "id": "pushup",
-    "title": "Віджимання",
     "category": "fitness",
     "muscles": [
       "chest",
@@ -10,12 +9,10 @@
     ],
     "sets": "3 × 12",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   },
   {
     "id": "squat",
-    "title": "Присідання",
     "category": "fitness",
     "muscles": [
       "quads",
@@ -23,49 +20,40 @@
     ],
     "sets": "4 × 10",
     "preview": "media/squat-demo.mp4",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки.",
-    "videoTitle": "Дивитись повне тренування"
+    "video": ""
   },
   {
     "id": "plank",
-    "title": "Планка",
     "category": "fitness",
     "muscles": [
       "abs"
     ],
     "sets": "3 × 45 с",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   },
   {
     "id": "mfr-quads",
-    "title": "МФР квадрицепсів",
     "category": "mfr",
     "muscles": [
       "quads"
     ],
     "sets": "1–2 хв на ногу",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   },
   {
     "id": "mfr-back",
-    "title": "МФР верху спини",
     "category": "mfr",
     "muscles": [
       "back"
     ],
     "sets": "1–2 хв",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   },
   {
     "id": "hip-opener",
-    "title": "Відкриття тазостегнових",
     "category": "mobility",
     "muscles": [
       "glutes",
@@ -73,12 +61,10 @@
     ],
     "sets": "2 × 30 с",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   },
   {
     "id": "thoracic-rotation",
-    "title": "Ротація грудного відділу",
     "category": "mobility",
     "muscles": [
       "back",
@@ -86,7 +72,6 @@
     ],
     "sets": "2 × 10",
     "preview": "",
-    "video": "",
-    "description": "ПРИКЛАД. Замініть на свій опис техніки."
+    "video": ""
   }
 ]

@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import useOnline from '../lib/useOnline.js';
+import { useI18n } from '../i18n/index.jsx';
 
 // Не вантажимо плеєр, поки учень не натисне кнопку: швидше відкривається сторінка
 // і не витрачається трафік. Потрібен інтернет.
 // `id` це код відео з посилання YouTube (частина після v= або після youtu.be/).
-export default function YouTubePlayer({ id, title = 'Повне тренування' }) {
+export default function YouTubePlayer({ id, title }) {
+  const { t } = useI18n();
   const online = useOnline();
   const [open, setOpen] = useState(false);
+  const label = title || t('exercise.watch');
 
   if (!id) return null;
 
@@ -15,7 +18,7 @@ export default function YouTubePlayer({ id, title = 'Повне тренуван
       <div className="video">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1`}
-          title={title}
+          title={label}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           allowFullScreen
         />
@@ -36,7 +39,7 @@ export default function YouTubePlayer({ id, title = 'Повне тренуван
           <path d="M8 5v14l11-7z" />
         </svg>
       </span>
-      <span className="yt-label">{online ? title : 'Відео доступне лише онлайн'}</span>
+      <span className="yt-label">{online ? label : t('video.onlineOnly')}</span>
     </button>
   );
 }
