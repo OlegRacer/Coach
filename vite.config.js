@@ -28,7 +28,20 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,json}']
+        globPatterns: ['**/*.{js,css,html,svg,png,json}'],
+        // Відео/GIF вправ кешуємо тоді, коли учень їх уже відкривав (потім працюють офлайн).
+        runtimeCaching: [
+          {
+            urlPattern: /\/media\/.*\.(mp4|webm|gif|png|jpg|jpeg|webp)$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'exercise-media',
+              rangeRequests: true,
+              expiration: { maxEntries: 150, maxAgeSeconds: 60 * 60 * 24 * 90 },
+              cacheableResponse: { statuses: [0, 200] }
+            }
+          }
+        ]
       }
     })
   ]
