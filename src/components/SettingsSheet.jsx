@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import Icon from './Icon.jsx';
+import ProfileCard from './ProfileCard.jsx';
 import LangSwitcher from './LangSwitcher.jsx';
 import ShareLink from './ShareLink.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -64,17 +64,6 @@ export default function SettingsSheet({ open, onClose }) {
           onPointerCancel={onUp}
         >
           <span className="sheet-grab" aria-hidden="true" />
-          <div className="profile">
-            <span className="avatar" aria-hidden="true">
-              <Icon name="user" size={28} />
-            </span>
-            <div className="profile-text">
-              <span id="settings-title" className="muted small">
-                {t('profile.title')}
-              </span>
-              <span className="profile-name">{t('profile.guest')}</span>
-            </div>
-          </div>
           <button
             ref={closeRef}
             type="button"
@@ -87,6 +76,7 @@ export default function SettingsSheet({ open, onClose }) {
         </div>
 
         <div className="sheet-body">
+          <ProfileCard />
           <div className="set-row">
             <span className="set-label">{t('settings.language')}</span>
             <LangSwitcher />

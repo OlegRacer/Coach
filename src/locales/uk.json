@@ -82,5 +82,16 @@
   "share.copy": "Скопіювати",
   "share.copied": "Посилання скопійовано",
   "share.more": "Інше…",
-  "share.instagram": "Посилання скопійовано. Вставте його в чат Instagram."
+  "share.instagram": "Посилання скопійовано. Вставте його в чат Instagram.",
+  "profile.coach": "Тренер",
+  "auth.signInGoogle": "Увійти через Google",
+  "auth.signOut": "Вийти",
+  "auth.needOnline": "Для входу потрібен інтернет",
+  "auth.error": "Не вдалося виконати дію. Спробуйте ще раз.",
+  "students.title": "Учні",
+  "students.empty": "Поки ніхто не зареєструвався.",
+  "students.new": "новий",
+  "students.noAccess": "Немає доступу.",
+  "students.registered": "Реєстрація: {date}",
+  "students.lastSeen": "Був у додатку: {date}"
 }

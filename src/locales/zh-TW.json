@@ -86,5 +86,16 @@
   "share.copy": "複製",
   "share.copied": "連結已複製",
   "share.more": "更多…",
-  "share.instagram": "連結已複製，請貼到 Instagram 聊天室。"
+  "share.instagram": "連結已複製，請貼到 Instagram 聊天室。",
+  "profile.coach": "教練",
+  "auth.signInGoogle": "使用 Google 登入",
+  "auth.signOut": "登出",
+  "auth.needOnline": "登入需要網路連線",
+  "auth.error": "發生錯誤，請再試一次。",
+  "students.title": "學員",
+  "students.empty": "目前還沒有人註冊。",
+  "students.new": "新",
+  "students.noAccess": "沒有權限。",
+  "students.registered": "註冊時間：{date}",
+  "students.lastSeen": "最後上線：{date}"
 }

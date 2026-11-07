@@ -86,5 +86,16 @@
   "share.copy": "Copy",
   "share.copied": "Link copied",
   "share.more": "More…",
-  "share.instagram": "Link copied. Paste it into an Instagram chat."
+  "share.instagram": "Link copied. Paste it into an Instagram chat.",
+  "profile.coach": "Coach",
+  "auth.signInGoogle": "Sign in with Google",
+  "auth.signOut": "Sign out",
+  "auth.needOnline": "Internet is required to sign in",
+  "auth.error": "Something went wrong. Try again.",
+  "students.title": "Students",
+  "students.empty": "Nobody has registered yet.",
+  "students.new": "new",
+  "students.noAccess": "No access.",
+  "students.registered": "Registered: {date}",
+  "students.lastSeen": "Last seen: {date}"
 }

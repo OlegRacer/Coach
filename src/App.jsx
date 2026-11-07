@@ -4,6 +4,7 @@ import Schedule from './pages/Schedule.jsx';
 import Section from './pages/Section.jsx';
 import Exercise from './pages/Exercise.jsx';
 import Anatomy from './pages/Anatomy.jsx';
+import Students from './pages/Students.jsx';
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/section/:category" element={<Section />} />
         <Route path="/exercise/:id" element={<Exercise />} />
         <Route path="/anatomy" element={<Anatomy />} />
+        <Route path="/admin/students" element={<Students />} />
         <Route path="*" element={<Home />} />
       </Routes>
     </div>

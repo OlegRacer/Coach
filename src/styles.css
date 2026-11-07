@@ -206,3 +206,23 @@ h1, h2, p { margin: 0; }
 }
 .share-btn:active { background: #2d3037; }
 .share-status { min-height: 18px; word-break: break-all; }
+
+.profile-wrap { display: flex; flex-direction: column; gap: 10px; padding-bottom: 8px; }
+.profile-email { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.avatar { overflow: hidden; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.btn-light, .btn-ghost {
+  border: 0; border-radius: 16px; min-height: 48px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%;
+}
+.btn-light { background: #f3f4f6; color: #0d0e11; }
+.btn-light:disabled { opacity: 0.6; cursor: default; }
+.btn-ghost { background: var(--card-2); color: var(--text); }
+.err { color: #ff8a8a; margin: 0; }
+.link-row { text-decoration: none; color: inherit; border-top: 1px solid #23252b; }
+.sheet-head { padding-bottom: 0; }
+
+.student { background: var(--card); border-radius: 20px; padding: 14px; display: flex; gap: 14px; align-items: flex-start; }
+.small-av { width: 44px; height: 44px; margin-top: 2px; background: var(--card-2); color: var(--text); }
+.student-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.student-main .small { overflow: hidden; text-overflow: ellipsis; }
+.badge-new { background: var(--accent); color: var(--on-accent); font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; }
