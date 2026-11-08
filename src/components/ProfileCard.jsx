@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Onboarding from './Onboarding.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -9,6 +11,7 @@ import { useI18n } from '../i18n/index.jsx';
 export default function ProfileCard() {
   const { t } = useI18n();
   const { user, isAdmin, signInGoogle, signOut, error } = useAuth();
+  const [editing, setEditing] = useState(false);
   const online = useOnline();
 
   return (
@@ -29,6 +32,14 @@ export default function ProfileCard() {
           {user && user.email && <span className="muted small profile-email">{user.email}</span>}
         </div>
       </div>
+
+      {user && !isAdmin && (
+        <button type="button" className="set-row link-row" onClick={() => setEditing(true)} disabled={!online}>
+          <span className="set-label">{t('ob.edit')}</span>
+          <span className="muted"><Icon name="chevron" size={20} /></span>
+        </button>
+      )}
+      {editing && <Onboarding onClose={() => setEditing(false)} />}
 
       {user ? (
         <button type="button" className="btn-ghost" onClick={signOut}>

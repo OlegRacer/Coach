@@ -8,6 +8,15 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
+  const [details, setDetails] = useState(null);
+  const [detailsLoaded, setDetailsLoaded] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      return sessionStorage.getItem('ob-dismissed') === '1';
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     let alive = true;
@@ -50,6 +59,34 @@ export function AuthProvider({ children }) {
     };
   }, [userId]);
 
+  // Анкета учня. Якщо запит не вдався (офлайн), анкету не нав'язуємо.
+  const refreshDetails = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const { data, error: e } = await supabase.from('student_details').select('*').eq('student_id', userId).maybeSingle();
+      if (e) return;
+      setDetails(data || null);
+      setDetailsLoaded(true);
+    } catch {
+      /* офлайн */
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    setDetails(null);
+    setDetailsLoaded(false);
+    if (userId) refreshDetails();
+  }, [userId, refreshDetails]);
+
+  const dismissOnboarding = useCallback(() => {
+    setDismissed(true);
+    try {
+      sessionStorage.setItem('ob-dismissed', '1');
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   const signInGoogle = useCallback(async () => {
     setError('');
     const { error: e } = await supabase.auth.signInWithOAuth({
@@ -62,6 +99,13 @@ export function AuthProvider({ children }) {
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProfile(null);
+    setDetails(null);
+    try {
+      sessionStorage.removeItem('ob-dismissed');
+    } catch {
+      /* ignore */
+    }
+    setDismissed(false);
   }, []);
 
   const value = useMemo(() => {
@@ -75,8 +119,13 @@ export function AuthProvider({ children }) {
           avatar: (profile && profile.avatar_url) || meta.avatar_url || meta.picture || ''
         }
       : null;
-    return { ready, user, profile, isAdmin: !!profile && profile.role === 'admin', signInGoogle, signOut, error };
-  }, [session, profile, ready, userId, signInGoogle, signOut, error]);
+    const isAdmin = !!profile && profile.role === 'admin';
+    const needsOnboarding = !!user && !!profile && !isAdmin && detailsLoaded && !(details && details.completed_at) && !dismissed;
+    return {
+      ready, user, profile, isAdmin, signInGoogle, signOut, error,
+      details, refreshDetails, needsOnboarding, dismissOnboarding
+    };
+  }, [session, profile, ready, userId, signInGoogle, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
