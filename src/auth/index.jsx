@@ -111,11 +111,13 @@ export function AuthProvider({ children }) {
   const value = useMemo(() => {
     const meta = (session && session.user && session.user.user_metadata) || {};
     const email = (session && session.user && session.user.email) || '';
+    const formName =
+      details && details.completed_at ? [details.first_name, details.last_name].filter(Boolean).join(' ') : '';
     const user = session
       ? {
           id: userId,
           email,
-          name: (profile && profile.full_name) || meta.full_name || meta.name || email.split('@')[0] || '',
+          name: formName || (profile && profile.full_name) || meta.full_name || meta.name || email.split('@')[0] || '',
           avatar: (profile && profile.avatar_url) || meta.avatar_url || meta.picture || ''
         }
       : null;

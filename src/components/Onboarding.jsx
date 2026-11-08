@@ -78,7 +78,7 @@ export default function Onboarding({ onClose }) {
     });
     setBusy(false);
     if (error) {
-      setErr(t('ob.saveError'));
+      setErr(t('ob.saveError') + ' [' + (error.code || '') + ' ' + (error.message || '') + ']');
       return;
     }
     await refreshDetails();

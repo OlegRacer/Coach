@@ -141,5 +141,12 @@
   "ob.weight": "Weight, kg",
   "ob.birthYear": "Year of birth",
   "students.body": "Body",
-  "students.bodyLine": "{h} cm · {w} kg · born {y}"
+  "students.bodyLine": "{h} cm · {w} kg · born {y}",
+  "ob.change": "Edit details",
+  "ob.viewTitle": "My questionnaire",
+  "ob.none": "Not set",
+  "ob.contact.label": "Contact",
+  "ob.goals.label": "Goals",
+  "ob.limits.label": "Limitations",
+  "ob.body.label": "Body"
 }

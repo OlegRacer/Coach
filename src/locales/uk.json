@@ -137,5 +137,12 @@
   "ob.weight": "Вага, кг",
   "ob.birthYear": "Рік народження",
   "students.body": "Тіло",
-  "students.bodyLine": "{h} см · {w} кг · {y} р.н."
+  "students.bodyLine": "{h} см · {w} кг · {y} р.н.",
+  "ob.change": "Змінити дані",
+  "ob.viewTitle": "Моя анкета",
+  "ob.none": "Не вказано",
+  "ob.contact.label": "Контакт",
+  "ob.goals.label": "Мета",
+  "ob.limits.label": "Обмеження",
+  "ob.body.label": "Тіло"
 }

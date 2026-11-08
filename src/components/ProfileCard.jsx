@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Onboarding from './Onboarding.jsx';
+import ProfileDetails from './ProfileDetails.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -10,13 +11,18 @@ import { useI18n } from '../i18n/index.jsx';
 // Тренеру (адміну) додатково показується перехід до списку учнів.
 export default function ProfileCard() {
   const { t } = useI18n();
-  const { user, isAdmin, signInGoogle, signOut, error } = useAuth();
-  const [editing, setEditing] = useState(false);
+  const { user, isAdmin, details, signInGoogle, signOut, error } = useAuth();
+  const [mode, setMode] = useState(null); // null | 'view' | 'edit'
+  const filled = !!(details && details.completed_at);
   const online = useOnline();
+  const canOpen = !!user && !isAdmin && online;
+
+  const Tag = canOpen ? 'button' : 'div';
+  const tagProps = canOpen ? { type: 'button', onClick: () => setMode(filled ? 'view' : 'edit') } : {};
 
   return (
     <div className="profile-wrap">
-      <div className="profile">
+      <Tag className={'profile' + (canOpen ? ' tappable' : '')} {...tagProps}>
         <span className="avatar" aria-hidden="true">
           {user && user.avatar ? (
             <img src={user.avatar} alt="" referrerPolicy="no-referrer" />
@@ -29,17 +35,15 @@ export default function ProfileCard() {
             {user ? (isAdmin ? t('profile.coach') : t('profile.title')) : t('profile.title')}
           </span>
           <span className="profile-name">{user ? user.name : t('profile.guest')}</span>
-          {user && user.email && <span className="muted small profile-email">{user.email}</span>}
         </div>
-      </div>
-
-      {user && !isAdmin && (
-        <button type="button" className="set-row link-row" onClick={() => setEditing(true)} disabled={!online}>
-          <span className="set-label">{t('ob.edit')}</span>
-          <span className="muted"><Icon name="chevron" size={20} /></span>
-        </button>
-      )}
-      {editing && <Onboarding onClose={() => setEditing(false)} />}
+        {canOpen && (
+          <span className="muted" aria-hidden="true">
+            <Icon name="chevron" size={20} />
+          </span>
+        )}
+      </Tag>
+      {mode === 'view' && <ProfileDetails onClose={() => setMode(null)} onEdit={() => setMode('edit')} />}
+      {mode === 'edit' && <Onboarding onClose={() => setMode(null)} />}
 
       {user ? (
         <button type="button" className="btn-ghost" onClick={signOut}>

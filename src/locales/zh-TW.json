@@ -141,5 +141,12 @@
   "ob.weight": "體重（公斤）",
   "ob.birthYear": "出生年份",
   "students.body": "身體數據",
-  "students.bodyLine": "{h} 公分 · {w} 公斤 · {y} 年生"
+  "students.bodyLine": "{h} 公分 · {w} 公斤 · {y} 年生",
+  "ob.change": "修改資料",
+  "ob.viewTitle": "我的問卷",
+  "ob.none": "未填寫",
+  "ob.contact.label": "聯絡方式",
+  "ob.goals.label": "目標",
+  "ob.limits.label": "限制",
+  "ob.body.label": "身體數據"
 }
