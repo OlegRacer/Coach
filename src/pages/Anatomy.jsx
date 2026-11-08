@@ -5,10 +5,13 @@ import { useI18n } from '../i18n/index.jsx';
 import { getExercises, getMuscles } from '../data/api.js';
 
 import bodyImg from '../assets/body.webp';
-import zones from '../data/bodyZones.json';
+import regions from '../data/bodyRegions.json';
+import zoneMap from '../data/bodyZones.json';
 
-// Підсвітка: у src/data/bodyZones.json для кожного id з muscles.json є список контурів (SVG path)
-// у координатах картинки (width x height). Додаєте контур і м'яз сам починає світитись.
+const REGION = Object.fromEntries(regions.regions.map((r) => [r.id, r.d]));
+
+// Картинка розрізана на 99 областей (src/data/bodyRegions.json, id r00…r98).
+// src/data/bodyZones.json каже, з яких областей складається кожен м'яз з muscles.json.
 export default function Anatomy() {
   const { t, tEx } = useI18n();
   const [params, setParams] = useSearchParams();
@@ -33,14 +36,15 @@ export default function Anatomy() {
 
       <div className="card">
         <div className="body-fig">
-          <img src={bodyImg} width={zones.width} height={zones.height} alt={t('anatomy.bodyAria')} draggable="false" />
-          <svg viewBox={`0 0 ${zones.width} ${zones.height}`} className="body-glow" aria-hidden="true">
+          <img src={bodyImg} width={regions.width} height={regions.height} alt={t('anatomy.bodyAria')} draggable="false" />
+          <svg viewBox={`0 0 ${regions.width} ${regions.height}`} className="body-glow" aria-hidden="true">
             <defs>
               <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="7" />
+                <feGaussianBlur stdDeviation="6" />
               </filter>
             </defs>
-            {Object.entries(zones.zones).map(([id, paths]) => {
+            {Object.entries(zoneMap.zones).map(([id, ids]) => {
+              const paths = ids.map((r) => REGION[r]).filter(Boolean);
               const on = selected === id;
               return (
                 <g key={id} className={'zone' + (on ? ' on' : '')} onClick={() => pick(id)}>

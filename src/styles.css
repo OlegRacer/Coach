@@ -262,13 +262,13 @@ button.profile { border: 0; width: 100%; text-align: left; color: inherit; }
 .pd-val { font-size: 16px; font-weight: 700; word-break: break-word; white-space: pre-wrap; }
 
 /* Анатомія: картинка + підсвітка */
-.body-fig { position: relative; width: 100%; max-width: 420px; margin: 0 auto; border-radius: 20px; overflow: hidden; background: #18191d; line-height: 0; }
+.body-fig { position: relative; width: 100%; max-width: 440px; margin: 0 auto; border-radius: 20px; overflow: hidden; background: #18191d; line-height: 0; }
 .body-fig img { width: 100%; height: auto; display: block; user-select: none; -webkit-user-drag: none; }
 .body-glow { position: absolute; inset: 0; width: 100%; height: 100%; }
 .zone { cursor: pointer; }
-.zone-fill { fill: var(--accent); opacity: 0; transition: opacity 0.2s; }
-.zone-glow { fill: var(--accent); opacity: 0; transition: opacity 0.2s; }
-.zone.on .zone-fill { opacity: 0.4; mix-blend-mode: screen; }
-.zone.on .zone-glow { opacity: 0.9; }
-.zone:not(.on):hover .zone-fill { opacity: 0.18; }
+.zone-fill { fill: #eef3fb; opacity: 0; transition: opacity 0.2s; }
+.zone-glow { fill: #8fb8ff; opacity: 0; transition: opacity 0.2s; }
+.zone.on .zone-fill { opacity: 0.92; }
+.zone.on .zone-glow { opacity: 1; }
+.zone:not(.on):hover .zone-fill { opacity: 0.22; }
 @media (prefers-reduced-motion: reduce) { .zone-fill, .zone-glow { transition: none; } }
