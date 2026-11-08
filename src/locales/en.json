@@ -149,5 +149,8 @@
   "ob.goals.label": "Goals",
   "ob.limits.label": "Limitations",
   "ob.body.label": "Body",
-  "ob.email": "Email"
+  "ob.email": "Email",
+  "admin.error": "Something broke in the admin area. The rest of the app works.",
+  "admin.back": "Back",
+  "admin.loading": "Loading…"
 }

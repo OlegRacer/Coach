@@ -149,5 +149,8 @@
   "ob.goals.label": "目標",
   "ob.limits.label": "限制",
   "ob.body.label": "身體數據",
-  "ob.email": "電子郵件"
+  "ob.email": "電子郵件",
+  "admin.error": "管理區發生錯誤，其餘功能不受影響。",
+  "admin.back": "返回",
+  "admin.loading": "載入中…"
 }

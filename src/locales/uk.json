@@ -145,5 +145,8 @@
   "ob.goals.label": "Мета",
   "ob.limits.label": "Обмеження",
   "ob.body.label": "Тіло",
-  "ob.email": "Email"
+  "ob.email": "Email",
+  "admin.error": "Помилка в адмінській частині. Решта застосунку працює.",
+  "admin.back": "Назад",
+  "admin.loading": "Завантаження…"
 }
