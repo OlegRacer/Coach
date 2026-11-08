@@ -7,7 +7,7 @@ import { useI18n } from '../i18n/index.jsx';
 // Перегляд заповненої анкети. Внизу кнопка «Змінити дані» відкриває майстер із готовими відповідями.
 export default function ProfileDetails({ onClose, onEdit }) {
   const { t } = useI18n();
-  const { details } = useAuth();
+  const { details, user } = useAuth();
   const d = details || {};
   const none = t('ob.none');
   const name = [d.first_name, d.last_name].filter(Boolean).join(' ');
@@ -16,6 +16,7 @@ export default function ProfileDetails({ onClose, onEdit }) {
     .filter(Boolean)
     .join(' · ');
   const rows = [
+    [t('ob.email'), (user && user.email) || ''],
     [t('ob.firstName') + ' / ' + t('ob.lastName'), name],
     [t('ob.contact.label'), msg && d.contact_handle ? `${msg.label} · ${d.contact_handle}` : ''],
     [t('ob.goals.label'), (d.goals || []).map((g) => t(`ob.goal.${g}`)).join(', ')],

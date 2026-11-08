@@ -148,5 +148,6 @@
   "ob.contact.label": "Contact",
   "ob.goals.label": "Goals",
   "ob.limits.label": "Limitations",
-  "ob.body.label": "Body"
+  "ob.body.label": "Body",
+  "ob.email": "Email"
 }

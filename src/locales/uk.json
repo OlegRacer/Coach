@@ -144,5 +144,6 @@
   "ob.contact.label": "Контакт",
   "ob.goals.label": "Мета",
   "ob.limits.label": "Обмеження",
-  "ob.body.label": "Тіло"
+  "ob.body.label": "Тіло",
+  "ob.email": "Email"
 }

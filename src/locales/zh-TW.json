@@ -148,5 +148,6 @@
   "ob.contact.label": "聯絡方式",
   "ob.goals.label": "目標",
   "ob.limits.label": "限制",
-  "ob.body.label": "身體數據"
+  "ob.body.label": "身體數據",
+  "ob.email": "電子郵件"
 }
