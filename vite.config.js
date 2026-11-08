@@ -28,7 +28,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,json}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,json,webp}'],
         // Відео/GIF вправ кешуємо тоді, коли учень їх уже відкривав (потім працюють офлайн).
         runtimeCaching: [
           {
