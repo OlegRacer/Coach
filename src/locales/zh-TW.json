@@ -165,5 +165,12 @@
   "signin.text": "在下一個畫面，Google 會顯示以下技術位址，而不是應用程式名稱：",
   "signin.beta": "這是測試版，所以顯示成這樣。請放心，一切正常：這是接收登入的我們的伺服器。我們只會取得你的姓名、電子郵件與頭像，Google 密碼不會傳給我們。",
   "signin.continue": "繼續使用 Google",
-  "signin.cancel": "取消"
+  "signin.cancel": "取消",
+  "update.available": "有新版本可用",
+  "update.apply": "更新",
+  "update.check": "檢查更新",
+  "update.checking": "檢查中…",
+  "update.latest": "已是最新版本",
+  "update.version": "版本 {v}",
+  "update.offline": "需要網路連線"
 }

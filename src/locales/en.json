@@ -165,5 +165,12 @@
   "signin.text": "On the next screen Google will show a technical address instead of the app name:",
   "signin.beta": "This is the beta version, so the label looks like this. Don't worry, it's normal: this is our server that receives the sign-in. We only get your name, email and profile photo. Your Google password never reaches us.",
   "signin.continue": "Continue with Google",
-  "signin.cancel": "Cancel"
+  "signin.cancel": "Cancel",
+  "update.available": "A new version is available",
+  "update.apply": "Update",
+  "update.check": "Check for updates",
+  "update.checking": "Checking…",
+  "update.latest": "You have the latest version",
+  "update.version": "Version {v}",
+  "update.offline": "Internet required"
 }

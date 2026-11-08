@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ProfileCard from './ProfileCard.jsx';
 import LangSwitcher from './LangSwitcher.jsx';
 import ShareLink from './ShareLink.jsx';
+import UpdateRow from './UpdateRow.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Нижня панель налаштувань: виїжджає знизу на всю ширину, висота за вмістом.
@@ -82,6 +83,7 @@ export default function SettingsSheet({ open, onClose }) {
             <LangSwitcher />
           </div>
           <ShareLink />
+          <UpdateRow />
         </div>
       </div>
     </div>

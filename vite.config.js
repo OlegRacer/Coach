@@ -5,11 +5,12 @@ import { VitePWA } from 'vite-plugin-pwa';
 // base './' працює на GitHub Pages у будь-якому репозиторії.
 // Маршрути через HashRouter (#/...), тому 404 на Pages не виникає.
 export default defineConfig({
+  define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
   base: './',
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
       includeAssets: ['icon.svg'],
       manifest: {
         name: 'Тренування',
