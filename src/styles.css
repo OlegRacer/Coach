@@ -272,3 +272,8 @@ button.profile { border: 0; width: 100%; text-align: left; color: inherit; }
 .zone.on .zone-glow { opacity: 1; }
 .zone:not(.on):hover .zone-fill { opacity: 0.22; }
 @media (prefers-reduced-motion: reduce) { .zone-fill, .zone-glow { transition: none; } }
+
+/* Коли м'яз увімкнений, білі лінії навколо й усередині нього стають чорними */
+.zone-line { fill: none; stroke: #0b0c10; stroke-width: 5; stroke-linejoin: round; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+.zone.on .zone-line { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .zone-line { transition: none; } }

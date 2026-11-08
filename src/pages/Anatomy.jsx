@@ -54,6 +54,9 @@ export default function Anatomy() {
                   {paths.map((d, i) => (
                     <path key={'f' + i} d={d} className="zone-fill" />
                   ))}
+                  {paths.map((d, i) => (
+                    <path key={'l' + i} d={d} className="zone-line" />
+                  ))}
                 </g>
               );
             })}
