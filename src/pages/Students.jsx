@@ -96,6 +96,9 @@ export default function Students() {
                       {msg && det.contact_handle && (
                         <p className="small"><b>{t('students.contact')}:</b> {msg.label} · {det.contact_handle}</p>
                       )}
+                      {(det.height_cm || det.weight_kg || det.birth_year) && (
+                        <p className="small"><b>{t('students.body')}:</b> {[det.height_cm && `${det.height_cm} cm`, det.weight_kg && `${det.weight_kg} kg`, det.birth_year && `${det.birth_year}`].filter(Boolean).join(' · ')}</p>
+                      )}
                       {det.goals && det.goals.length > 0 && (
                         <p className="small"><b>{t('students.goals')}:</b> {det.goals.map((g) => t(`ob.goal.${g}`)).join(', ')}</p>
                       )}

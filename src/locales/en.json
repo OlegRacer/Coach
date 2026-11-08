@@ -134,5 +134,12 @@
   "students.contact": "Contact",
   "students.goals": "Goals",
   "students.limitations": "Limitations",
-  "students.consent": "Consent: {date}"
+  "students.consent": "Consent: {date}",
+  "ob.body.title": "Body",
+  "ob.body.sub": "Used to calculate daily calories. Optional.",
+  "ob.height": "Height, cm",
+  "ob.weight": "Weight, kg",
+  "ob.birthYear": "Year of birth",
+  "students.body": "Body",
+  "students.bodyLine": "{h} cm · {w} kg · born {y}"
 }

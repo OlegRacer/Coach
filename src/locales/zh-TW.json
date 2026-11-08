@@ -134,5 +134,12 @@
   "students.contact": "聯絡方式",
   "students.goals": "目標",
   "students.limitations": "限制",
-  "students.consent": "同意時間：{date}"
+  "students.consent": "同意時間：{date}",
+  "ob.body.title": "身體數據",
+  "ob.body.sub": "用於計算每日所需熱量，可不填。",
+  "ob.height": "身高（公分）",
+  "ob.weight": "體重（公斤）",
+  "ob.birthYear": "出生年份",
+  "students.body": "身體數據",
+  "students.bodyLine": "{h} 公分 · {w} 公斤 · {y} 年生"
 }

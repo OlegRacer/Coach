@@ -130,5 +130,12 @@
   "students.contact": "Контакт",
   "students.goals": "Мета",
   "students.limitations": "Обмеження",
-  "students.consent": "Згода: {date}"
+  "students.consent": "Згода: {date}",
+  "ob.body.title": "Тіло",
+  "ob.body.sub": "Потрібно для розрахунку денної калорійності. Необов'язково.",
+  "ob.height": "Зріст, см",
+  "ob.weight": "Вага, кг",
+  "ob.birthYear": "Рік народження",
+  "students.body": "Тіло",
+  "students.bodyLine": "{h} см · {w} кг · {y} р.н."
 }

@@ -16,6 +16,7 @@ const STEPS = [
   { key: 'name', icon: 'user' },
   { key: 'contact', icon: 'chat' },
   { key: 'goals', icon: 'target' },
+  { key: 'body', icon: 'anatomy' },
   { key: 'limits', icon: 'heart' },
   { key: 'consent', icon: 'check' }
 ];
@@ -31,6 +32,9 @@ export default function Onboarding({ onClose }) {
   const [messenger, setMessenger] = useState(d.contact_messenger || '');
   const [handle, setHandle] = useState(d.contact_handle || '');
   const [goals, setGoals] = useState(d.goals || []);
+  const [height, setHeight] = useState(d.height_cm != null ? String(d.height_cm) : '');
+  const [weight, setWeight] = useState(d.weight_kg != null ? String(d.weight_kg) : '');
+  const [year, setYear] = useState(d.birth_year != null ? String(d.birth_year) : '');
   const [limits, setLimits] = useState(d.limitations || '');
   const [consent, setConsent] = useState(!!d.consent_at);
   const [busy, setBusy] = useState(false);
@@ -41,6 +45,13 @@ export default function Onboarding({ onClose }) {
   const cur = STEPS[step].key;
   const toggleGoal = (g) => setGoals((x) => (x.includes(g) ? x.filter((i) => i !== g) : [...x, g]));
   const clean = (v) => (v.trim() ? v.trim() : null);
+
+  const num = (v, min, max) => {
+    const n = parseFloat(String(v).replace(',', '.'));
+    return Number.isFinite(n) && n >= min && n <= max ? n : null;
+  };
+  const bad = (v, min, max) => v.trim() !== '' && num(v, min, max) === null;
+  const bodyBad = bad(height, 80, 250) || bad(weight, 20, 400) || bad(year, 1920, new Date().getFullYear());
 
   const save = async () => {
     if (!consent) {
@@ -57,6 +68,9 @@ export default function Onboarding({ onClose }) {
       contact_messenger: messenger && clean(handle) ? messenger : null,
       contact_handle: messenger ? clean(handle) : null,
       goals,
+      height_cm: num(height, 80, 250),
+      weight_kg: num(weight, 20, 400),
+      birth_year: num(year, 1920, new Date().getFullYear()),
       limitations: clean(limits),
       consent_at: d.consent_at || now,
       completed_at: now,
@@ -153,6 +167,14 @@ export default function Onboarding({ onClose }) {
             </div>
           )}
 
+          {cur === 'body' && (
+            <div className="stack">
+              <input className="field" inputMode="decimal" value={height} maxLength={5} onChange={(e) => setHeight(e.target.value)} placeholder={t('ob.height')} aria-label={t('ob.height')} aria-invalid={bad(height, 80, 250)} />
+              <input className="field" inputMode="decimal" value={weight} maxLength={5} onChange={(e) => setWeight(e.target.value)} placeholder={t('ob.weight')} aria-label={t('ob.weight')} aria-invalid={bad(weight, 20, 400)} />
+              <input className="field" inputMode="numeric" value={year} maxLength={4} onChange={(e) => setYear(e.target.value.replace(/\D/g, ''))} placeholder={t('ob.birthYear')} aria-label={t('ob.birthYear')} aria-invalid={bad(year, 1920, new Date().getFullYear())} />
+            </div>
+          )}
+
           {cur === 'limits' && (
             <div className="stack">
               <textarea className="field" rows={5} maxLength={2000} value={limits} onChange={(e) => setLimits(e.target.value)} placeholder={t('ob.limits.placeholder')} />
@@ -182,7 +204,7 @@ export default function Onboarding({ onClose }) {
               {busy ? t('ob.saving') : t('ob.finish')}
             </button>
           ) : (
-            <button type="button" className="btn-primary" onClick={() => setStep(step + 1)}>
+            <button type="button" className="btn-primary" onClick={() => setStep(step + 1)} disabled={cur === 'body' && bodyBad}>
               {t('ob.next')}
             </button>
           )}
