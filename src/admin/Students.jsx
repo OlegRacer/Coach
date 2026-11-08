@@ -15,19 +15,38 @@ export default function Students() {
   const [rows, setRows] = useState(null);
   const [failed, setFailed] = useState(false);
   const [open, setOpen] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [ownerIds, setOwnerIds] = useState([]);
+  const [armed, setArmed] = useState(null);
+  const [roleErr, setRoleErr] = useState(false);
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
       .from('profiles')
       .select('*, student_details(*)')
-      .neq('role', 'admin')
       .order('created_at', { ascending: false });
     if (error) setFailed(true);
     else {
       setFailed(false);
       setRows(data);
     }
+    const [own, ids] = await Promise.all([supabase.rpc('is_owner'), supabase.rpc('owner_ids')]);
+    setIsOwner(own.data === true);
+    setOwnerIds(Array.isArray(ids.data) ? ids.data.map((x) => (typeof x === 'object' && x ? Object.values(x)[0] : x)) : []);
   }, []);
+
+  const setRole = async (id, makeAdmin) => {
+    const key = id + (makeAdmin ? ':on' : ':off');
+    if (armed !== key) {
+      setArmed(key);
+      return;
+    }
+    setArmed(null);
+    setRoleErr(false);
+    const { error } = await supabase.rpc('set_admin_role', { target: id, make_admin: makeAdmin });
+    if (error) setRoleErr(true);
+    else load();
+  };
 
   useEffect(() => {
     if (!isAdmin) return undefined;
@@ -45,6 +64,9 @@ export default function Students() {
   const fmt = (iso) => (iso ? new Date(iso).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) : '—');
   const isNew = (iso) => Date.now() - new Date(iso).getTime() < NEW_DAYS * 86400000;
 
+  const students = (rows || []).filter((r) => r.role !== 'admin');
+  const admins = (rows || []).filter((r) => r.role === 'admin');
+
   if (!ready) return <main className="page" />;
 
   if (!isAdmin) {
@@ -60,9 +82,10 @@ export default function Students() {
     <main className="page">
       <TopBar title={t('students.title')} />
       {failed && <p className="err">{t('auth.error')}</p>}
-      {rows && !rows.length && <p className="muted">{t('students.empty')}</p>}
+      {rows && !students.length && <p className="muted">{t('students.empty')}</p>}
+      {roleErr && <p className="err" role="alert">{t('students.roleError')}</p>}
       <div className="list">
-        {(rows || []).map((s) => {
+        {students.map((s) => {
           const raw = s.student_details;
           const det = Array.isArray(raw) ? raw[0] : raw;
           const filled = det && det.completed_at;
@@ -108,12 +131,51 @@ export default function Students() {
                       <p className="muted small">{t('students.consent', { date: fmt(det.consent_at) })}</p>
                     </>
                   )}
+                  {isOwner && (
+                    <button type="button" className="btn-ghost" onClick={() => setRole(s.id, true)}>
+                      {armed === s.id + ':on' ? t('students.makeAdminConfirm') : t('students.makeAdmin')}
+                    </button>
+                  )}
                 </div>
               )}
             </div>
           );
         })}
       </div>
+
+      {admins.length > 0 && (
+        <>
+          <h2 className="h2 section-title">{t('students.admins')}</h2>
+          <div className="list">
+            {admins.map((a) => {
+              const owner = ownerIds.includes(a.id);
+              return (
+                <div key={a.id} className="student">
+                  <div className="student-head" style={{ cursor: 'default' }}>
+                    <span className="avatar small-av" aria-hidden="true">
+                      {a.avatar_url ? <img src={a.avatar_url} alt="" referrerPolicy="no-referrer" /> : <Icon name="user" size={22} />}
+                    </span>
+                    <div className="student-main">
+                      <div className="row">
+                        <span className="list-title">{a.full_name || a.email}</span>
+                        <span className="badge-new">{owner ? t('students.owner') : t('students.adminBadge')}</span>
+                      </div>
+                      <span className="muted small">{a.email}</span>
+                    </div>
+                  </div>
+                  {isOwner && !owner && (
+                    <div className="student-details">
+                      <button type="button" className="btn-ghost" onClick={() => setRole(a.id, false)}>
+                        {armed === a.id + ':off' ? t('students.removeAdminConfirm') : t('students.removeAdmin')}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
     </main>
   );
 }

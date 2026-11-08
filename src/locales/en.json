@@ -152,5 +152,13 @@
   "ob.email": "Email",
   "admin.error": "Something broke in the admin area. The rest of the app works.",
   "admin.back": "Back",
-  "admin.loading": "Loading…"
+  "admin.loading": "Loading…",
+  "students.admins": "Admins",
+  "students.owner": "Owner",
+  "students.adminBadge": "Admin",
+  "students.makeAdmin": "Make admin",
+  "students.makeAdminConfirm": "Tap again: this person will see all student questionnaires",
+  "students.removeAdmin": "Remove admin rights",
+  "students.removeAdminConfirm": "Tap again to remove admin rights",
+  "students.roleError": "Could not change the role."
 }

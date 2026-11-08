@@ -148,5 +148,13 @@
   "ob.email": "Email",
   "admin.error": "Помилка в адмінській частині. Решта застосунку працює.",
   "admin.back": "Назад",
-  "admin.loading": "Завантаження…"
+  "admin.loading": "Завантаження…",
+  "students.admins": "Адміни",
+  "students.owner": "Власник",
+  "students.adminBadge": "Адмін",
+  "students.makeAdmin": "Зробити адміном",
+  "students.makeAdminConfirm": "Натисни ще раз: людина побачить усі анкети учнів",
+  "students.removeAdmin": "Зняти права адміна",
+  "students.removeAdminConfirm": "Натисни ще раз, щоб зняти права",
+  "students.roleError": "Не вдалося змінити роль."
 }

@@ -152,5 +152,13 @@
   "ob.email": "電子郵件",
   "admin.error": "管理區發生錯誤，其餘功能不受影響。",
   "admin.back": "返回",
-  "admin.loading": "載入中…"
+  "admin.loading": "載入中…",
+  "students.admins": "管理員",
+  "students.owner": "擁有者",
+  "students.adminBadge": "管理員",
+  "students.makeAdmin": "設為管理員",
+  "students.makeAdminConfirm": "再按一次：此人將能看到所有學員問卷",
+  "students.removeAdmin": "移除管理員權限",
+  "students.removeAdminConfirm": "再按一次以移除權限",
+  "students.roleError": "無法變更角色。"
 }
