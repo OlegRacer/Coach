@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Onboarding from './Onboarding.jsx';
 import ProfileDetails from './ProfileDetails.jsx';
+import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -13,6 +14,7 @@ export default function ProfileCard() {
   const { t } = useI18n();
   const { user, isAdmin, details, signInGoogle, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
+  const [notice, setNotice] = useState(false);
   const filled = !!(details && details.completed_at);
   const online = useOnline();
   const canOpen = !!user && !isAdmin && online;
@@ -50,9 +52,18 @@ export default function ProfileCard() {
           {t('auth.signOut')}
         </button>
       ) : (
-        <button type="button" className="btn-light" onClick={signInGoogle} disabled={!online}>
+        <button type="button" className="btn-light" onClick={() => setNotice(true)} disabled={!online}>
           {online ? t('auth.signInGoogle') : t('auth.needOnline')}
         </button>
+      )}
+      {notice && (
+        <SignInNotice
+          onCancel={() => setNotice(false)}
+          onContinue={() => {
+            setNotice(false);
+            signInGoogle();
+          }}
+        />
       )}
       {error && (
         <p className="small err" role="alert">

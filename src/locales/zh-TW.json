@@ -160,5 +160,10 @@
   "students.makeAdminConfirm": "再按一次：此人將能看到所有學員問卷",
   "students.removeAdmin": "移除管理員權限",
   "students.removeAdminConfirm": "再按一次以移除權限",
-  "students.roleError": "無法變更角色。"
+  "students.roleError": "無法變更角色。",
+  "signin.title": "使用 Google 登入之前",
+  "signin.text": "在下一個畫面，Google 會顯示以下技術位址，而不是應用程式名稱：",
+  "signin.beta": "這是測試版，所以顯示成這樣。請放心，一切正常：這是接收登入的我們的伺服器。我們只會取得你的姓名、電子郵件與頭像，Google 密碼不會傳給我們。",
+  "signin.continue": "繼續使用 Google",
+  "signin.cancel": "取消"
 }

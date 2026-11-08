@@ -160,5 +160,10 @@
   "students.makeAdminConfirm": "Tap again: this person will see all student questionnaires",
   "students.removeAdmin": "Remove admin rights",
   "students.removeAdminConfirm": "Tap again to remove admin rights",
-  "students.roleError": "Could not change the role."
+  "students.roleError": "Could not change the role.",
+  "signin.title": "Before you sign in with Google",
+  "signin.text": "On the next screen Google will show a technical address instead of the app name:",
+  "signin.beta": "This is the beta version, so the label looks like this. Don't worry, it's normal: this is our server that receives the sign-in. We only get your name, email and profile photo. Your Google password never reaches us.",
+  "signin.continue": "Continue with Google",
+  "signin.cancel": "Cancel"
 }

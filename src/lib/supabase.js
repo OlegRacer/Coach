@@ -6,6 +6,9 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = 'https://qbgeogmupdigvmywgdoi.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_dudAdZZvVWffIjRtfTqs9Q_F8DdrYPH';
 
+// Адреса, яку Google показує на екрані входу (див. SignInNotice).
+export const SUPABASE_HOST = new URL(SUPABASE_URL).host;
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' }
 });
