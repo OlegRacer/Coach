@@ -5,10 +5,12 @@ import { useI18n } from '../i18n/index.jsx';
 import { getExercises, getMuscles } from '../data/api.js';
 
 import bodyImg from '../assets/body.webp';
+import litImg from '../assets/body-lit.webp';
 import regions from '../data/bodyRegions.json';
 import zoneMap from '../data/bodyZones.json';
 
 const REGION = Object.fromEntries(regions.regions.map((r) => [r.id, r.d]));
+const CLIP = Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]));
 
 // Картинка розрізана на 99 областей (src/data/bodyRegions.json, id r00…r98).
 // src/data/bodyZones.json каже, з яких областей складається кожен м'яз з muscles.json.
@@ -44,19 +46,26 @@ export default function Anatomy() {
               </filter>
             </defs>
             {Object.entries(zoneMap.zones).map(([id, ids]) => {
-              const paths = ids.map((r) => REGION[r]).filter(Boolean);
               const on = selected === id;
+              const glow = ids.map((r) => REGION[r]).filter(Boolean);
+              const clip = ids.map((r) => CLIP[r]).filter(Boolean);
               return (
                 <g key={id} className={'zone' + (on ? ' on' : '')} onClick={() => pick(id)}>
-                  {paths.map((d, i) => (
+                  <clipPath id={`clip-${id}`}>
+                    {clip.map((d, i) => (
+                      <path key={i} d={d} />
+                    ))}
+                  </clipPath>
+                  {glow.map((d, i) => (
                     <path key={'g' + i} d={d} className="zone-glow" filter="url(#glow)" />
                   ))}
-                  {paths.map((d, i) => (
-                    <path key={'f' + i} d={d} className="zone-fill" />
-                  ))}
-                  {paths.map((d, i) => (
-                    <path key={'l' + i} d={d} className="zone-line" />
-                  ))}
+                  <image
+                    href={litImg}
+                    width={regions.width}
+                    height={regions.height}
+                    className="zone-lit"
+                    clipPath={`url(#clip-${id})`}
+                  />
                 </g>
               );
             })}
