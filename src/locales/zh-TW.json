@@ -266,5 +266,10 @@
   "content.uploadFile": "上傳檔案",
   "content.fileLimit": "最大 30 MB。長影片請放 YouTube。",
   "content.removeFile": "移除檔案",
-  "content.youtube": "YouTube 影片（不公開連結）"
+  "content.youtube": "YouTube 影片（不公開連結）",
+  "students.trainers": "教練",
+  "students.noTrainers": "尚未新增教練。請到「課表」新增。",
+  "students.note": "備註",
+  "students.noteHint": "只有管理員看得到，學員看不到。",
+  "students.notePlaceholder": "關於學員的備註…"
 }

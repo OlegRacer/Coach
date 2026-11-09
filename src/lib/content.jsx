@@ -77,7 +77,7 @@ export function ContentProvider({ children }) {
         }
         if (need) {
           const { data: snap, error } = await supabase.rpc('get_content');
-          if (error || !snap) return;
+          if (error || !snap || !Array.isArray(snap.sections) || !Array.isArray(snap.exercises)) return;
           write(key, snap);
           setData(snap);
         }

@@ -262,5 +262,10 @@
   "content.uploadFile": "Завантажити файл",
   "content.fileLimit": "До 30 МБ. Довгі відео краще на YouTube.",
   "content.removeFile": "Прибрати файл",
-  "content.youtube": "Відео YouTube (закрите посилання)"
+  "content.youtube": "Відео YouTube (закрите посилання)",
+  "students.trainers": "Тренери",
+  "students.noTrainers": "Тренерів ще не додано. Додайте їх у «Розклад занять».",
+  "students.note": "Коментар",
+  "students.noteHint": "Бачать лише адміни. Учень цього не бачить.",
+  "students.notePlaceholder": "Нотатки про учня…"
 }

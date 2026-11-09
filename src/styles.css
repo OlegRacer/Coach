@@ -337,3 +337,4 @@ select.field { appearance: none; }
 .swatch.on { border-color: #fff; }
 .file-btn { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 16px; cursor: pointer; font-weight: 700; }
 .list-main { text-decoration: none; color: inherit; }
+.make-admin { align-self: flex-start; padding-left: 0; color: var(--muted); font-weight: 600; font-size: 14px; }

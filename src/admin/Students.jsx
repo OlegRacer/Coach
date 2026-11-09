@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MESSENGERS } from '../components/Onboarding.jsx';
 import AccessPanel from './AccessPanel.jsx';
+import { TrainerPicker, NotePanel } from './StudentExtra.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -21,6 +22,10 @@ export default function Students() {
   const [armed, setArmed] = useState(null);
   const [accessRows, setAccessRows] = useState([]);
   const [accessOpen, setAccessOpen] = useState(null);
+  const [noteOpen, setNoteOpen] = useState(null);
+  const [trainers, setTrainers] = useState([]);
+  const [links, setLinks] = useState([]);
+  const [notes, setNotes] = useState({});
   const [roleErr, setRoleErr] = useState(false);
   const [ownerErr, setOwnerErr] = useState('');
 
@@ -36,6 +41,14 @@ export default function Students() {
     }
     const acc = await supabase.from('section_access').select('student_id, section, expires_at');
     setAccessRows(acc.error ? [] : acc.data || []);
+    const [tr, ln, nt] = await Promise.all([
+      supabase.from('trainers').select('id, name').order('sort').order('created_at'),
+      supabase.from('student_trainers').select('student_id, trainer_id'),
+      supabase.from('student_notes').select('student_id, note')
+    ]);
+    setTrainers(tr.error ? [] : tr.data || []);
+    setLinks(ln.error ? [] : ln.data || []);
+    setNotes(nt.error ? {} : Object.fromEntries((nt.data || []).map((x) => [x.student_id, x.note])));
     const [own, ids] = await Promise.all([supabase.rpc('is_owner'), supabase.rpc('owner_ids')]);
     setOwnerErr(own.error ? `${own.error.code || ''} ${own.error.message || ''}`.trim() : '');
     setIsOwner(own.data === true);
@@ -71,6 +84,7 @@ export default function Students() {
   const fmt = (iso) => (iso ? new Date(iso).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) : '—');
   const isNew = (iso) => Date.now() - new Date(iso).getTime() < NEW_DAYS * 86400000;
 
+  const myTrainerIds = (sid) => links.filter((l) => l.student_id === sid).map((l) => l.trainer_id);
   const students = (rows || []).filter((r) => r.role !== 'admin');
   const admins = (rows || []).filter((r) => r.role === 'admin');
 
@@ -117,6 +131,9 @@ export default function Students() {
                   </span>
                   <span className="muted small">{t('students.registered', { date: fmt(s.created_at) })}</span>
                   <span className="muted small">{t('students.lastSeen', { date: fmt(s.last_seen_at) })}</span>
+                  {myTrainerIds(s.id).length > 0 && (
+                    <span className="small">{t('students.trainers')}: {trainers.filter((x) => myTrainerIds(s.id).includes(x.id)).map((x) => x.name).join(', ')}</span>
+                  )}
                 </div>
               </button>
               {expanded && (
@@ -145,8 +162,13 @@ export default function Students() {
                   {accessOpen === s.id && (
                     <AccessPanel student={s} rows={accessRows.filter((r) => r.student_id === s.id)} onChanged={load} />
                   )}
+                  <TrainerPicker student={s} trainers={trainers} mine={myTrainerIds(s.id)} onChanged={load} />
+                  <button type="button" className="btn-ghost" onClick={() => setNoteOpen(noteOpen === s.id ? null : s.id)}>
+                    {t('students.note')}{notes[s.id] ? ' •' : ''}
+                  </button>
+                  {noteOpen === s.id && <NotePanel student={s} note={notes[s.id]} onChanged={load} />}
                   {isOwner && (
-                    <button type="button" className="btn-ghost" onClick={() => setRole(s.id, true)}>
+                    <button type="button" className="link-btn make-admin" onClick={() => setRole(s.id, true)}>
                       {armed === s.id + ':on' ? t('students.makeAdminConfirm') : t('students.makeAdmin')}
                     </button>
                   )}

@@ -266,5 +266,10 @@
   "content.uploadFile": "Upload file",
   "content.fileLimit": "Up to 30 MB. Put long videos on YouTube.",
   "content.removeFile": "Remove file",
-  "content.youtube": "YouTube video (unlisted link)"
+  "content.youtube": "YouTube video (unlisted link)",
+  "students.trainers": "Trainers",
+  "students.noTrainers": "No trainers yet. Add them in “Class schedule”.",
+  "students.note": "Comment",
+  "students.noteHint": "Visible to admins only. The student can’t see it.",
+  "students.notePlaceholder": "Notes about the student…"
 }
