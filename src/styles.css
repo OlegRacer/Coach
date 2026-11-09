@@ -337,4 +337,9 @@ select.field { appearance: none; }
 .swatch.on { border-color: #fff; }
 .file-btn { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 16px; cursor: pointer; font-weight: 700; }
 .list-main { text-decoration: none; color: inherit; }
-.make-admin { align-self: flex-start; padding-left: 0; color: var(--muted); font-weight: 600; font-size: 14px; }
+.student { position: relative; }
+.admin-btn { position: absolute; left: 18px; top: 74px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--card-2); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.admin-btn.armed { background: var(--accent); color: var(--on-accent); }
+.warn { color: #ffd166; }
+.filter-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+.filter-row .chip { flex: none; white-space: nowrap; }

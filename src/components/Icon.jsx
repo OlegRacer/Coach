@@ -60,6 +60,12 @@ const paths = {
       <path d="M8 11V8a4 4 0 0 1 8 0v3" />
     </>
   ),
+  shield: (
+    <>
+      <path d="M12 3l7 3v5c0 4.6-2.9 8.4-7 10-4.1-1.6-7-5.4-7-10V6l7-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </>
+  ),
   check: <path d="M5 13l4 4L19 7" />,
   close: (
     <>

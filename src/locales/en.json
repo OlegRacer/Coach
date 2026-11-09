@@ -271,5 +271,8 @@
   "students.noTrainers": "No trainers yet. Add them in “Class schedule”.",
   "students.note": "Comment",
   "students.noteHint": "Visible to admins only. The student can’t see it.",
-  "students.notePlaceholder": "Notes about the student…"
+  "students.notePlaceholder": "Notes about the student…",
+  "students.filterAll": "All",
+  "students.filterNone": "No trainer",
+  "students.filterEmpty": "No students in this group."
 }

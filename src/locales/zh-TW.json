@@ -271,5 +271,8 @@
   "students.noTrainers": "尚未新增教練。請到「課表」新增。",
   "students.note": "備註",
   "students.noteHint": "只有管理員看得到，學員看不到。",
-  "students.notePlaceholder": "關於學員的備註…"
+  "students.notePlaceholder": "關於學員的備註…",
+  "students.filterAll": "全部",
+  "students.filterNone": "未指派",
+  "students.filterEmpty": "此分組沒有學員。"
 }

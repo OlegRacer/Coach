@@ -267,5 +267,8 @@
   "students.noTrainers": "Тренерів ще не додано. Додайте їх у «Розклад занять».",
   "students.note": "Коментар",
   "students.noteHint": "Бачать лише адміни. Учень цього не бачить.",
-  "students.notePlaceholder": "Нотатки про учня…"
+  "students.notePlaceholder": "Нотатки про учня…",
+  "students.filterAll": "Усі",
+  "students.filterNone": "Без тренера",
+  "students.filterEmpty": "У цій групі учнів немає."
 }

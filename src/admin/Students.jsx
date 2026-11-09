@@ -26,6 +26,7 @@ export default function Students() {
   const [trainers, setTrainers] = useState([]);
   const [links, setLinks] = useState([]);
   const [notes, setNotes] = useState({});
+  const [filter, setFilter] = useState('all');
   const [roleErr, setRoleErr] = useState(false);
   const [ownerErr, setOwnerErr] = useState('');
 
@@ -85,7 +86,12 @@ export default function Students() {
   const isNew = (iso) => Date.now() - new Date(iso).getTime() < NEW_DAYS * 86400000;
 
   const myTrainerIds = (sid) => links.filter((l) => l.student_id === sid).map((l) => l.trainer_id);
-  const students = (rows || []).filter((r) => r.role !== 'admin');
+  const allStudents = (rows || []).filter((r) => r.role !== 'admin');
+  const countFor = (f) =>
+    f === 'all' ? allStudents.length : f === 'none' ? allStudents.filter((x) => !myTrainerIds(x.id).length).length : allStudents.filter((x) => myTrainerIds(x.id).includes(f)).length;
+  const students = allStudents.filter((x) =>
+    filter === 'all' ? true : filter === 'none' ? !myTrainerIds(x.id).length : myTrainerIds(x.id).includes(filter)
+  );
   const admins = (rows || []).filter((r) => r.role === 'admin');
 
   if (!ready) return <main className="page" />;
@@ -102,8 +108,18 @@ export default function Students() {
   return (
     <main className="page">
       <TopBar title={t('students.title')} />
+      {trainers.length > 0 && (
+        <div className="chips filter-row" role="group" aria-label={t('students.trainers')}>
+          {[{ id: 'all', name: t('students.filterAll') }, ...trainers, { id: 'none', name: t('students.filterNone') }].map((x) => (
+            <button type="button" key={x.id} className={'chip' + (filter === x.id ? ' active' : '')} aria-pressed={filter === x.id} onClick={() => setFilter(x.id)}>
+              {x.name} · {countFor(x.id)}
+            </button>
+          ))}
+        </div>
+      )}
       {failed && <p className="err">{t('auth.error')}</p>}
-      {rows && !students.length && <p className="muted">{t('students.empty')}</p>}
+      {rows && !allStudents.length && <p className="muted">{t('students.empty')}</p>}
+      {rows && allStudents.length > 0 && !students.length && <p className="muted">{t('students.filterEmpty')}</p>}
       {roleErr && <p className="err" role="alert">{t('students.roleError')}</p>}
       {ownerErr && <p className="muted small">{t('students.ownerSetup')} [{ownerErr}]</p>}
       <div className="list">
@@ -136,8 +152,20 @@ export default function Students() {
                   )}
                 </div>
               </button>
+              {expanded && isOwner && (
+                <button
+                  type="button"
+                  className={'admin-btn' + (armed === s.id + ':on' ? ' armed' : '')}
+                  aria-label={t('students.makeAdmin')}
+                  title={t('students.makeAdmin')}
+                  onClick={() => setRole(s.id, true)}
+                >
+                  <Icon name="shield" size={20} />
+                </button>
+              )}
               {expanded && (
                 <div className="student-details">
+                  {armed === s.id + ':on' && <p className="small warn">{t('students.makeAdminConfirm')}</p>}
                   {!filled && <p className="muted small">{t('students.noDetails')}</p>}
                   {filled && (
                     <>
@@ -167,11 +195,6 @@ export default function Students() {
                     {t('students.note')}{notes[s.id] ? ' •' : ''}
                   </button>
                   {noteOpen === s.id && <NotePanel student={s} note={notes[s.id]} onChanged={load} />}
-                  {isOwner && (
-                    <button type="button" className="link-btn make-admin" onClick={() => setRole(s.id, true)}>
-                      {armed === s.id + ':on' ? t('students.makeAdminConfirm') : t('students.makeAdmin')}
-                    </button>
-                  )}
                 </div>
               )}
             </div>
