@@ -294,3 +294,27 @@ button.profile { border: 0; width: 100%; text-align: left; color: inherit; }
 .btn-danger { border: 0; border-radius: 16px; min-height: 48px; font-size: 16px; font-weight: 800; width: 100%; background: #3a1d1f; color: #ff9a9a; }
 .btn-danger:disabled, .btn-primary:disabled { opacity: 0.5; }
 button.btn-primary { border: 0; width: 100%; }
+
+/* Віджет розкладу */
+.widget { gap: 12px; overflow: hidden; }
+.widget-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -18px; align-items: flex-start; }
+.widget-track::-webkit-scrollbar { display: none; }
+.widget-page { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; padding: 0 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.widget-dots { display: flex; justify-content: center; gap: 8px; }
+.wdot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; background: #3a3d46; position: relative; }
+.wdot::after { content: ''; position: absolute; inset: -18px -10px; }
+.wdot.on { background: var(--accent); width: 20px; }
+button.day { border: 0; color: inherit; font: inherit; padding: 0; }
+.day.sel:not(.today) { box-shadow: inset 0 0 0 2px var(--accent); }
+.day.today.sel { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+
+/* Календар місяця */
+.month-label::first-letter { text-transform: uppercase; }
+.month-head, .month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.month-head span { text-align: center; font-size: 11px; font-weight: 700; color: var(--muted); }
+.mday { border: 0; color: inherit; font: inherit; font-weight: 700; background: var(--card-2); border-radius: 14px; min-height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.mday.today { background: var(--accent); color: var(--on-accent); }
+.mday.today .dot.on { background: var(--on-accent); }
+.mday.sel:not(.today) { box-shadow: inset 0 0 0 2px var(--accent); }
+.mday.today.sel { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+select.field { appearance: none; }

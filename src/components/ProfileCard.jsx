@@ -72,12 +72,20 @@ export default function ProfileCard() {
       )}
 
       {isAdmin && (
-        <Link to="/admin/students" className="set-row link-row">
-          <span className="set-label">{t('students.title')}</span>
-          <span className="muted">
-            <Icon name="chevron" size={20} />
-          </span>
-        </Link>
+        <>
+          <Link to="/admin/students" className="set-row link-row">
+            <span className="set-label">{t('students.title')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/schedule" className="set-row link-row">
+            <span className="set-label">{t('sa.link')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+        </>
       )}
     </div>
   );
