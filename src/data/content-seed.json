@@ -1,0 +1,267 @@
+{
+ "sections": [
+  {
+   "id": "fitness",
+   "kind": "exercises",
+   "icon": "barbell",
+   "color": "#C6F432",
+   "title": {
+    "uk": "Вправи фітнес",
+    "en": "Fitness exercises",
+    "zh-TW": "健身動作"
+   },
+   "hint": {
+    "uk": "Силові та кардіо з відео",
+    "en": "Strength and cardio with video",
+    "zh-TW": "肌力與有氧，附示範影片"
+   },
+   "position": 0,
+   "published": true
+  },
+  {
+   "id": "mfr",
+   "kind": "exercises",
+   "icon": "roller",
+   "color": "#FF8A5B",
+   "title": {
+    "uk": "МФР ролл",
+    "en": "Foam rolling",
+    "zh-TW": "滾筒放鬆"
+   },
+   "hint": {
+    "uk": "Масаж роликом, відновлення",
+    "en": "Roller massage and recovery",
+    "zh-TW": "筋膜滾筒按摩與恢復"
+   },
+   "position": 1,
+   "published": true
+  },
+  {
+   "id": "mobility",
+   "kind": "exercises",
+   "icon": "mobility",
+   "color": "#8FD3FF",
+   "title": {
+    "uk": "Мобільність",
+    "en": "Mobility",
+    "zh-TW": "活動度訓練"
+   },
+   "hint": {
+    "uk": "Розтяжка та рухливість суглобів",
+    "en": "Stretching and joint mobility",
+    "zh-TW": "伸展與關節活動度"
+   },
+   "position": 2,
+   "published": true
+  },
+  {
+   "id": "anatomy",
+   "kind": "anatomy",
+   "icon": "anatomy",
+   "color": "#C9B8FF",
+   "title": {
+    "uk": "Анатомія тіла",
+    "en": "Body anatomy",
+    "zh-TW": "人體肌肉"
+   },
+   "hint": {
+    "uk": "М'язи та вправи для них",
+    "en": "Muscles and exercises for them",
+    "zh-TW": "肌肉與對應的訓練動作"
+   },
+   "position": 3,
+   "published": true
+  }
+ ],
+ "exercises": [
+  {
+   "id": "pushup",
+   "section_id": "fitness",
+   "title": {
+    "uk": "Віджимання",
+    "en": "Push-up",
+    "zh-TW": "伏地挺身"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "3 × 12",
+    "en": "3 × 12",
+    "zh-TW": "3 × 12"
+   },
+   "muscles": [
+    "chest",
+    "shoulders",
+    "triceps"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 0,
+   "published": true
+  },
+  {
+   "id": "squat",
+   "section_id": "fitness",
+   "title": {
+    "uk": "Присідання",
+    "en": "Squat",
+    "zh-TW": "深蹲"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "4 × 10",
+    "en": "4 × 10",
+    "zh-TW": "4 × 10"
+   },
+   "muscles": [
+    "quads",
+    "glutes"
+   ],
+   "preview": "media/squat-demo.mp4",
+   "video": "",
+   "position": 1,
+   "published": true
+  },
+  {
+   "id": "plank",
+   "section_id": "fitness",
+   "title": {
+    "uk": "Планка",
+    "en": "Plank",
+    "zh-TW": "棒式"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "3 × 45 с",
+    "en": "3 × 45 s",
+    "zh-TW": "3 × 45 秒"
+   },
+   "muscles": [
+    "abs"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 2,
+   "published": true
+  },
+  {
+   "id": "mfr-quads",
+   "section_id": "mfr",
+   "title": {
+    "uk": "МФР квадрицепсів",
+    "en": "Quadriceps foam rolling",
+    "zh-TW": "股四頭肌滾筒放鬆"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "1–2 хв на ногу",
+    "en": "1–2 min per leg",
+    "zh-TW": "每側 1–2 分鐘"
+   },
+   "muscles": [
+    "quads"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 3,
+   "published": true
+  },
+  {
+   "id": "mfr-back",
+   "section_id": "mfr",
+   "title": {
+    "uk": "МФР верху спини",
+    "en": "Upper back foam rolling",
+    "zh-TW": "上背滾筒放鬆"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "1–2 хв",
+    "en": "1–2 min",
+    "zh-TW": "1–2 分鐘"
+   },
+   "muscles": [
+    "back"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 4,
+   "published": true
+  },
+  {
+   "id": "hip-opener",
+   "section_id": "mobility",
+   "title": {
+    "uk": "Відкриття тазостегнових",
+    "en": "Hip opener",
+    "zh-TW": "開髖伸展"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "2 × 30 с",
+    "en": "2 × 30 s",
+    "zh-TW": "2 × 30 秒"
+   },
+   "muscles": [
+    "glutes",
+    "quads"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 5,
+   "published": true
+  },
+  {
+   "id": "thoracic-rotation",
+   "section_id": "mobility",
+   "title": {
+    "uk": "Ротація грудного відділу",
+    "en": "Thoracic rotation",
+    "zh-TW": "胸椎旋轉"
+   },
+   "description": {
+    "uk": "ПРИКЛАД. Замініть на свій опис техніки.",
+    "en": "EXAMPLE. Replace with your own technique description.",
+    "zh-TW": "範例。請改成你自己的動作說明。"
+   },
+   "sets": {
+    "uk": "2 × 10",
+    "en": "2 × 10",
+    "zh-TW": "2 × 10"
+   },
+   "muscles": [
+    "back",
+    "shoulders"
+   ],
+   "preview": "",
+   "video": "",
+   "position": 6,
+   "published": true
+  }
+ ],
+ "order": [],
+ "sig": "seed"
+}

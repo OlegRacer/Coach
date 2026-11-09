@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { getExercises, getMuscles } from '../data/api.js';
+import { useContent, useL } from '../lib/content.jsx';
 
 import bodyImg from '../assets/body.webp';
 import litImg from '../assets/body-lit.webp';
@@ -17,20 +16,14 @@ const CLIP = Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]));
 // Картинка розрізана на 99 областей (src/data/bodyRegions.json, id r00…r98).
 // src/data/bodyZones.json каже, з яких областей складається кожен м'яз з muscles.json.
 export default function Anatomy() {
-  const { t, tEx } = useI18n();
+  const { t } = useI18n();
+  const { muscles, exercisesByMuscle } = useContent();
+  const L = useL();
   const { ready, hasAccess } = useAuth();
   const [params, setParams] = useSearchParams();
   const selected = params.get('m');
-  const [muscles, setMuscles] = useState([]);
-  const [items, setItems] = useState([]);
+  const items = selected ? exercisesByMuscle(selected) : [];
 
-  useEffect(() => {
-    getMuscles().then(setMuscles);
-  }, []);
-  useEffect(() => {
-    if (selected) getExercises({ muscle: selected }).then(setItems);
-    else setItems([]);
-  }, [selected]);
 
   const pick = (id) => setParams(id === selected ? {} : { m: id });
   const current = muscles.find((m) => m.id === selected);
@@ -99,8 +92,8 @@ export default function Anatomy() {
             {items.map((e) => (
               <Link key={e.id} to={`/exercise/${e.id}`} className="list-item">
                 <span className="list-main">
-                  <span className="list-title">{tEx(e, 'title')}</span>
-                  <span className="muted small">{tEx(e, 'sets')}</span>
+                  <span className="list-title">{L(e.title)}</span>
+                  <span className="muted small">{L(e.sets)}</span>
                 </span>
               </Link>
             ))}

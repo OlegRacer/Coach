@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Media from '../components/Media.jsx';
@@ -6,19 +5,15 @@ import YouTubePlayer from '../components/YouTubePlayer.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { getExercise, getMuscles } from '../data/api.js';
+import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 
 export default function Exercise() {
   const { id } = useParams();
-  const { t, tEx } = useI18n();
+  const { t } = useI18n();
   const { ready, hasAccess } = useAuth();
-  const [ex, setEx] = useState(null);
-  const [muscles, setMuscles] = useState([]);
-
-  useEffect(() => {
-    getExercise(id).then(setEx);
-    getMuscles().then(setMuscles);
-  }, [id]);
+  const { exercise, muscles } = useContent();
+  const L = useL();
+  const ex = exercise(id);
 
   if (!ex) {
     return (
@@ -30,23 +25,24 @@ export default function Exercise() {
   }
 
   if (!ready) return <main className="page" />;
-  if (ex.category && !hasAccess(ex.category)) return <Locked section={ex.category} title={t('exercise.title')} />;
+  if (ex.section_id && !hasAccess(ex.section_id)) return <Locked section={ex.section_id} title={t('exercise.title')} />;
 
-  const list = ex.muscles.map((m) => muscles.find((x) => x.id === m)).filter(Boolean);
-  const title = tEx(ex, 'title');
+  const list = (ex.muscles || []).map((m) => muscles.find((x) => x.id === m)).filter(Boolean);
+  const title = L(ex.title);
 
   return (
     <main className="page">
-      <TopBar title={title} to={`/section/${ex.category}`} />
+      <TopBar title={title} to={`/section/${ex.section_id}`} />
+      {!ex.published && <div className="pill draft-pill">{t('content.draft')}</div>}
 
-      <Media src={ex.preview} title={title} />
+      <Media src={mediaUrl(ex.preview)} title={title} />
 
       <section className="card">
         <div className="row between">
           <h2 className="h2">{t('exercise.sets')}</h2>
-          <b>{tEx(ex, 'sets')}</b>
+          <b>{L(ex.sets)}</b>
         </div>
-        <p className="body">{tEx(ex, 'description')}</p>
+        <p className="body pre">{L(ex.description)}</p>
       </section>
 
       <section className="card">

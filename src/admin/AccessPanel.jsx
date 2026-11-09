@@ -2,13 +2,8 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { useContent, useL } from '../lib/content.jsx';
 
-export const SECTIONS = [
-  { id: 'fitness', title: 'cat.fitness.title' },
-  { id: 'mfr', title: 'cat.mfr.title' },
-  { id: 'mobility', title: 'cat.mobility.title' },
-  { id: 'anatomy', title: 'anatomy.title' }
-];
 const PRESETS = [7, 14, 30, 90];
 const DAY = 86400000;
 
@@ -18,6 +13,8 @@ const DAY = 86400000;
 export default function AccessPanel({ student, rows, onChanged }) {
   const { t, locale } = useI18n();
   const { user } = useAuth();
+  const { rawSections: SECTIONS } = useContent();
+  const L = useL();
   const [picked, setPicked] = useState([]);
   const [days, setDays] = useState(30);
   const [busy, setBusy] = useState(false);
@@ -77,7 +74,7 @@ export default function AccessPanel({ student, rows, onChanged }) {
         <label key={s.id} className="access-row">
           <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} />
           <span>
-            {t(s.title)}
+            {L(s.title)}{!s.published && " ·  " + t("content.draft")}
             <small>{status(s.id)}</small>
           </span>
         </label>
