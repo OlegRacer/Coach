@@ -3,12 +3,15 @@ import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Media from '../components/Media.jsx';
 import YouTubePlayer from '../components/YouTubePlayer.jsx';
+import Locked from '../components/Locked.jsx';
+import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { getExercise, getMuscles } from '../data/api.js';
 
 export default function Exercise() {
   const { id } = useParams();
   const { t, tEx } = useI18n();
+  const { ready, hasAccess } = useAuth();
   const [ex, setEx] = useState(null);
   const [muscles, setMuscles] = useState([]);
 
@@ -25,6 +28,9 @@ export default function Exercise() {
       </main>
     );
   }
+
+  if (!ready) return <main className="page" />;
+  if (ex.category && !hasAccess(ex.category)) return <Locked section={ex.category} title={t('exercise.title')} />;
 
   const list = ex.muscles.map((m) => muscles.find((x) => x.id === m)).filter(Boolean);
   const title = tEx(ex, 'title');

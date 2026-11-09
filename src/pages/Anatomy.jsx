@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
+import Locked from '../components/Locked.jsx';
+import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { getExercises, getMuscles } from '../data/api.js';
 
@@ -16,6 +18,7 @@ const CLIP = Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]));
 // src/data/bodyZones.json каже, з яких областей складається кожен м'яз з muscles.json.
 export default function Anatomy() {
   const { t, tEx } = useI18n();
+  const { ready, hasAccess } = useAuth();
   const [params, setParams] = useSearchParams();
   const selected = params.get('m');
   const [muscles, setMuscles] = useState([]);
@@ -31,6 +34,9 @@ export default function Anatomy() {
 
   const pick = (id) => setParams(id === selected ? {} : { m: id });
   const current = muscles.find((m) => m.id === selected);
+
+  if (!ready) return <main className="page" />;
+  if (!hasAccess('anatomy')) return <Locked section="anatomy" title={t('anatomy.title')} />;
 
   return (
     <main className="page">

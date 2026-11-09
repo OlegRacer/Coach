@@ -9,6 +9,8 @@ export function AuthProvider({ children }) {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [details, setDetails] = useState(null);
+  const [access, setAccess] = useState({});
+  const [accessLoaded, setAccessLoaded] = useState(false);
   const [detailsLoaded, setDetailsLoaded] = useState(false);
   const [dismissed, setDismissed] = useState(() => {
     try {
@@ -49,6 +51,13 @@ export function AuthProvider({ children }) {
       try {
         const { data } = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
         if (alive) setProfile(data);
+        if (data && data.role) {
+          try {
+            localStorage.setItem('role:' + userId, data.role);
+          } catch {
+            /* ignore */
+          }
+        }
         await supabase.from('profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', userId);
       } catch {
         /* офлайн: не критично */
@@ -78,6 +87,41 @@ export function AuthProvider({ children }) {
     if (userId) refreshDetails();
   }, [userId, refreshDetails]);
 
+  // Доступ до розділів: { fitness: '2026-12-01T…', … }. Копія лежить у телефоні, щоб працювало офлайн.
+  const refreshAccess = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const { data, error: e } = await supabase.from('section_access').select('section, expires_at').eq('student_id', userId);
+      if (e) throw e;
+      const map = Object.fromEntries((data || []).map((r) => [r.section, r.expires_at]));
+      setAccess(map);
+      try {
+        localStorage.setItem('access:' + userId, JSON.stringify(map));
+      } catch {
+        /* ignore */
+      }
+    } catch {
+      try {
+        const cached = JSON.parse(localStorage.getItem('access:' + userId) || '{}');
+        setAccess((cur) => (Object.keys(cur).length ? cur : cached));
+      } catch {
+        /* ignore */
+      }
+    } finally {
+      setAccessLoaded(true);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    setAccess({});
+    setAccessLoaded(false);
+    if (!userId) return undefined;
+    refreshAccess();
+    const onVisible = () => document.visibilityState === 'visible' && refreshAccess();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [userId, refreshAccess]);
+
   const dismissOnboarding = useCallback(() => {
     setDismissed(true);
     try {
@@ -100,6 +144,7 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut();
     setProfile(null);
     setDetails(null);
+    setAccess({});
     try {
       sessionStorage.removeItem('ob-dismissed');
     } catch {
@@ -121,13 +166,25 @@ export function AuthProvider({ children }) {
           avatar: (profile && profile.avatar_url) || meta.avatar_url || meta.picture || ''
         }
       : null;
-    const isAdmin = !!profile && profile.role === 'admin';
+    let cachedRole = '';
+    try {
+      cachedRole = (userId && localStorage.getItem('role:' + userId)) || '';
+    } catch {
+      /* ignore */
+    }
+    const isAdmin = (profile ? profile.role : cachedRole) === 'admin';
+    const hasAccess = (section) => {
+      if (isAdmin) return true;
+      const exp = access[section];
+      return !!exp && new Date(exp).getTime() > Date.now();
+    };
     const needsOnboarding = !!user && !!profile && !isAdmin && detailsLoaded && !(details && details.completed_at) && !dismissed;
     return {
       ready, user, profile, isAdmin, signInGoogle, signOut, error,
-      details, refreshDetails, needsOnboarding, dismissOnboarding
+      details, refreshDetails, needsOnboarding, dismissOnboarding,
+      access, accessLoaded, hasAccess, refreshAccess
     };
-  }, [session, profile, ready, userId, signInGoogle, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
+  }, [access, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

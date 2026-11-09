@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MESSENGERS } from '../components/Onboarding.jsx';
+import AccessPanel from './AccessPanel.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -18,7 +19,10 @@ export default function Students() {
   const [isOwner, setIsOwner] = useState(false);
   const [ownerIds, setOwnerIds] = useState([]);
   const [armed, setArmed] = useState(null);
+  const [accessRows, setAccessRows] = useState([]);
+  const [accessOpen, setAccessOpen] = useState(null);
   const [roleErr, setRoleErr] = useState(false);
+  const [ownerErr, setOwnerErr] = useState('');
 
   const load = useCallback(async () => {
     const { data, error } = await supabase
@@ -30,7 +34,10 @@ export default function Students() {
       setFailed(false);
       setRows(data);
     }
+    const acc = await supabase.from('section_access').select('student_id, section, expires_at');
+    setAccessRows(acc.error ? [] : acc.data || []);
     const [own, ids] = await Promise.all([supabase.rpc('is_owner'), supabase.rpc('owner_ids')]);
+    setOwnerErr(own.error ? `${own.error.code || ''} ${own.error.message || ''}`.trim() : '');
     setIsOwner(own.data === true);
     setOwnerIds(Array.isArray(ids.data) ? ids.data.map((x) => (typeof x === 'object' && x ? Object.values(x)[0] : x)) : []);
   }, []);
@@ -84,6 +91,7 @@ export default function Students() {
       {failed && <p className="err">{t('auth.error')}</p>}
       {rows && !students.length && <p className="muted">{t('students.empty')}</p>}
       {roleErr && <p className="err" role="alert">{t('students.roleError')}</p>}
+      {ownerErr && <p className="muted small">{t('students.ownerSetup')} [{ownerErr}]</p>}
       <div className="list">
         {students.map((s) => {
           const raw = s.student_details;
@@ -130,6 +138,12 @@ export default function Students() {
                       )}
                       <p className="muted small">{t('students.consent', { date: fmt(det.consent_at) })}</p>
                     </>
+                  )}
+                  <button type="button" className="btn-danger" onClick={() => setAccessOpen(accessOpen === s.id ? null : s.id)}>
+                    {t('students.openAccess')}
+                  </button>
+                  {accessOpen === s.id && (
+                    <AccessPanel student={s} rows={accessRows.filter((r) => r.student_id === s.id)} onChanged={load} />
                   )}
                   {isOwner && (
                     <button type="button" className="btn-ghost" onClick={() => setRole(s.id, true)}>
