@@ -17,6 +17,15 @@ export function youtubeId(v) {
   return /^[A-Za-z0-9_-]{11}$/.test(s) ? s : s;
 }
 
+function Toggle({ label, on, onChange }) {
+  return (
+    <label className="access-row field-toggle">
+      <input type="checkbox" checked={on} onChange={onChange} />
+      <span>{label}</span>
+    </label>
+  );
+}
+
 // Редактор вправи: тексти трьома мовами, м'язи, прев'ю (фото/mp4 у сховищі), відео YouTube, публікація.
 export default function ExerciseEditor() {
   const { sid, eid } = useParams();
@@ -30,6 +39,7 @@ export default function ExerciseEditor() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [on, setOn] = useState({ sets: true, description: true, muscles: true, preview: true });
 
   useEffect(() => {
     if (ex && !f) {
@@ -37,6 +47,9 @@ export default function ExerciseEditor() {
         title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [],
         preview: ex.preview || '', video: ex.video || '', published: ex.published
       });
+      const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
+      const fresh = !has(ex.sets) && !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
+      setOn({ sets: fresh || has(ex.sets), description: fresh || has(ex.description), muscles: fresh || (ex.muscles || []).length > 0, preview: fresh || !!ex.preview });
     }
   }, [ex, f]);
 
@@ -50,6 +63,10 @@ export default function ExerciseEditor() {
   const set = (k, v) => {
     setSaved(false);
     setF((x) => ({ ...x, [k]: v }));
+  };
+  const flip = (k) => {
+    setSaved(false);
+    setOn((x) => ({ ...x, [k]: !x[k] }));
   };
   const toggleMuscle = (m) => set('muscles', f.muscles.includes(m) ? f.muscles.filter((x) => x !== m) : [...f.muscles, m]);
 
@@ -69,7 +86,15 @@ export default function ExerciseEditor() {
     setBusy(true);
     const { error } = await supabase
       .from('content_exercises')
-      .update({ ...f, video: youtubeId(f.video), updated_at: new Date().toISOString() })
+      .update({
+        ...f,
+        sets: on.sets ? f.sets : {},
+        description: on.description ? f.description : {},
+        muscles: on.muscles ? f.muscles : [],
+        preview: on.preview ? f.preview : '',
+        video: youtubeId(f.video),
+        updated_at: new Date().toISOString()
+      })
       .eq('id', eid);
     setBusy(false);
     fail(error);
@@ -94,29 +119,33 @@ export default function ExerciseEditor() {
 
       <section className="card stack">
         <LangField label={t('content.fieldTitle')} value={f.title} onChange={(v) => set('title', v)} maxLength={100} />
-        <LangField label={t('exercise.sets')} value={f.sets} onChange={(v) => set('sets', v)} maxLength={60} />
-        <LangField label={t('content.fieldDescription')} value={f.description} onChange={(v) => set('description', v)} multiline />
+        <Toggle label={t('exercise.sets')} on={on.sets} onChange={() => flip('sets')} />
+        {on.sets && <LangField value={f.sets} onChange={(v) => set('sets', v)} maxLength={60} />}
 
-        <span className="muted small">{t('exercise.muscles')}</span>
-        <div className="chips">
-          {muscles.map((m) => (
-            <button type="button" key={m.id} className={'chip' + (f.muscles.includes(m.id) ? ' active' : '')} aria-pressed={f.muscles.includes(m.id)} onClick={() => toggleMuscle(m.id)}>
-              {t(`muscle.${m.id}`)}
-            </button>
-          ))}
-        </div>
+        <Toggle label={t('content.fieldDescription')} on={on.description} onChange={() => flip('description')} />
+        {on.description && <LangField value={f.description} onChange={(v) => set('description', v)} multiline />}
 
-        <span className="muted small">{t('content.preview')}</span>
-        <Media src={mediaUrl(f.preview)} title="" />
-        <label className="btn-ghost file-btn">
-          {busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
-          <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
-        </label>
-        <span className="muted small">{t('content.fileLimit')}</span>
-        {f.preview && (
-          <button type="button" className="btn-ghost danger" onClick={() => set('preview', '')}>
-            {t('content.removeFile')}
-          </button>
+        <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
+        {on.muscles && (
+          <div className="chips">
+            {muscles.map((m) => (
+              <button type="button" key={m.id} className={'chip' + (f.muscles.includes(m.id) ? ' active' : '')} aria-pressed={f.muscles.includes(m.id)} onClick={() => toggleMuscle(m.id)}>
+                {t(`muscle.${m.id}`)}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <Toggle label={t('content.preview')} on={on.preview} onChange={() => flip('preview')} />
+        {on.preview && (
+          <>
+            <Media src={mediaUrl(f.preview)} title="" />
+            <label className="btn-ghost file-btn">
+              {busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
+            </label>
+            <span className="muted small">{t('content.fileLimit')}</span>
+          </>
         )}
 
         <span className="muted small">{t('content.youtube')}</span>

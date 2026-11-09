@@ -343,3 +343,4 @@ select.field { appearance: none; }
 .warn { color: #ffd166; }
 .filter-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .filter-row .chip { flex: none; white-space: nowrap; }
+.field-toggle { padding: 4px 0; font-weight: 700; }

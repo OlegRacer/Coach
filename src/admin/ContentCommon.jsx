@@ -8,7 +8,7 @@ export function LangField({ label, value, onChange, multiline, maxLength = 4000 
   const v = value || {};
   return (
     <div className="lang-field">
-      <span className="muted small">{label}</span>
+      {label && <span className="muted small">{label}</span>}
       {LANGS.map((l) => {
         const Tag = multiline ? 'textarea' : 'input';
         return (

@@ -7,6 +7,8 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 
+const hasText = (o) => !!o && Object.values(o).some((x) => String(x || '').trim());
+
 export default function Exercise() {
   const { id } = useParams();
   const { t } = useI18n();
@@ -35,26 +37,32 @@ export default function Exercise() {
       <TopBar title={title} to={`/section/${ex.section_id}`} />
       {!ex.published && <div className="pill draft-pill">{t('content.draft')}</div>}
 
-      <Media src={mediaUrl(ex.preview)} title={title} />
+      {ex.preview && <Media src={mediaUrl(ex.preview)} title={title} />}
 
-      <section className="card">
-        <div className="row between">
-          <h2 className="h2">{t('exercise.sets')}</h2>
-          <b>{L(ex.sets)}</b>
-        </div>
-        <p className="body pre">{L(ex.description)}</p>
-      </section>
+      {(hasText(ex.sets) || hasText(ex.description)) && (
+        <section className="card">
+          {hasText(ex.sets) && (
+            <div className="row between">
+              <h2 className="h2">{t('exercise.sets')}</h2>
+              <b>{L(ex.sets)}</b>
+            </div>
+          )}
+          {hasText(ex.description) && <p className="body pre">{L(ex.description)}</p>}
+        </section>
+      )}
 
-      <section className="card">
-        <h2 className="h2">{t('exercise.muscles')}</h2>
-        <div className="chips">
-          {list.map((m) => (
-            <Link key={m.id} to={`/anatomy?m=${m.id}`} className="chip">
-              {t(`muscle.${m.id}`)}
-            </Link>
-          ))}
-        </div>
-      </section>
+      {list.length > 0 && (
+        <section className="card">
+          <h2 className="h2">{t('exercise.muscles')}</h2>
+          <div className="chips">
+            {list.map((m) => (
+              <Link key={m.id} to={`/anatomy?m=${m.id}`} className="chip">
+                {t(`muscle.${m.id}`)}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {ex.video && (
         <section className="stack">
