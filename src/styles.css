@@ -359,3 +359,9 @@ input, textarea, select, [contenteditable], .student-details {
   user-select: text;
   -webkit-touch-callout: default;
 }
+.photo-pick { display: flex; gap: 16px; align-items: center; }
+.photo-pick .stack { flex: 1; }
+.big-av { width: 88px; height: 88px; flex: none; background: var(--card-2); color: var(--text); }
+.gender-row { display: flex; gap: 12px; }
+.gender-btn { flex: 1; min-height: 56px; border-radius: 16px; border: 2px solid transparent; background: var(--card); color: var(--text); font: inherit; font-size: 17px; font-weight: 800; cursor: pointer; }
+.gender-btn.active { background: var(--accent); color: var(--on-accent); }

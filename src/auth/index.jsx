@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
+import { avatarUrl } from '../lib/image.js';
 
 const AuthContext = createContext(null);
 
@@ -163,7 +164,7 @@ export function AuthProvider({ children }) {
           id: userId,
           email,
           name: formName || (profile && profile.full_name) || meta.full_name || meta.name || email.split('@')[0] || '',
-          avatar: (profile && profile.avatar_url) || meta.avatar_url || meta.picture || ''
+          avatar: (details && details.photo_path ? avatarUrl(details.photo_path) : '') || (profile && profile.avatar_url) || meta.avatar_url || meta.picture || ''
         }
       : null;
     let cachedRole = '';

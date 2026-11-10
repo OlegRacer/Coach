@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import Icon from './Icon.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
+import { avatarUrl, squarePhoto } from '../lib/image.js';
 import { useI18n } from '../i18n/index.jsx';
 
 export const GOALS = ['lose_weight', 'muscle', 'mobility', 'recovery', 'maintain'];
@@ -35,6 +36,10 @@ export default function Onboarding({ onClose }) {
   const [height, setHeight] = useState(d.height_cm != null ? String(d.height_cm) : '');
   const [weight, setWeight] = useState(d.weight_kg != null ? String(d.weight_kg) : '');
   const [year, setYear] = useState(d.birth_year != null ? String(d.birth_year) : '');
+  const [gender, setGender] = useState(d.gender || '');
+  const [photoBlob, setPhotoBlob] = useState(null);
+  const [photoPrev, setPhotoPrev] = useState('');
+  const [photoGone, setPhotoGone] = useState(false);
   const [limits, setLimits] = useState(d.limitations || '');
   const [consent, setConsent] = useState(!!d.consent_at);
   const [busy, setBusy] = useState(false);
@@ -53,6 +58,22 @@ export default function Onboarding({ onClose }) {
   const bad = (v, min, max) => v.trim() !== '' && num(v, min, max) === null;
   const bodyBad = bad(height, 80, 250) || bad(weight, 20, 400) || bad(year, 1920, new Date().getFullYear());
 
+  const pickPhoto = async (file) => {
+    if (!file) return;
+    try {
+      const blob = await squarePhoto(file);
+      setPhotoBlob(blob);
+      setPhotoGone(false);
+      setPhotoPrev((old) => {
+        if (old) URL.revokeObjectURL(old);
+        return URL.createObjectURL(blob);
+      });
+    } catch {
+      setErr(t('ob.photo.error'));
+    }
+  };
+  const shownPhoto = photoPrev || (!photoGone && d.photo_path ? avatarUrl(d.photo_path) : '') || (photoGone ? '' : user && user.avatar) || '';
+
   const save = async () => {
     if (!consent) {
       setErr(t('ob.consent.required'));
@@ -61,6 +82,17 @@ export default function Onboarding({ onClose }) {
     setBusy(true);
     setErr('');
     const now = new Date().toISOString();
+    let photo_path = photoGone ? null : d.photo_path || null;
+    if (photoBlob) {
+      const path = `${user.id}/${Date.now()}.jpg`;
+      const up = await supabase.storage.from('avatars').upload(path, photoBlob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+      if (up.error) {
+        setBusy(false);
+        setErr(t('ob.photo.error') + ' [' + (up.error.message || '') + ']');
+        return;
+      }
+      photo_path = path;
+    }
     const { error } = await supabase.from('student_details').upsert({
       student_id: user.id,
       first_name: clean(first),
@@ -71,6 +103,8 @@ export default function Onboarding({ onClose }) {
       height_cm: num(height, 80, 250),
       weight_kg: num(weight, 20, 400),
       birth_year: num(year, 1920, new Date().getFullYear()),
+      gender: gender || null,
+      photo_path,
       limitations: clean(limits),
       consent_at: d.consent_at || now,
       completed_at: now,
@@ -81,6 +115,7 @@ export default function Onboarding({ onClose }) {
       setErr(t('ob.saveError') + ' [' + (error.code || '') + ' ' + (error.message || '') + ']');
       return;
     }
+    if (d.photo_path && d.photo_path !== photo_path) supabase.storage.from('avatars').remove([d.photo_path]);
     await refreshDetails();
     onClose();
   };
@@ -131,6 +166,31 @@ export default function Onboarding({ onClose }) {
 
           {cur === 'name' && (
             <div className="stack">
+              <div className="photo-pick">
+                <span className="avatar big-av" aria-hidden="true">
+                  {shownPhoto ? <img src={shownPhoto} alt="" referrerPolicy="no-referrer" /> : <Icon name="user" size={36} />}
+                </span>
+                <div className="stack">
+                  <label className="btn-ghost file-btn">
+                    {shownPhoto ? t('ob.photo.change') : t('ob.photo.add')}
+                    <input type="file" accept="image/*" hidden onChange={(e) => pickPhoto(e.target.files[0])} />
+                  </label>
+                  {(photoPrev || d.photo_path) && !photoGone && (
+                    <button
+                      type="button"
+                      className="btn-ghost danger"
+                      onClick={() => {
+                        setPhotoBlob(null);
+                        setPhotoPrev('');
+                        setPhotoGone(true);
+                      }}
+                    >
+                      {t('ob.photo.remove')}
+                    </button>
+                  )}
+                </div>
+              </div>
+              <p className="small muted">{t('ob.photo.hint')}</p>
               <input className="field" value={first} maxLength={80} onChange={(e) => setFirst(e.target.value)} placeholder={t('ob.firstName')} autoComplete="given-name" />
               <input className="field" value={last} maxLength={80} onChange={(e) => setLast(e.target.value)} placeholder={t('ob.lastName')} autoComplete="family-name" />
             </div>
@@ -169,6 +229,13 @@ export default function Onboarding({ onClose }) {
 
           {cur === 'body' && (
             <div className="stack">
+              <div className="gender-row" role="group" aria-label={t('ob.gender.label')}>
+                {['male', 'female'].map((g) => (
+                  <button type="button" key={g} className={'gender-btn' + (gender === g ? ' active' : '')} aria-pressed={gender === g} onClick={() => setGender(gender === g ? '' : g)}>
+                    {t(`ob.gender.${g}`)}
+                  </button>
+                ))}
+              </div>
               <input className="field" inputMode="decimal" value={height} maxLength={5} onChange={(e) => setHeight(e.target.value)} placeholder={t('ob.height')} aria-label={t('ob.height')} aria-invalid={bad(height, 80, 250)} />
               <input className="field" inputMode="decimal" value={weight} maxLength={5} onChange={(e) => setWeight(e.target.value)} placeholder={t('ob.weight')} aria-label={t('ob.weight')} aria-invalid={bad(weight, 20, 400)} />
               <input className="field" inputMode="numeric" value={year} maxLength={4} onChange={(e) => setYear(e.target.value.replace(/\D/g, ''))} placeholder={t('ob.birthYear')} aria-label={t('ob.birthYear')} aria-invalid={bad(year, 1920, new Date().getFullYear())} />

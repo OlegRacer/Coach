@@ -274,5 +274,13 @@
   "students.notePlaceholder": "Notes about the student…",
   "students.filterAll": "All",
   "students.filterNone": "No trainer",
-  "students.filterEmpty": "No students in this group."
+  "students.filterEmpty": "No students in this group.",
+  "ob.gender.label": "Gender",
+  "ob.gender.male": "Male",
+  "ob.gender.female": "Female",
+  "ob.photo.add": "Add photo",
+  "ob.photo.change": "Change photo",
+  "ob.photo.remove": "Remove photo",
+  "ob.photo.hint": "This photo replaces your Google photo. Your trainer can see it.",
+  "ob.photo.error": "Couldn’t upload the photo."
 }

@@ -5,6 +5,7 @@ import { TrainerPicker, NotePanel } from './StudentExtra.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
+import { avatarUrl } from '../lib/image.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -134,7 +135,7 @@ export default function Students() {
             <div key={s.id} className={'student' + (expanded ? ' expanded' : '')}>
               <button type="button" className="student-head" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : s.id)}>
                 <span className="avatar small-av" aria-hidden="true">
-                  {s.avatar_url ? <img src={s.avatar_url} alt="" referrerPolicy="no-referrer" /> : <Icon name="user" size={22} />}
+                  {(det && det.photo_path) || s.avatar_url ? <img src={det && det.photo_path ? avatarUrl(det.photo_path) : s.avatar_url} alt="" referrerPolicy="no-referrer" /> : <Icon name="user" size={22} />}
                 </span>
                 <div className="student-main">
                   <div className="row">
@@ -171,6 +172,9 @@ export default function Students() {
                     <>
                       {msg && det.contact_handle && (
                         <p className="small"><b>{t('students.contact')}:</b> {msg.label} · {det.contact_handle}</p>
+                      )}
+                      {det.gender && (
+                        <p className="small"><b>{t('ob.gender.label')}:</b> {t(`ob.gender.${det.gender}`)}</p>
                       )}
                       {(det.height_cm || det.weight_kg || det.birth_year) && (
                         <p className="small"><b>{t('students.body')}:</b> {[det.height_cm && `${det.height_cm} cm`, det.weight_kg && `${det.weight_kg} kg`, det.birth_year && `${det.birth_year}`].filter(Boolean).join(' · ')}</p>

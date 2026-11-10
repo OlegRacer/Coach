@@ -274,5 +274,13 @@
   "students.notePlaceholder": "關於學員的備註…",
   "students.filterAll": "全部",
   "students.filterNone": "未指派",
-  "students.filterEmpty": "此分組沒有學員。"
+  "students.filterEmpty": "此分組沒有學員。",
+  "ob.gender.label": "性別",
+  "ob.gender.male": "男",
+  "ob.gender.female": "女",
+  "ob.photo.add": "新增照片",
+  "ob.photo.change": "更換照片",
+  "ob.photo.remove": "移除照片",
+  "ob.photo.hint": "此照片將取代 Google 照片，教練可以看到。",
+  "ob.photo.error": "無法上傳照片。"
 }

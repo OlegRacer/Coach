@@ -20,6 +20,7 @@ export default function ProfileDetails({ onClose, onEdit }) {
     [t('ob.firstName') + ' / ' + t('ob.lastName'), name],
     [t('ob.contact.label'), msg && d.contact_handle ? `${msg.label} · ${d.contact_handle}` : ''],
     [t('ob.goals.label'), (d.goals || []).map((g) => t(`ob.goal.${g}`)).join(', ')],
+    [t('ob.gender.label'), d.gender ? t(`ob.gender.${d.gender}`) : ''],
     [t('ob.body.label'), body],
     [t('ob.limits.label'), d.limitations || '']
   ];
