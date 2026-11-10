@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Media from '../components/Media.jsx';
 import YouTubePlayer from '../components/YouTubePlayer.jsx';
+import { videosOf } from '../lib/video.js';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -16,6 +18,9 @@ export default function Exercise() {
   const { exercise, muscles } = useContent();
   const L = useL();
   const ex = exercise(id);
+  const [vi, setVi] = useState(0);
+  const videos = videosOf(ex);
+  const vcur = Math.min(vi, Math.max(0, videos.length - 1));
 
   if (!ex) {
     return (
@@ -64,10 +69,19 @@ export default function Exercise() {
         </section>
       )}
 
-      {ex.video && (
+      {videos.length > 0 && (
         <section className="stack">
           <h2 className="h2 section-title">{t('exercise.video')}</h2>
-          <YouTubePlayer id={ex.video} />
+          {videos.length > 1 && (
+            <div className="chips">
+              {videos.map((v, i) => (
+                <button type="button" key={i} className={'chip' + (vcur === i ? ' active' : '')} aria-pressed={vcur === i} onClick={() => setVi(i)}>
+                  {L(v.label) || `${t('exercise.video')} ${i + 1}`}
+                </button>
+              ))}
+            </div>
+          )}
+          <YouTubePlayer key={vcur + ':' + videos[vcur].id} video={videos[vcur]} title={L(videos[vcur].label)} />
         </section>
       )}
     </main>

@@ -278,5 +278,16 @@
   "ob.photo.change": "Змінити фото",
   "ob.photo.remove": "Прибрати фото",
   "ob.photo.hint": "Це фото замінить фото з Google. Його бачить тренер.",
-  "ob.photo.error": "Не вдалося завантажити фото."
+  "ob.photo.error": "Не вдалося завантажити фото.",
+  "video.pause": "Пауза",
+  "video.play": "Відтворити",
+  "video.seek": "Перемотування",
+  "video.error": "Не вдалося завантажити плеєр.",
+  "content.videos": "Відео (YouTube, закрите посилання)",
+  "content.addVideo": "Додати відео",
+  "content.removeVideo": "Прибрати відео",
+  "content.videoLabel": "Підпис (наприклад, «Техніка»)",
+  "content.videoStart": "Початок (хв:сек)",
+  "content.videoEnd": "Кінець (порожньо: до кінця)",
+  "content.videoLoops": "Повторів (0 = безкінечно)"
 }

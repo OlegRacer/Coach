@@ -282,5 +282,16 @@
   "ob.photo.change": "Change photo",
   "ob.photo.remove": "Remove photo",
   "ob.photo.hint": "This photo replaces your Google photo. Your trainer can see it.",
-  "ob.photo.error": "Couldn’t upload the photo."
+  "ob.photo.error": "Couldn’t upload the photo.",
+  "video.pause": "Pause",
+  "video.play": "Play",
+  "video.seek": "Seek",
+  "video.error": "Couldn’t load the player.",
+  "content.videos": "Videos (YouTube, unlisted link)",
+  "content.addVideo": "Add video",
+  "content.removeVideo": "Remove video",
+  "content.videoLabel": "Label (e.g. “Technique”)",
+  "content.videoStart": "Start (m:ss)",
+  "content.videoEnd": "End (empty: to the end)",
+  "content.videoLoops": "Repeats (0 = endless)"
 }

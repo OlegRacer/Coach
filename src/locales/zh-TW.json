@@ -282,5 +282,16 @@
   "ob.photo.change": "更換照片",
   "ob.photo.remove": "移除照片",
   "ob.photo.hint": "此照片將取代 Google 照片，教練可以看到。",
-  "ob.photo.error": "無法上傳照片。"
+  "ob.photo.error": "無法上傳照片。",
+  "video.pause": "暫停",
+  "video.play": "播放",
+  "video.seek": "進度",
+  "video.error": "無法載入播放器。",
+  "content.videos": "影片（YouTube 不公開連結）",
+  "content.addVideo": "新增影片",
+  "content.removeVideo": "移除影片",
+  "content.videoLabel": "標題（例如「技巧」）",
+  "content.videoStart": "開始（分:秒）",
+  "content.videoEnd": "結束（空白：到結尾）",
+  "content.videoLoops": "重複次數（0 = 無限）"
 }

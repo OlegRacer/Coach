@@ -119,6 +119,12 @@ function Translate() {
         if (src && (all || !(row[f][lang] || '').trim())) out[`${pre}.${row.id}.${f}`] = src;
       })
     );
+    exercises.forEach((e) =>
+      (e.videos || []).forEach((v, i) => {
+        const src = v.label && v.label.uk;
+        if (src && (all || !(v.label[lang] || '').trim())) out[`v.${e.id}.${i}`] = src;
+      })
+    );
     return out;
   };
 
@@ -156,6 +162,20 @@ function Translate() {
           const k = table + ':' + row.id;
           const p = patches.get(k) || { table, id: row.id, data: {} };
           p.data[f] = { ...(p.data[f] || row[f] || {}), [lang]: v.trim() };
+          patches.set(k, p);
+          n += 1;
+        }
+      })
+    );
+    exercises.forEach((e) =>
+      (e.videos || []).forEach((v, i) => {
+        const val = parsed[`v.${e.id}.${i}`];
+        if (typeof val === 'string' && val.trim()) {
+          const k = 'content_exercises:' + e.id;
+          const p = patches.get(k) || { table: 'content_exercises', id: e.id, data: {} };
+          const vids = p.data.videos || (e.videos || []).map((x) => ({ ...x }));
+          vids[i] = { ...vids[i], label: { ...(vids[i].label || {}), [lang]: val.trim() } };
+          p.data.videos = vids;
           patches.set(k, p);
           n += 1;
         }

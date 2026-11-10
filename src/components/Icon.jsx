@@ -66,6 +66,9 @@ const paths = {
       <path d="M9 12l2 2 4-4" />
     </>
   ),
+  play: <path d="M8 5v14l11-7z" fill="currentColor" stroke="none" />,
+  pause: <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor" stroke="none" />,
+  replay: <path d="M4 12a8 8 0 1 0 2.6-5.9M4 4v4.5h4.5" />,
   check: <path d="M5 13l4 4L19 7" />,
   close: (
     <>

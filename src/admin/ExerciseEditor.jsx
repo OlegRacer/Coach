@@ -7,15 +7,11 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
+import { youtubeId, parseTime, fmtTime, videosOf } from '../lib/video.js';
 
-// Приймає повне посилання YouTube або сам id.
-export function youtubeId(v) {
-  const s = (v || '').trim();
-  if (!s) return '';
-  const m = s.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
-  if (m) return m[1];
-  return /^[A-Za-z0-9_-]{11}$/.test(s) ? s : s;
-}
+export { youtubeId };
+
+const emptyVideo = () => ({ id: '', label: {}, start: '', end: '', loops: '1' });
 
 function Toggle({ label, on, onChange }) {
   return (
@@ -45,7 +41,9 @@ export default function ExerciseEditor() {
     if (ex && !f) {
       setF({
         title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [],
-        preview: ex.preview || '', video: ex.video || '', published: ex.published
+        preview: ex.preview || '',
+        videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, start: v.start ? fmtTime(v.start) : '', end: v.end ? fmtTime(v.end) : '', loops: String(v.loops ?? 1) })),
+        published: ex.published
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
       const fresh = !has(ex.sets) && !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
@@ -82,7 +80,18 @@ export default function ExerciseEditor() {
     set('preview', path);
   };
 
+  const setVideo = (i, patch) => {
+    setSaved(false);
+    setF((x) => ({ ...x, videos: x.videos.map((v, j) => (j === i ? { ...v, ...patch } : v)) }));
+  };
+
   const save = async () => {
+    const vids = f.videos
+      .map((v) => {
+        const n = parseInt(v.loops, 10);
+        return { id: youtubeId(v.id), label: v.label || {}, start: parseTime(v.start), end: parseTime(v.end), loops: Number.isFinite(n) && n >= 0 ? Math.min(n, 99) : 1 };
+      })
+      .filter((v) => v.id);
     setBusy(true);
     const { error } = await supabase
       .from('content_exercises')
@@ -92,7 +101,8 @@ export default function ExerciseEditor() {
         description: on.description ? f.description : {},
         muscles: on.muscles ? f.muscles : [],
         preview: on.preview ? f.preview : '',
-        video: youtubeId(f.video),
+        videos: vids,
+        video: vids.length ? vids[0].id : '',
         updated_at: new Date().toISOString()
       })
       .eq('id', eid);
@@ -148,8 +158,35 @@ export default function ExerciseEditor() {
           </>
         )}
 
-        <span className="muted small">{t('content.youtube')}</span>
-        <input className="field" value={f.video} placeholder="https://youtu.be/…" onChange={(e) => set('video', e.target.value)} />
+        <span className="muted small">{t('content.videos')}</span>
+        {f.videos.map((v, i) => (
+          <div key={i} className="video-row">
+            <input className="field" value={v.id} placeholder="https://youtu.be/…" onChange={(e) => setVideo(i, { id: e.target.value })} />
+            <LangField label={t('content.videoLabel')} value={v.label} onChange={(l) => setVideo(i, { label: l })} maxLength={60} />
+            <div className="grid2">
+              <label className="stack">
+                <span className="muted small">{t('content.videoStart')}</span>
+                <input className="field" inputMode="numeric" placeholder="0:00" value={v.start} onChange={(e) => setVideo(i, { start: e.target.value })} />
+              </label>
+              <label className="stack">
+                <span className="muted small">{t('content.videoEnd')}</span>
+                <input className="field" inputMode="numeric" placeholder="1:30" value={v.end} onChange={(e) => setVideo(i, { end: e.target.value })} />
+              </label>
+              <label className="stack">
+                <span className="muted small">{t('content.videoLoops')}</span>
+                <input className="field" inputMode="numeric" value={v.loops} onChange={(e) => setVideo(i, { loops: e.target.value.replace(/\D/g, '') })} />
+              </label>
+            </div>
+            <button type="button" className="btn-ghost danger" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: x.videos.filter((_, j) => j !== i) })); }}>
+              {t('content.removeVideo')}
+            </button>
+          </div>
+        ))}
+        {f.videos.length < 8 && (
+          <button type="button" className="btn-ghost" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: [...x.videos, emptyVideo()] })); }}>
+            {t('content.addVideo')}
+          </button>
+        )}
 
         <label className="access-row">
           <input type="checkbox" checked={f.published} onChange={(e) => set('published', e.target.checked)} />
