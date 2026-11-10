@@ -318,5 +318,13 @@
   "muscle.back_erectors": "Erectors",
   "muscle.back_upper.full": "Upper back",
   "muscle.back_lats.full": "Lats",
-  "muscle.back_erectors.full": "Spinal erectors"
+  "muscle.back_erectors.full": "Spinal erectors",
+  "muscle.legs": "Legs",
+  "muscle.hamstrings": "Hamstrings",
+  "muscle.adductors": "Adductors",
+  "muscle.glutes_small": "Small glutes",
+  "muscle.calves": "Calves",
+  "muscle.hamstrings.full": "Hamstrings",
+  "muscle.adductors.full": "Adductors",
+  "muscle.glutes_small.full": "Small glutes"
 }

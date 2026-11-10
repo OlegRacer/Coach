@@ -314,5 +314,13 @@
   "muscle.back_erectors": "Розгиначі",
   "muscle.back_upper.full": "Верх спини",
   "muscle.back_lats.full": "Широчайші м'язи спини",
-  "muscle.back_erectors.full": "Розгиначі спини"
+  "muscle.back_erectors.full": "Розгиначі спини",
+  "muscle.legs": "Ноги",
+  "muscle.hamstrings": "Хамстрінги",
+  "muscle.adductors": "Привідні",
+  "muscle.glutes_small": "Малі сідничні",
+  "muscle.calves": "Литки",
+  "muscle.hamstrings.full": "Задня поверхня стегна",
+  "muscle.adductors.full": "Привідні м'язи",
+  "muscle.glutes_small.full": "Малі сідничні м'язи"
 }
