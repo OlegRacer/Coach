@@ -312,5 +312,11 @@
   "anatomy.all": "整組",
   "anatomy.clear": "清除",
   "anatomy.exercisesForMany": "已選部位的動作：{n}",
-  "anatomy.tapMulti": "點選人體或名稱，可同時選多個部位。"
+  "anatomy.tapMulti": "點選人體或名稱，可同時選多個部位。",
+  "muscle.back_upper": "上背",
+  "muscle.back_lats": "背闊肌",
+  "muscle.back_erectors": "豎脊肌",
+  "muscle.back_upper.full": "上背",
+  "muscle.back_lats.full": "背闊肌",
+  "muscle.back_erectors.full": "豎脊肌"
 }

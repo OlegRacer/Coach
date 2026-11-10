@@ -92,17 +92,32 @@
  },
  {
   "id": "back",
-  "regions": [
-   "r50",
-   "r51",
-   "r54",
-   "r55",
-   "r58",
-   "r59",
-   "r60",
-   "r63",
-   "r64",
-   "r65"
+  "parts": [
+   {
+    "id": "back_upper",
+    "regions": [
+     "r50",
+     "r51",
+     "r54",
+     "r55",
+     "r58",
+     "r59",
+     "r60"
+    ]
+   },
+   {
+    "id": "back_lats",
+    "regions": [
+     "r63",
+     "r64"
+    ]
+   },
+   {
+    "id": "back_erectors",
+    "regions": [
+     "r65"
+    ]
+   }
   ]
  },
  {

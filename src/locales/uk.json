@@ -308,5 +308,11 @@
   "anatomy.all": "Вся група",
   "anatomy.clear": "Скинути",
   "anatomy.exercisesForMany": "Вправи для вибраного: {n}",
-  "anatomy.tapMulti": "Тапайте по м'язах на фігурі або по назвах, щоб вибрати кілька зон одразу."
+  "anatomy.tapMulti": "Тапайте по м'язах на фігурі або по назвах, щоб вибрати кілька зон одразу.",
+  "muscle.back_upper": "Верх",
+  "muscle.back_lats": "Широчайші",
+  "muscle.back_erectors": "Розгиначі",
+  "muscle.back_upper.full": "Верх спини",
+  "muscle.back_lats.full": "Широчайші м'язи спини",
+  "muscle.back_erectors.full": "Розгиначі спини"
 }

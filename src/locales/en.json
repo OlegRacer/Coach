@@ -312,5 +312,11 @@
   "anatomy.all": "Whole group",
   "anatomy.clear": "Clear",
   "anatomy.exercisesForMany": "Exercises for selection: {n}",
-  "anatomy.tapMulti": "Tap muscles on the figure or the names to select several zones at once."
+  "anatomy.tapMulti": "Tap muscles on the figure or the names to select several zones at once.",
+  "muscle.back_upper": "Upper",
+  "muscle.back_lats": "Lats",
+  "muscle.back_erectors": "Erectors",
+  "muscle.back_upper.full": "Upper back",
+  "muscle.back_lats.full": "Lats",
+  "muscle.back_erectors.full": "Spinal erectors"
 }
