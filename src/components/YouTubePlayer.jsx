@@ -7,7 +7,8 @@ import { fmtTime } from '../lib/video.js';
 // Власний інтерфейс поверх YouTube IFrame API: без рекомендацій, кнопок «Далі» і назв відео.
 // Фрагмент (start/end) і кількість повторів (loops: 0 = безкінечно) задає тренер.
 // Поки відео на паузі чи завершене, iframe закрито нашим постером, тому підказки YouTube не видно.
-// Плеєр не вантажиться, доки учень не натисне кнопку. Потрібен інтернет.
+// Плеєр створюється одразу при відкритті вправи (прихований за заставкою), щоб тап по заставці
+// запускав відео одразу: iOS дозволяє запуск лише прямо з тапа. Потрібен інтернет.
 let apiPromise = null;
 function loadYT() {
   if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
@@ -38,7 +39,7 @@ export default function YouTubePlayer({ video, title }) {
   const endCfg = Number(video && video.end) || 0;
   const loops = video && video.loops !== undefined && video.loops !== null ? Number(video.loops) : 1;
 
-  const [open, setOpen] = useState(false);
+  const [started, setStarted] = useState(false);
   const [status, setStatus] = useState('paused'); // playing | paused | ended
   const [now, setNow] = useState(start);
   const [dur, setDur] = useState(0);
@@ -48,6 +49,7 @@ export default function YouTubePlayer({ video, title }) {
   const player = useRef(null);
   const roundRef = useRef(1);
   const stateRef = useRef('paused');
+  const wantPlay = useRef(false);
 
   const endT = endCfg > 0 ? endCfg : dur;
   const span = Math.max(1, endT - start);
@@ -65,13 +67,14 @@ export default function YouTubePlayer({ video, title }) {
       p.seekTo(start, true);
       stateRef.current = 'ended';
       setStatus('ended');
+      setStarted(false);
       setNow(start);
     }
   }, [loops, start]);
 
   // Створення плеєра після першого натискання.
   useEffect(() => {
-    if (!open || !id) return undefined;
+    if (!online || !id) return undefined;
     let dead = false;
     loadYT()
       .then((YT) => {
@@ -79,11 +82,11 @@ export default function YouTubePlayer({ video, title }) {
         player.current = new YT.Player(host.current, {
           host: 'https://www.youtube-nocookie.com',
           videoId: id,
-          playerVars: { autoplay: 1, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, disablekb: 1, fs: 0, start: Math.floor(start) },
+          playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, disablekb: 1, fs: 0, start: Math.floor(start) },
           events: {
             onReady: (e) => {
               setDur(e.target.getDuration() || 0);
-              e.target.playVideo();
+              if (wantPlay.current) e.target.playVideo();
             },
             onStateChange: (e) => {
               const S = YT.PlayerState;
@@ -95,6 +98,7 @@ export default function YouTubePlayer({ video, title }) {
                 if (stateRef.current !== 'ended') {
                   stateRef.current = 'paused';
                   setStatus('paused');
+                  setStarted(false);
                 }
               } else if (e.data === S.ENDED) {
                 finish();
@@ -110,7 +114,7 @@ export default function YouTubePlayer({ video, title }) {
       player.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, id]);
+  }, [online, id]);
 
   // Відстеження позиції: повтори й зупинка в кінці фрагмента.
   useEffect(() => {
@@ -120,6 +124,7 @@ export default function YouTubePlayer({ video, title }) {
       if (!p || !p.getCurrentTime) return;
       const cur = p.getCurrentTime();
       setNow(cur);
+      if (cur > start + 0.3) setStarted(true);
       const end = endCfg > 0 ? endCfg : p.getDuration() || 0;
       if (end > 0 && cur >= end - 0.15) finish();
     }, 200);
@@ -130,7 +135,10 @@ export default function YouTubePlayer({ video, title }) {
 
   const toggle = () => {
     const p = player.current;
-    if (!p) return;
+    if (!p || !p.playVideo) {
+      wantPlay.current = true; // плеєр ще вантажиться: запустимо, щойно буде готовий
+      return;
+    }
     if (status === 'playing') p.pauseVideo();
     else {
       if (status === 'ended') {
@@ -154,19 +162,10 @@ export default function YouTubePlayer({ video, title }) {
 
   const thumb = `url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)`;
 
-  if (!open) {
+  if (!online) {
     return (
-      <button
-        type="button"
-        className="yt-thumb"
-        onClick={() => online && setOpen(true)}
-        disabled={!online}
-        style={{ backgroundImage: online ? thumb : 'none' }}
-      >
-        <span className="yt-play" aria-hidden="true">
-          <Icon name="play" size={28} />
-        </span>
-        <span className="yt-label">{online ? title || t('exercise.watch') : t('video.onlineOnly')}</span>
+      <button type="button" className="yt-thumb" disabled>
+        <span className="yt-label">{t('video.onlineOnly')}</span>
       </button>
     );
   }
@@ -177,10 +176,10 @@ export default function YouTubePlayer({ video, title }) {
       <div className="video yt-frame">
         <div ref={host} className="yt-host" />
         <button type="button" className="yt-shield" aria-label={status === 'playing' ? t('video.pause') : t('video.play')} onClick={toggle} />
-        {status !== 'playing' && (
+        {(status !== 'playing' || !started) && (
           <button type="button" className="yt-cover" style={{ backgroundImage: thumb }} onClick={toggle} aria-label={t('video.play')}>
             <span className="yt-play" aria-hidden="true">
-              <Icon name={status === 'ended' ? 'replay' : 'play'} size={28} />
+              {status === 'playing' ? <span className="yt-spin" /> : <Icon name={status === 'ended' ? 'replay' : 'play'} size={28} />}
             </span>
           </button>
         )}
