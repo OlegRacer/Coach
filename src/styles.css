@@ -386,7 +386,22 @@ input, textarea, select, [contenteditable], .student-details {
 @keyframes yt-spin { to { transform: rotate(360deg); } }
 .block-row { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px; background: var(--card); }
 .danger-text { color: #ff8a8a; padding: 0; }
-.muscle-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%; }
-.chip-sub { font-size: 14px; padding-block: 8px; opacity: 0.9; }
+
 .chip.partial { box-shadow: inset 0 0 0 2px var(--accent); }
 .zone:not(.on):hover .zone-lit { opacity: 0.2; }
+
+/* Зони-«бульбашки»: кожна група в окремому контейнері, півзони всередині. */
+.muscle-groups { display: flex; flex-wrap: wrap; gap: 10px; }
+.muscle-group {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center; flex: 0 1 auto; max-width: 100%;
+  padding: 8px; border-radius: 26px;
+  background: radial-gradient(120% 140% at 20% 0%, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  border: 1.5px solid rgba(255,255,255,.09);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 14px rgba(0,0,0,.35);
+  transition: border-color .2s, box-shadow .2s;
+}
+.muscle-group.some { border-color: rgba(198,244,50,.45); }
+.muscle-group.all { border-color: var(--accent); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 16px rgba(198,244,50,.35); }
+.muscle-group > .chip:first-child { font-weight: 800; }
+.chip-sub { font-size: 14px; padding-block: 8px; background: rgba(255,255,255,.06); }
+.chip-sub.active { background: var(--accent); color: var(--on-accent); }

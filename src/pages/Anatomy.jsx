@@ -79,13 +79,13 @@ export default function Anatomy() {
           </svg>
         </div>
         <p className="muted small">{t('anatomy.tapMulti')}</p>
-        <div className="stack">
+        <div className="muscle-groups">
           {GROUPS.map((g) => {
             const ids = leavesOfGroup(g.id);
             const all = ids.every((x) => sel.has(x));
             const some = ids.some((x) => sel.has(x));
             return (
-              <div key={g.id} className="muscle-group">
+              <div key={g.id} className={'muscle-group' + (all ? ' all' : some ? ' some' : '')}>
                 <button
                   type="button"
                   className={'chip' + (all ? ' active' : some ? ' partial' : '')}

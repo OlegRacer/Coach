@@ -160,9 +160,9 @@ export default function ExerciseEditor() {
 
         <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
         {on.muscles && (
-          <div className="chips">
+          <div className="muscle-groups">
             {GROUPS.map((g) => (
-              <div key={g.id} className="muscle-group">
+              <div key={g.id} className={'muscle-group' + (f.muscles.includes(g.id) ? ' all' : [g.id, ...(g.parts || []).map((x) => x.id)].some((x) => f.muscles.includes(x)) ? ' some' : '')}>
                 <button type="button" className={'chip' + (f.muscles.includes(g.id) ? ' active' : '')} aria-pressed={f.muscles.includes(g.id)} onClick={() => toggleMuscle(g.id)}>
                   {g.parts ? t('anatomy.all') + ': ' : ''}{t(`muscle.${g.id}`)}
                 </button>
