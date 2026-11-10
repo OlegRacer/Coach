@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import seed from '../data/content-seed.json';
-import muscles from '../data/muscles.json';
+import { GROUPS, expand } from './muscles.js';
 import { supabase } from './supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -138,13 +138,17 @@ export function ContentProvider({ children }) {
       sections, // у порядку учня
       rawSections: data.sections, // у порядку тренера (для адмінки)
       exercises: data.exercises,
-      muscles,
+      muscles: GROUPS,
       reload: () => check(true),
       setOrder,
       section: (id) => data.sections.find((s) => s.id === id) || null,
       exercisesOf: (sectionId) => data.exercises.filter((e) => e.section_id === sectionId),
       exercise: (id) => data.exercises.find((e) => e.id === id) || null,
-      exercisesByMuscle: (m) => data.exercises.filter((e) => (e.muscles || []).includes(m))
+      // Вправи, що працюють хоч одну з вибраних зон (групу чи півзону).
+      exercisesByMuscles: (ids) => {
+        const want = expand(ids);
+        return data.exercises.filter((e) => [...expand(e.muscles)].some((l) => want.has(l)));
+      }
     }),
     [data, sections, loaded, check, setOrder]
   );

@@ -386,3 +386,7 @@ input, textarea, select, [contenteditable], .student-details {
 @keyframes yt-spin { to { transform: rotate(360deg); } }
 .block-row { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px; background: var(--card); }
 .danger-text { color: #ff8a8a; padding: 0; }
+.muscle-group { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; width: 100%; }
+.chip-sub { font-size: 14px; padding-block: 8px; opacity: 0.9; }
+.chip.partial { box-shadow: inset 0 0 0 2px var(--accent); }
+.zone:not(.on):hover .zone-lit { opacity: 0.2; }

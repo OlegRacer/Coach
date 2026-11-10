@@ -4,6 +4,7 @@ import TopBar from '../components/TopBar.jsx';
 import Media from '../components/Media.jsx';
 import YouTubePlayer from '../components/YouTubePlayer.jsx';
 import { videosOf } from '../lib/video.js';
+import { isKnown, muscleName } from '../lib/muscles.js';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -15,7 +16,7 @@ export default function Exercise() {
   const { id } = useParams();
   const { t } = useI18n();
   const { ready, hasAccess } = useAuth();
-  const { exercise, muscles } = useContent();
+  const { exercise } = useContent();
   const L = useL();
   const ex = exercise(id);
   const [vi, setVi] = useState(0);
@@ -34,7 +35,7 @@ export default function Exercise() {
   if (!ready) return <main className="page" />;
   if (ex.section_id && !hasAccess(ex.section_id)) return <Locked section={ex.section_id} title={t('exercise.title')} />;
 
-  const list = (ex.muscles || []).map((m) => muscles.find((x) => x.id === m)).filter(Boolean);
+  const list = (ex.muscles || []).filter(isKnown);
   const title = L(ex.title);
 
   return (
@@ -60,9 +61,9 @@ export default function Exercise() {
         <section className="card">
           <h2 className="h2">{t('exercise.muscles')}</h2>
           <div className="chips">
-            {list.map((m) => (
-              <Link key={m.id} to={`/anatomy?m=${m.id}`} className="chip">
-                {t(`muscle.${m.id}`)}
+            {list.map((id) => (
+              <Link key={id} to={`/anatomy?m=${id}`} className="chip">
+                {muscleName(t, id)}
               </Link>
             ))}
           </div>

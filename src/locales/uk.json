@@ -294,5 +294,19 @@
   "content.block": "Блок {n}",
   "content.removeBlock": "Прибрати блок",
   "content.toEnd": "до кінця",
-  "video.block": "Блок {i}/{n}"
+  "video.block": "Блок {i}/{n}",
+  "muscle.arms": "Руки",
+  "muscle.forearms": "Передпліччя",
+  "muscle.shoulders_front": "Передня",
+  "muscle.shoulders_middle": "Середня",
+  "muscle.shoulders_rear": "Задня",
+  "muscle.shoulders_front.full": "Передня дельта",
+  "muscle.shoulders_middle.full": "Середня дельта",
+  "muscle.shoulders_rear.full": "Задня дельта",
+  "muscle.abdominal": "Абдомінальні",
+  "muscle.obliques": "Косі",
+  "anatomy.all": "Вся група",
+  "anatomy.clear": "Скинути",
+  "anatomy.exercisesForMany": "Вправи для вибраного: {n}",
+  "anatomy.tapMulti": "Тапайте по м'язах на фігурі або по назвах, щоб вибрати кілька зон одразу."
 }

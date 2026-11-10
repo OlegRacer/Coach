@@ -298,5 +298,19 @@
   "content.block": "區段 {n}",
   "content.removeBlock": "移除區段",
   "content.toEnd": "到結尾",
-  "video.block": "區段 {i}/{n}"
+  "video.block": "區段 {i}/{n}",
+  "muscle.arms": "手臂",
+  "muscle.forearms": "前臂",
+  "muscle.shoulders_front": "前束",
+  "muscle.shoulders_middle": "中束",
+  "muscle.shoulders_rear": "後束",
+  "muscle.shoulders_front.full": "三角肌前束",
+  "muscle.shoulders_middle.full": "三角肌中束",
+  "muscle.shoulders_rear.full": "三角肌後束",
+  "muscle.abdominal": "腹直肌",
+  "muscle.obliques": "腹斜肌",
+  "anatomy.all": "整組",
+  "anatomy.clear": "清除",
+  "anatomy.exercisesForMany": "已選部位的動作：{n}",
+  "anatomy.tapMulti": "點選人體或名稱，可同時選多個部位。"
 }

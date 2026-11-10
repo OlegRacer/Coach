@@ -8,6 +8,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
 import TimeInput from './TimeInput.jsx';
+import { GROUPS, muscleName } from '../lib/muscles.js';
 import { youtubeId, videosOf } from '../lib/video.js';
 
 export { youtubeId };
@@ -31,7 +32,7 @@ export default function ExerciseEditor() {
   const L = useL();
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { exercise, section, muscles, reload } = useContent();
+  const { exercise, section, reload } = useContent();
   const ex = exercise(eid);
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
@@ -160,10 +161,17 @@ export default function ExerciseEditor() {
         <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
         {on.muscles && (
           <div className="chips">
-            {muscles.map((m) => (
-              <button type="button" key={m.id} className={'chip' + (f.muscles.includes(m.id) ? ' active' : '')} aria-pressed={f.muscles.includes(m.id)} onClick={() => toggleMuscle(m.id)}>
-                {t(`muscle.${m.id}`)}
-              </button>
+            {GROUPS.map((g) => (
+              <div key={g.id} className="muscle-group">
+                <button type="button" className={'chip' + (f.muscles.includes(g.id) ? ' active' : '')} aria-pressed={f.muscles.includes(g.id)} onClick={() => toggleMuscle(g.id)}>
+                  {g.parts ? t('anatomy.all') + ': ' : ''}{t(`muscle.${g.id}`)}
+                </button>
+                {(g.parts || []).map((p) => (
+                  <button type="button" key={p.id} className={'chip chip-sub' + (f.muscles.includes(p.id) ? ' active' : '')} aria-pressed={f.muscles.includes(p.id)} onClick={() => toggleMuscle(p.id)}>
+                    {muscleName(t, p.id)}
+                  </button>
+                ))}
+              </div>
             ))}
           </div>
         )}
