@@ -373,7 +373,6 @@ input, textarea, select, [contenteditable], .student-details {
 .yt-shield { position: absolute; inset: 0; background: transparent; border: 0; padding: 0; cursor: pointer; z-index: 2; }
 .yt-cover { position: absolute; inset: 0; z-index: 3; border: 0; padding: 0; cursor: pointer; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; }
 .yt-cover::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.45); }
-.yt-cover .yt-play { position: relative; }
 .yt-failed { position: absolute; inset: 0; z-index: 4; background: var(--card); }
 .yt-bar { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 16px; padding: 6px 12px 6px 6px; }
 .yt-track { flex: 1; height: 28px; display: flex; align-items: center; cursor: pointer; position: relative; }
