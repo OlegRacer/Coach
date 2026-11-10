@@ -291,7 +291,12 @@
   "content.addVideo": "Add video",
   "content.removeVideo": "Remove video",
   "content.videoLabel": "Label (e.g. “Technique”)",
-  "content.videoStart": "Start (m:ss)",
-  "content.videoEnd": "End (empty: to the end)",
-  "content.videoLoops": "Repeats (0 = endless)"
+  "content.videoStart": "Start",
+  "content.videoEnd": "End",
+  "content.videoLoops": "Repeats (0: endless)",
+  "content.addBlock": "Add block",
+  "content.block": "Block {n}",
+  "content.removeBlock": "Remove block",
+  "content.toEnd": "to the end",
+  "video.block": "Block {i}/{n}"
 }

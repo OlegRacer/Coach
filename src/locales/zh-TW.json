@@ -291,7 +291,12 @@
   "content.addVideo": "新增影片",
   "content.removeVideo": "移除影片",
   "content.videoLabel": "標題（例如「技巧」）",
-  "content.videoStart": "開始（分:秒）",
-  "content.videoEnd": "結束（空白：到結尾）",
-  "content.videoLoops": "重複次數（0 = 無限）"
+  "content.videoStart": "開始",
+  "content.videoEnd": "結束",
+  "content.videoLoops": "重複（0：無限）",
+  "content.addBlock": "新增區段",
+  "content.block": "區段 {n}",
+  "content.removeBlock": "移除區段",
+  "content.toEnd": "到結尾",
+  "video.block": "區段 {i}/{n}"
 }

@@ -20,8 +20,17 @@ export function fmtTime(n) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
+// Блоки відео: фрагменти, що грають по черзі. Кожен: {start, end, loops}. end 0 = до кінця, loops 0 = безкінечно.
+// Старі записи без blocks мають один блок із полів start/end/loops.
+export function blocksOf(v) {
+  if (v && Array.isArray(v.blocks) && v.blocks.length) {
+    return v.blocks.map((b) => ({ start: Number(b.start) || 0, end: Number(b.end) || 0, loops: b.loops === undefined || b.loops === null ? 1 : Number(b.loops) }));
+  }
+  return [{ start: Number(v && v.start) || 0, end: Number(v && v.end) || 0, loops: v && v.loops !== undefined && v.loops !== null ? Number(v.loops) : 1 }];
+}
+
 // Список відео вправи (з урахуванням старого одиночного поля video).
 export function videosOf(ex) {
-  if (ex && Array.isArray(ex.videos) && ex.videos.length) return ex.videos.filter((v) => v && v.id);
-  return ex && ex.video ? [{ id: ex.video, label: {}, start: 0, end: 0, loops: 1 }] : [];
+  const list = ex && Array.isArray(ex.videos) && ex.videos.length ? ex.videos : ex && ex.video ? [{ id: ex.video, label: {} }] : [];
+  return list.filter((v) => v && v.id).map((v) => ({ ...v, blocks: blocksOf(v) }));
 }

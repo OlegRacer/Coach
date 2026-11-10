@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import useOnline from '../lib/useOnline.js';
 import { useI18n } from '../i18n/index.jsx';
 import Icon from './Icon.jsx';
-import { fmtTime } from '../lib/video.js';
+import { fmtTime, blocksOf } from '../lib/video.js';
 
 // Власний інтерфейс поверх YouTube IFrame API: без рекомендацій, кнопок «Далі» і назв відео.
 // Фрагмент (start/end) і кількість повторів (loops: 0 = безкінечно) задає тренер.
@@ -35,9 +35,13 @@ export default function YouTubePlayer({ video, title }) {
   const { t } = useI18n();
   const online = useOnline();
   const id = video && video.id;
-  const start = Number(video && video.start) || 0;
-  const endCfg = Number(video && video.end) || 0;
-  const loops = video && video.loops !== undefined && video.loops !== null ? Number(video.loops) : 1;
+  const blocks = blocksOf(video);
+  const [bi, setBi] = useState(0);
+  const biRef = useRef(0);
+  const blk = blocks[Math.min(bi, blocks.length - 1)];
+  const start = blk.start;
+  const endCfg = blk.end;
+  const loops = blk.loops;
 
   const [started, setStarted] = useState(false);
   const [status, setStatus] = useState('paused'); // playing | paused | ended
@@ -57,20 +61,34 @@ export default function YouTubePlayer({ video, title }) {
   const finish = useCallback(() => {
     const p = player.current;
     if (!p) return;
-    if (loops === 0 || roundRef.current < loops) {
+    const cur = blocks[biRef.current];
+    if (cur.loops === 0 || roundRef.current < cur.loops) {
       roundRef.current += 1;
       setRound(roundRef.current);
-      p.seekTo(start, true);
+      p.seekTo(cur.start, true);
+      p.playVideo();
+    } else if (biRef.current < blocks.length - 1) {
+      biRef.current += 1;
+      roundRef.current = 1;
+      setBi(biRef.current);
+      setRound(1);
+      setNow(blocks[biRef.current].start);
+      p.seekTo(blocks[biRef.current].start, true);
       p.playVideo();
     } else {
       p.pauseVideo();
-      p.seekTo(start, true);
+      biRef.current = 0;
+      roundRef.current = 1;
+      setBi(0);
+      setRound(1);
+      p.seekTo(blocks[0].start, true);
       stateRef.current = 'ended';
       setStatus('ended');
       setStarted(false);
-      setNow(start);
+      setNow(blocks[0].start);
     }
-  }, [loops, start]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [video]);
 
   // Створення плеєра після першого натискання.
   useEffect(() => {
@@ -82,7 +100,7 @@ export default function YouTubePlayer({ video, title }) {
         player.current = new YT.Player(host.current, {
           host: 'https://www.youtube-nocookie.com',
           videoId: id,
-          playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, disablekb: 1, fs: 0, start: Math.floor(start) },
+          playerVars: { autoplay: 0, controls: 0, rel: 0, modestbranding: 1, playsinline: 1, iv_load_policy: 3, disablekb: 1, fs: 0, start: Math.floor(blocks[0].start) },
           events: {
             onReady: (e) => {
               setDur(e.target.getDuration() || 0);
@@ -129,7 +147,7 @@ export default function YouTubePlayer({ video, title }) {
       if (end > 0 && cur >= end - 0.15) finish();
     }, 200);
     return () => clearInterval(iv);
-  }, [status, endCfg, finish]);
+  }, [status, endCfg, finish, bi]);
 
   if (!id) return null;
 
@@ -143,8 +161,11 @@ export default function YouTubePlayer({ video, title }) {
     else {
       if (status === 'ended') {
         roundRef.current = 1;
+        biRef.current = 0;
         setRound(1);
+        setBi(0);
         stateRef.current = 'paused';
+        p.seekTo(blocks[0].start, true);
       }
       p.playVideo();
     }
@@ -193,6 +214,7 @@ export default function YouTubePlayer({ video, title }) {
           <div className="yt-fill" style={{ width: pct + '%' }} />
         </div>
         <span className="yt-time">{fmtTime(Math.max(0, now - start))} / {fmtTime(span)}</span>
+        {blocks.length > 1 && <span className="yt-loop">{t('video.block', { i: bi + 1, n: blocks.length })}</span>}
         {loops !== 1 && <span className="yt-loop">↻ {loops === 0 ? round : `${round}/${loops}`}</span>}
       </div>
     </div>

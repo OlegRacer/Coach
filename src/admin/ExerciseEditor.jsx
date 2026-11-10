@@ -7,11 +7,13 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
-import { youtubeId, parseTime, fmtTime, videosOf } from '../lib/video.js';
+import TimeInput from './TimeInput.jsx';
+import { youtubeId, videosOf } from '../lib/video.js';
 
 export { youtubeId };
 
-const emptyVideo = () => ({ id: '', label: {}, start: '', end: '', loops: '1' });
+const emptyBlock = () => ({ start: 0, end: 0, loops: '1' });
+const emptyVideo = () => ({ id: '', label: {}, blocks: [emptyBlock()] });
 
 function Toggle({ label, on, onChange }) {
   return (
@@ -42,7 +44,7 @@ export default function ExerciseEditor() {
       setF({
         title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [],
         preview: ex.preview || '',
-        videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, start: v.start ? fmtTime(v.start) : '', end: v.end ? fmtTime(v.end) : '', loops: String(v.loops ?? 1) })),
+        videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
         published: ex.published
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
@@ -85,11 +87,31 @@ export default function ExerciseEditor() {
     setF((x) => ({ ...x, videos: x.videos.map((v, j) => (j === i ? { ...v, ...patch } : v)) }));
   };
 
+  const setBlock = (i, j, patch) => {
+    setSaved(false);
+    setF((x) => ({
+      ...x,
+      videos: x.videos.map((v, k) => (k === i ? { ...v, blocks: v.blocks.map((b, m) => (m === j ? { ...b, ...patch } : b)) } : v))
+    }));
+  };
+  const addBlock = (i) => {
+    setSaved(false);
+    setF((x) => ({ ...x, videos: x.videos.map((v, k) => (k === i ? { ...v, blocks: [...v.blocks, emptyBlock()] } : v)) }));
+  };
+  const removeBlock = (i, j) => {
+    setSaved(false);
+    setF((x) => ({ ...x, videos: x.videos.map((v, k) => (k === i ? { ...v, blocks: v.blocks.filter((_, m) => m !== j) } : v)) }));
+  };
+
   const save = async () => {
     const vids = f.videos
       .map((v) => {
-        const n = parseInt(v.loops, 10);
-        return { id: youtubeId(v.id), label: v.label || {}, start: parseTime(v.start), end: parseTime(v.end), loops: Number.isFinite(n) && n >= 0 ? Math.min(n, 99) : 1 };
+        const blocks = v.blocks.map((b) => {
+          const n = parseInt(b.loops, 10);
+          return { start: b.start || 0, end: b.end > (b.start || 0) ? b.end : 0, loops: Number.isFinite(n) && n >= 0 ? n : 1 };
+        });
+        // start/end/loops першого блоку лишаємо для сумісності зі старою версією додатка.
+        return { id: youtubeId(v.id), label: v.label || {}, blocks, ...blocks[0] };
       })
       .filter((v) => v.id);
     setBusy(true);
@@ -163,20 +185,35 @@ export default function ExerciseEditor() {
           <div key={i} className="video-row">
             <input className="field" value={v.id} placeholder="https://youtu.be/…" onChange={(e) => setVideo(i, { id: e.target.value })} />
             <LangField label={t('content.videoLabel')} value={v.label} onChange={(l) => setVideo(i, { label: l })} maxLength={60} />
-            <div className="grid2">
-              <label className="stack">
-                <span className="muted small">{t('content.videoStart')}</span>
-                <input className="field" inputMode="numeric" placeholder="0:00" value={v.start} onChange={(e) => setVideo(i, { start: e.target.value })} />
-              </label>
-              <label className="stack">
-                <span className="muted small">{t('content.videoEnd')}</span>
-                <input className="field" inputMode="numeric" placeholder="1:30" value={v.end} onChange={(e) => setVideo(i, { end: e.target.value })} />
-              </label>
-              <label className="stack">
-                <span className="muted small">{t('content.videoLoops')}</span>
-                <input className="field" inputMode="numeric" value={v.loops} onChange={(e) => setVideo(i, { loops: e.target.value.replace(/\D/g, '') })} />
-              </label>
-            </div>
+            {v.blocks.map((b, j) => (
+              <div key={j} className="block-row">
+                <div className="row between">
+                  <b>{t('content.block', { n: j + 1 })}</b>
+                  {v.blocks.length > 1 && (
+                    <button type="button" className="link-btn danger-text" onClick={() => removeBlock(i, j)}>
+                      {t('content.removeBlock')}
+                    </button>
+                  )}
+                </div>
+                <div className="grid2">
+                  <label className="stack">
+                    <span className="muted small">{t('content.videoStart')}</span>
+                    <TimeInput value={b.start} placeholder="0:00" onChange={(sec) => setBlock(i, j, { start: sec })} />
+                  </label>
+                  <label className="stack">
+                    <span className="muted small">{t('content.videoEnd')}</span>
+                    <TimeInput value={b.end} placeholder={t('content.toEnd')} onChange={(sec) => setBlock(i, j, { end: sec })} />
+                  </label>
+                  <label className="stack">
+                    <span className="muted small">{t('content.videoLoops')}</span>
+                    <input className="field" inputMode="numeric" value={b.loops} onChange={(e) => setBlock(i, j, { loops: e.target.value.replace(/\D/g, '').slice(0, 3) })} />
+                  </label>
+                </div>
+              </div>
+            ))}
+            <button type="button" className="btn-ghost" onClick={() => addBlock(i)}>
+              {t('content.addBlock')}
+            </button>
             <button type="button" className="btn-ghost danger" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: x.videos.filter((_, j) => j !== i) })); }}>
               {t('content.removeVideo')}
             </button>

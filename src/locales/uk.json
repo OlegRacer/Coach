@@ -287,7 +287,12 @@
   "content.addVideo": "Додати відео",
   "content.removeVideo": "Прибрати відео",
   "content.videoLabel": "Підпис (наприклад, «Техніка»)",
-  "content.videoStart": "Початок (хв:сек)",
-  "content.videoEnd": "Кінець (порожньо: до кінця)",
-  "content.videoLoops": "Повторів (0 = безкінечно)"
+  "content.videoStart": "Старт",
+  "content.videoEnd": "Фініш",
+  "content.videoLoops": "Повторів (0: безкінечно)",
+  "content.addBlock": "Додати блок",
+  "content.block": "Блок {n}",
+  "content.removeBlock": "Прибрати блок",
+  "content.toEnd": "до кінця",
+  "video.block": "Блок {i}/{n}"
 }

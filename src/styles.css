@@ -381,6 +381,8 @@ input, textarea, select, [contenteditable], .student-details {
 .yt-time, .yt-loop { font-size: 13px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .yt-loop { color: var(--accent); }
 .video-row { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-radius: 16px; background: var(--card-2); }
-.video-row .grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.video-row .grid2 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items: end; }
 .yt-spin { width: 26px; height: 26px; border-radius: 50%; border: 4px solid rgba(0,0,0,.25); border-top-color: var(--on-accent); animation: yt-spin .8s linear infinite; }
 @keyframes yt-spin { to { transform: rotate(360deg); } }
+.block-row { display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px; background: var(--card); }
+.danger-text { color: #ff8a8a; padding: 0; }
