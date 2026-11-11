@@ -425,3 +425,7 @@ input, textarea, select, [contenteditable], .student-details {
 .badge-status.approved { background: #1f3a12; color: #9be564; }
 .badge-status.rejected { background: #3a1616; color: #ff8a8a; }
 .badge-count { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 12px; font-weight: 800; }
+.partial-note { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.ex-pick { border-radius: 16px; background: var(--card-2); padding: 10px 12px; }
+.ex-pick summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+.ex-pick .chips { margin-top: 8px; }

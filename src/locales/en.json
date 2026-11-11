@@ -371,5 +371,9 @@
   "pay.planDelete": "Delete plan",
   "pay.planInvalid": "Pick at least one section and enter days and price.",
   "pay.qr": "Transfer QR code",
-  "pay.instructions": "Instructions for students (how to pay)"
+  "pay.instructions": "Instructions for students (how to pay)",
+  "access.partial": "Exercises unlocked: {n}",
+  "access.partialNote": "Some exercises are unlocked: {n}. The rest of the section needs a plan.",
+  "pay.exercisesList": "exercises: {list}",
+  "pay.planExercises": "Individual exercises (instead of a whole section)"
 }

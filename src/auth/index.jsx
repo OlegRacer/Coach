@@ -11,6 +11,7 @@ export function AuthProvider({ children }) {
   const [error, setError] = useState('');
   const [details, setDetails] = useState(null);
   const [access, setAccess] = useState({});
+  const [exAccess, setExAccess] = useState({});
   const [accessLoaded, setAccessLoaded] = useState(false);
   const [detailsLoaded, setDetailsLoaded] = useState(false);
   const [dismissed, setDismissed] = useState(() => {
@@ -101,10 +102,21 @@ export function AuthProvider({ children }) {
       } catch {
         /* ignore */
       }
+      // Доступ до окремих вправ (пакети оплати). Якщо таблиці ще нема, просто порожньо.
+      const ex = await supabase.from('exercise_access').select('exercise_id, expires_at').eq('student_id', userId);
+      const exMap = ex.error ? {} : Object.fromEntries((ex.data || []).map((r) => [r.exercise_id, r.expires_at]));
+      setExAccess(exMap);
+      try {
+        localStorage.setItem('exaccess:' + userId, JSON.stringify(exMap));
+      } catch {
+        /* ignore */
+      }
     } catch {
       try {
         const cached = JSON.parse(localStorage.getItem('access:' + userId) || '{}');
         setAccess((cur) => (Object.keys(cur).length ? cur : cached));
+        const exCached = JSON.parse(localStorage.getItem('exaccess:' + userId) || '{}');
+        setExAccess((cur) => (Object.keys(cur).length ? cur : exCached));
       } catch {
         /* ignore */
       }
@@ -115,6 +127,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     setAccess({});
+    setExAccess({});
     setAccessLoaded(false);
     if (!userId) return undefined;
     refreshAccess();
@@ -189,13 +202,18 @@ export function AuthProvider({ children }) {
       const exp = access[section];
       return !!exp && new Date(exp).getTime() > Date.now();
     };
+    const hasExercise = (id) => {
+      if (isAdmin) return true;
+      const exp = exAccess[id];
+      return !!exp && new Date(exp).getTime() > Date.now();
+    };
     const needsOnboarding = !!user && !!profile && !isAdmin && detailsLoaded && !(details && details.completed_at) && !dismissed;
     return {
       ready, user, profile, isAdmin, signInGoogle, signInLine, signOut, error,
       details, refreshDetails, needsOnboarding, dismissOnboarding,
-      access, accessLoaded, hasAccess, refreshAccess
+      access, accessLoaded, hasAccess, hasExercise, exAccess, refreshAccess
     };
-  }, [access, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
+  }, [access, exAccess, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

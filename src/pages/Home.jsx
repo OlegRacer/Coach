@@ -11,10 +11,10 @@ import { useContent, useL } from '../lib/content.jsx';
 export default function Home() {
   const { t, locale } = useI18n();
   const online = useOnline();
-  const { isAdmin, access, hasAccess } = useAuth();
+  const { isAdmin, access, hasAccess, hasExercise } = useAuth();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [sorting, setSorting] = useState(false);
-  const { sections, setOrder } = useContent();
+  const { sections, setOrder, exercisesOf } = useContent();
   const L = useL();
   const move = (i, d) => {
     const ids = sections.map((x) => x.id);
@@ -63,13 +63,15 @@ export default function Home() {
       </div>
       <div className="tiles">
         {sections.map((x, i) => {
-          const open = hasAccess(x.id);
-          const until = !isAdmin && open && access[x.id]
+          const full = hasAccess(x.id);
+          const partN = !full && x.kind !== 'anatomy' ? exercisesOf(x.id).filter((e) => hasExercise(e.id)).length : 0;
+          const open = full || partN > 0;
+          const until = !isAdmin && full && access[x.id]
             ? new Date(access[x.id]).toLocaleDateString(locale, { day: 'numeric', month: 'short' })
             : '';
           const to = x.kind === 'anatomy' ? '/anatomy' : `/section/${x.id}`;
           const hint = L(x.hint);
-          const sub = !x.published ? t('content.draft') : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
+          const sub = !x.published ? t('content.draft') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
           const body = (
             <>
               <span className="tile-icon" style={{ background: x.color }}>

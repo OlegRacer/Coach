@@ -15,7 +15,7 @@ const hasText = (o) => !!o && Object.values(o).some((x) => String(x || '').trim(
 export default function Exercise() {
   const { id } = useParams();
   const { t } = useI18n();
-  const { ready, hasAccess } = useAuth();
+  const { ready, hasAccess, hasExercise } = useAuth();
   const { exercise } = useContent();
   const L = useL();
   const ex = exercise(id);
@@ -33,7 +33,7 @@ export default function Exercise() {
   }
 
   if (!ready) return <main className="page" />;
-  if (ex.section_id && !hasAccess(ex.section_id)) return <Locked section={ex.section_id} title={t('exercise.title')} />;
+  if (ex.section_id && !hasAccess(ex.section_id) && !hasExercise(ex.id)) return <Locked section={ex.section_id} title={t('exercise.title')} />;
 
   const list = (ex.muscles || []).filter(isKnown);
   const title = L(ex.title);

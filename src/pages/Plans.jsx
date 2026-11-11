@@ -16,7 +16,7 @@ export default function Plans() {
   const L = useL();
   const online = useOnline();
   const { ready, user } = useAuth();
-  const { section } = useContent();
+  const { section, exercise } = useContent();
   const [plans, setPlans] = useState(null);
   const [settings, setSettings] = useState(null);
   const [requests, setRequests] = useState([]);
@@ -66,7 +66,11 @@ export default function Plans() {
     );
   }
 
-  const sectionNames = (ids) => (ids || []).map((id) => section(id)).filter(Boolean).map((s) => L(s.title)).join(', ');
+  const planContents = (p) => {
+    const secs = (p.sections || []).map((id) => section(id)).filter(Boolean).map((x) => L(x.title));
+    const exs = (p.exercises || []).map((id) => exercise(id)).filter(Boolean).map((x) => L(x.title));
+    return [...secs, ...(exs.length ? [t('pay.exercisesList', { list: exs.length > 4 ? exs.slice(0, 4).join(', ') + ` +${exs.length - 4}` : exs.join(', ') })] : [])].join(' · ');
+  };
 
   const copy = async (text) => {
     try {
@@ -95,7 +99,7 @@ export default function Plans() {
     const { error } = await supabase.from('payment_requests').insert({
       student_id: user.id,
       plan_id: chosen.id,
-      plan: { title: chosen.title, sections: chosen.sections, days: chosen.days, price: chosen.price, currency: chosen.currency },
+      plan: { title: chosen.title, sections: chosen.sections, exercises: chosen.exercises || [], days: chosen.days, price: chosen.price, currency: chosen.currency },
       note: note.trim(),
       proof_path: proof
     });
@@ -133,7 +137,7 @@ export default function Plans() {
                   <b className="plan-title">{L(p.title)}</b>
                   <span className="plan-price">{formatMoney(p.price, p.currency, locale)}</span>
                 </span>
-                <span className="muted small">{t('pay.days', { n: p.days })} · {sectionNames(p.sections)}</span>
+                <span className="muted small">{t('pay.days', { n: p.days })} · {planContents(p)}</span>
                 {L(p.description) && <span className="body">{L(p.description)}</span>}
               </button>
             ))}
@@ -147,7 +151,7 @@ export default function Plans() {
             ← {t('pay.otherPlan')}
           </button>
           <h2 className="h2">{L(chosen.title)}</h2>
-          <p className="muted small">{t('pay.days', { n: chosen.days })} · {sectionNames(chosen.sections)}</p>
+          <p className="muted small">{t('pay.days', { n: chosen.days })} · {planContents(chosen)}</p>
           <p className="pay-amount">{formatMoney(chosen.price, chosen.currency, locale)}</p>
 
           <h3 className="h3">{t('pay.step1')}</h3>

@@ -105,12 +105,12 @@ function Requests() {
   );
 }
 
-const emptyPlan = () => ({ title: {}, description: {}, sections: [], days: '30', price: '', currency: 'TWD', active: false });
+const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: [], days: '30', price: '', currency: 'TWD', active: false });
 
 function Plans() {
   const { t, locale } = useI18n();
   const L = useL();
-  const { rawSections } = useContent();
+  const { rawSections, exercises: allEx } = useContent();
   const [plans, setPlans] = useState(null);
   const [edit, setEdit] = useState(null); // {id|null, ...поля}
   const [err, setErr] = useState('');
@@ -128,10 +128,10 @@ function Plans() {
   const save = async () => {
     const days = parseInt(edit.days, 10);
     const price = parseFloat(String(edit.price).replace(',', '.'));
-    if (!edit.sections.length || !(days > 0) || !(price >= 0)) return setErr(t('pay.planInvalid'));
+    if ((!edit.sections.length && !(edit.exercises || []).length) || !(days > 0) || !(price >= 0)) return setErr(t('pay.planInvalid'));
     setBusy(true);
     setErr('');
-    const row = { title: edit.title, description: edit.description, sections: edit.sections, days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active };
+    const row = { title: edit.title, description: edit.description, sections: edit.sections, exercises: edit.exercises || [], days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active };
     const q = edit.id ? supabase.from('access_plans').update(row).eq('id', edit.id) : supabase.from('access_plans').insert({ ...row, position: (plans || []).length });
     const { error } = await q;
     setBusy(false);
@@ -145,6 +145,8 @@ function Plans() {
     setEdit(null);
     load();
   };
+  const toggleExercise = (id) =>
+    setEdit((x) => ({ ...x, exercises: (x.exercises || []).includes(id) ? x.exercises.filter((e) => e !== id) : [...(x.exercises || []), id] }));
   const toggleSection = (id) =>
     setEdit((x) => ({ ...x, sections: x.sections.includes(id) ? x.sections.filter((s) => s !== id) : [...x.sections, id] }));
 
@@ -162,6 +164,26 @@ function Plans() {
               {L(s.title) || s.id}
             </button>
           ))}
+        </div>
+        <span className="muted small">{t('pay.planExercises')}</span>
+        <div className="stack">
+          {rawSections.filter((x) => x.kind === 'exercises').map((sec) => {
+            const list = allEx.filter((e) => e.section_id === sec.id);
+            if (!list.length) return null;
+            const n = list.filter((e) => (edit.exercises || []).includes(e.id)).length;
+            return (
+              <details key={sec.id} className="ex-pick" open={n > 0}>
+                <summary>{L(sec.title) || sec.id}{n > 0 ? ` · ${n}` : ''}</summary>
+                <div className="chips">
+                  {list.map((e) => (
+                    <button type="button" key={e.id} className={'chip chip-sub' + ((edit.exercises || []).includes(e.id) ? ' active' : '')} aria-pressed={(edit.exercises || []).includes(e.id)} onClick={() => toggleExercise(e.id)}>
+                      {L(e.title) || e.id}
+                    </button>
+                  ))}
+                </div>
+              </details>
+            );
+          })}
         </div>
         <div className="grid2">
           <label className="stack"><span className="muted small">{t('pay.planDays')}</span>

@@ -371,5 +371,9 @@
   "pay.planDelete": "刪除方案",
   "pay.planInvalid": "請至少選一個分類，並填寫天數與價格。",
   "pay.qr": "轉帳 QR Code",
-  "pay.instructions": "給學員的付款說明"
+  "pay.instructions": "給學員的付款說明",
+  "access.partial": "已開通動作：{n}",
+  "access.partialNote": "已開通部分動作：{n}。其餘內容需購買方案。",
+  "pay.exercisesList": "動作：{list}",
+  "pay.planExercises": "單一動作（不開通整個分類時）"
 }

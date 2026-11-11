@@ -9,11 +9,14 @@ import { useContent, useL } from '../lib/content.jsx';
 export default function Section() {
   const { category } = useParams();
   const { t } = useI18n();
-  const { ready, hasAccess } = useAuth();
+  const { ready, hasAccess, hasExercise } = useAuth();
   const { section, exercisesOf } = useContent();
   const L = useL();
   const sec = section(category);
-  const items = exercisesOf(category);
+  const all = exercisesOf(category);
+  const full = hasAccess(category);
+  // Якщо весь розділ не відкрито, показуємо лише вправи, відкриті окремо (пакет оплати).
+  const items = full ? all : all.filter((e) => hasExercise(e.id));
 
   const title = sec ? L(sec.title) : t('section.exercises');
   if (!ready) return <main className="page" />;
@@ -23,10 +26,16 @@ export default function Section() {
       <p className="muted">{t('section.empty')}</p>
     </main>
   );
-  if (!hasAccess(category)) return <Locked section={category} title={title} />;
+  if (!full && !items.length) return <Locked section={category} title={title} />;
   return (
     <main className="page">
       <TopBar title={title} />
+      {!full && (
+        <div className="card partial-note">
+          <span className="muted small">{t('access.partialNote', { n: items.length })}</span>
+          <Link to="/plans" className="link-btn">{t('pay.howToOpen')}</Link>
+        </div>
+      )}
       <div className="list">
         {items.map((e) => (
           <Link key={e.id} to={`/exercise/${e.id}`} className="list-item">

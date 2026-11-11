@@ -1,13 +1,14 @@
 -- Оплата переказом (LINE Pay на особистий акаунт): пакети доступу, реквізити, заявки «Я оплатив».
 -- Supabase -> SQL Editor -> New query -> вставити все -> Run. Можна запускати повторно.
--- Потрібні: supabase-schema.sql, supabase-access.sql, supabase-content.sql.
+-- Потрібні: supabase-schema.sql, supabase-access.sql, supabase-content.sql (з таблицею exercise_access).
 
 -- Пакети: які розділи, на скільки днів, за яку ціну.
 create table if not exists public.access_plans (
   id          uuid primary key default gen_random_uuid(),
   title       jsonb not null default '{}'::jsonb,        -- {"uk","en","zh-TW"}
   description jsonb not null default '{}'::jsonb,
-  sections    text[] not null default '{}',              -- id розділів з content_sections
+  sections    text[] not null default '{}',              -- id розділів з content_sections (весь розділ)
+  exercises   text[] not null default '{}',              -- id окремих вправ з content_exercises
   days        int not null check (days between 1 and 3650),
   price       numeric(10,2) not null check (price >= 0),
   currency    text not null default 'TWD',
@@ -15,6 +16,8 @@ create table if not exists public.access_plans (
   active      boolean not null default false,            -- false = чернетка, учні не бачать
   created_at  timestamptz not null default now()
 );
+
+alter table public.access_plans add column if not exists exercises text[] not null default '{}';
 
 -- Реквізити для переказу. Один рядок.
 create table if not exists public.payment_settings (
@@ -31,7 +34,7 @@ create table if not exists public.payment_requests (
   id            uuid primary key default gen_random_uuid(),
   student_id    uuid not null references public.profiles (id) on delete cascade,
   plan_id       uuid references public.access_plans (id) on delete set null,
-  plan          jsonb not null,                          -- {title, sections, days, price, currency}
+  plan          jsonb not null,                          -- {title, sections, exercises, days, price, currency}
   note          text not null default '' check (char_length(note) <= 1000),
   proof_path    text not null default '',                -- скріншот у сховищі payments
   status        text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
@@ -100,6 +103,19 @@ begin
     )
     on conflict (student_id, section) do update
       set expires_at = excluded.expires_at, granted_by = excluded.granted_by, updated_at = now();
+  end loop;
+  for s in select jsonb_array_elements_text(coalesce(r.plan -> 'exercises', '[]'::jsonb)) loop
+    -- вправа могла бути видалена після заявки: тоді пропускаємо
+    if exists (select 1 from public.content_exercises e where e.id = s) then
+      insert into public.exercise_access (student_id, exercise_id, expires_at, granted_by, updated_at)
+      values (
+        r.student_id, s,
+        greatest(now(), coalesce((select a.expires_at from public.exercise_access a where a.student_id = r.student_id and a.exercise_id = s), now())) + make_interval(days => d),
+        auth.uid(), now()
+      )
+      on conflict (student_id, exercise_id) do update
+        set expires_at = excluded.expires_at, granted_by = excluded.granted_by, updated_at = now();
+    end if;
   end loop;
   update public.payment_requests
     set status = 'approved', decided_at = now(), decided_by = auth.uid()
