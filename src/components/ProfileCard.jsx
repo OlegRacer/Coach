@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Onboarding from './Onboarding.jsx';
 import ProfileDetails from './ProfileDetails.jsx';
+import PushToggle from './PushToggle.jsx';
 import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
@@ -97,6 +98,8 @@ export default function ProfileCard() {
         </Link>
       )}
 
+      <PushToggle />
+
       {isAdmin && (
         <>
           <Link to="/admin/students" className="set-row link-row">
@@ -116,6 +119,12 @@ export default function ProfileCard() {
           </Link>
           <Link to="/admin/content" className="set-row link-row">
             <span className="set-label">{t('content.link')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/storage" className="set-row link-row">
+            <span className="set-label">{t('mem.title')}</span>
             <span className="muted">
               <Icon name="chevron" size={20} />
             </span>

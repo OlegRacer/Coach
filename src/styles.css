@@ -429,3 +429,11 @@ input, textarea, select, [contenteditable], .student-details {
 .ex-pick { border-radius: 16px; background: var(--card-2); padding: 10px 12px; }
 .ex-pick summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
 .ex-pick .chips { margin-top: 8px; }
+
+/* Пам'ять */
+.mem-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.1); overflow: hidden; }
+.mem-fill { height: 100%; background: var(--accent, #C6F432); border-radius: 4px; }
+.mem-fill.hot { background: #FF8A5B; }
+.mem-files { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.mem-name { overflow-wrap: anywhere; }
+.btn-plain { background: none; border: 0; color: inherit; font: inherit; padding: 0; text-align: left; width: 100%; cursor: pointer; }

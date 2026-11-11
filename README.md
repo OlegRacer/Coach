@@ -75,3 +75,31 @@ npm run build    # збірка в dist/
 - Замінити схему-заготовку в `Anatomy.jsx` на повноцінний SVG м'язів.
 - Додати свої відео та описи вправ.
 - Етап 2: акаунти й прогрес (Supabase).
+
+
+## Вхід через LINE
+
+Кнопка «Увійти через LINE» у профілі викликає `supabase.auth.signInWithOAuth({ provider: 'custom:line' })`.
+Для цього в Supabase має бути власний OIDC-провайдер з ідентифікатором `custom:line` (безкоштовний тариф дозволяє до 3 власних провайдерів).
+
+1. LINE Developers Console (developers.line.biz): Provider -> Create channel -> **LINE Login**, тип **Web app**.
+2. У каналі, вкладка **LINE Login**: додайте Callback URL з Supabase (див. п. 3).
+3. Supabase -> Authentication -> Auth Providers -> **New Provider** -> **Auto-discovery (OIDC)**:
+   - Identifier: `custom:line`
+   - Client ID: Channel ID каналу LINE; Client Secret: Channel secret
+   - Issuer URL: `https://access.line.me`
+   - Scopes: `openid profile email`
+   - Увімкніть дозвіл на користувачів без email (`email_optional`), доки LINE не схвалив доступ до email.
+   Callback URL береться з форми створення провайдера (його треба вписати в LINE, п. 2).
+4. Щоб LINE віддавав email: у каналі LINE, Basic settings -> OpenID Connect -> **Apply** (потрібен скріншот, як ви використовуєте email). Без схвалення вхід працює, але email буде порожнім.
+5. Статус каналу LINE переведіть з Developing у **Published**, інакше увійти зможуть лише адміни каналу й тестувальники.
+
+## Пуш-сповіщення про оплату
+
+1. Supabase → SQL Editor: виконайте `supabase-push.sql`, потім `supabase-storage.sql`.
+2. Supabase → Edge Functions → **Deploy a new function** (через Dashboard) з назвою `push`; вставте код з `supabase/functions/push/index.ts`. У налаштуваннях функції **вимкніть Verify JWT**.
+3. Edge Functions → Secrets додайте: `VAPID_PUBLIC` (ключ із `src/lib/push.js`), `VAPID_PRIVATE` (приватний ключ), `VAPID_SUBJECT` = `mailto:ваша@пошта`.
+4. У додатку: Профіль → «Пуш-сповіщення» → дозволити → «Надіслати тест».
+5. На iPhone додаток має бути доданий на екран «Додому» (iOS 16.4+).
+
+Приватний VAPID-ключ не кладіть у код додатку. Якщо він потрапив у чат чи на показ, згенеруйте нову пару (`npx web-push generate-vapid-keys`), оновіть секрети й `VAPID_PUBLIC` у `src/lib/push.js`; усі повинні увімкнути сповіщення знову.

@@ -64,6 +64,24 @@ function Requests() {
     setErr(errText(error));
     load();
   };
+  // Повне видалення: спершу файл зі сховища, потім запис. Видалення запису не чіпає вже виданий доступ.
+  const removeAll = async (r) => {
+    if (r.proof_path) {
+      const { error } = await supabase.storage.from('payments').remove([r.proof_path]);
+      if (error) return setErr(errText(error));
+    }
+    const { error } = await supabase.from('payment_requests').delete().eq('id', r.id);
+    setErr(errText(error));
+    load();
+  };
+  const removeProof = async (r) => {
+    const { error } = await supabase.storage.from('payments').remove([r.proof_path]);
+    if (error) return setErr(errText(error));
+    const { error: e2 } = await supabase.from('payment_requests').update({ proof_path: '' }).eq('id', r.id);
+    setErr(errText(e2));
+    setProof((x) => ({ ...x, [r.id]: undefined }));
+    load();
+  };
   const showProof = async (r) => {
     const { data, error } = await supabase.storage.from('payments').createSignedUrl(r.proof_path, 600);
     if (error) return setErr(errText(error));
@@ -85,6 +103,8 @@ function Requests() {
       {r.note && <p className="body pre">{r.note}</p>}
       {r.proof_path && (proof[r.id] ? <img className="pay-proof" src={proof[r.id]} alt="" /> : <button type="button" className="btn-ghost" onClick={() => showProof(r)}>{t('pay.showProof')}</button>)}
       {r.status === 'rejected' && r.reject_reason && <span className="muted small">{r.reject_reason}</span>}
+      {r.status !== 'pending' && r.proof_path && <ConfirmButton label={t('pay.delProof')} confirmLabel={t('pay.delConfirm')} className="btn-ghost" onConfirm={() => removeProof(r)} />}
+      {r.status !== 'pending' && <ConfirmButton label={t('pay.delPayment')} confirmLabel={t('pay.delConfirm')} onConfirm={() => removeAll(r)} />}
       {r.status === 'pending' && (
         <>
           <input className="field" maxLength={500} placeholder={t('pay.rejectReason')} value={reason[r.id] || ''} onChange={(e) => setReason((x) => ({ ...x, [r.id]: e.target.value }))} />

@@ -14,6 +14,7 @@ import OnboardingGate from './components/OnboardingGate.jsx';
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
 const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
+const StorageAdmin = lazy(() => import('./admin/StorageAdmin.jsx'));
 const ContentAdmin = lazy(() => import('./admin/ContentAdmin.jsx'));
 const SectionEditor = lazy(() => import('./admin/SectionEditor.jsx'));
 const ExerciseEditor = lazy(() => import('./admin/ExerciseEditor.jsx'));
@@ -66,6 +67,14 @@ export default function App() {
           element={
             <AdminBoundary>
               <PaymentsAdmin />
+            </AdminBoundary>
+          }
+        />
+        <Route
+          path="/admin/storage"
+          element={
+            <AdminBoundary>
+              <StorageAdmin />
             </AdminBoundary>
           }
         />

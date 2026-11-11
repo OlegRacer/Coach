@@ -30,6 +30,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,json,webp}'],
+        globIgnores: ['push-sw.js'],
+        importScripts: ['push-sw.js'],
         // Відео/GIF вправ кешуємо тоді, коли учень їх уже відкривав (потім працюють офлайн).
         runtimeCaching: [
           {
