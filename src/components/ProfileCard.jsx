@@ -12,7 +12,7 @@ import { useI18n } from '../i18n/index.jsx';
 // Тренеру (адміну) додатково показується перехід до списку учнів.
 export default function ProfileCard() {
   const { t } = useI18n();
-  const { user, isAdmin, details, signInGoogle, signOut, error } = useAuth();
+  const { user, isAdmin, details, signInGoogle, signInLine, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);
   const filled = !!(details && details.completed_at);
@@ -52,9 +52,14 @@ export default function ProfileCard() {
           {t('auth.signOut')}
         </button>
       ) : (
-        <button type="button" className="btn-light" onClick={() => setNotice(true)} disabled={!online}>
-          {online ? t('auth.signInGoogle') : t('auth.needOnline')}
-        </button>
+        <div className="stack">
+          <button type="button" className="btn-light" onClick={() => setNotice(true)} disabled={!online}>
+            {online ? t('auth.signInGoogle') : t('auth.needOnline')}
+          </button>
+          <button type="button" className="btn-line" onClick={signInLine} disabled={!online}>
+            {t('auth.signInLine')}
+          </button>
+        </div>
       )}
       {notice && (
         <SignInNotice
@@ -68,6 +73,8 @@ export default function ProfileCard() {
       {error && (
         <p className="small err" role="alert">
           {t('auth.error')}
+          <br />
+          <span className="muted">{error}</span>
         </p>
       )}
 

@@ -141,6 +141,16 @@ export function AuthProvider({ children }) {
     if (e) setError(e.message);
   }, []);
 
+  // LINE: власний OIDC-провайдер у Supabase з ідентифікатором custom:line (див. README, розділ «Вхід через LINE»).
+  const signInLine = useCallback(async () => {
+    setError('');
+    const { error: e } = await supabase.auth.signInWithOAuth({
+      provider: 'custom:line',
+      options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+    if (e) setError(e.message);
+  }, []);
+
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
     setProfile(null);
@@ -181,11 +191,11 @@ export function AuthProvider({ children }) {
     };
     const needsOnboarding = !!user && !!profile && !isAdmin && detailsLoaded && !(details && details.completed_at) && !dismissed;
     return {
-      ready, user, profile, isAdmin, signInGoogle, signOut, error,
+      ready, user, profile, isAdmin, signInGoogle, signInLine, signOut, error,
       details, refreshDetails, needsOnboarding, dismissOnboarding,
       access, accessLoaded, hasAccess, refreshAccess
     };
-  }, [access, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
+  }, [access, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

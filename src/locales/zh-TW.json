@@ -326,5 +326,6 @@
   "muscle.calves": "小腿",
   "muscle.hamstrings.full": "腿後肌",
   "muscle.adductors.full": "內收肌",
-  "muscle.glutes_small.full": "臀中小肌"
+  "muscle.glutes_small.full": "臀中小肌",
+  "auth.signInLine": "使用 LINE 登入"
 }

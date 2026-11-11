@@ -322,5 +322,6 @@
   "muscle.calves": "Литки",
   "muscle.hamstrings.full": "Задня поверхня стегна",
   "muscle.adductors.full": "Привідні м'язи",
-  "muscle.glutes_small.full": "Малі сідничні м'язи"
+  "muscle.glutes_small.full": "Малі сідничні м'язи",
+  "auth.signInLine": "Увійти через LINE"
 }

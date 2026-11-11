@@ -405,3 +405,5 @@ input, textarea, select, [contenteditable], .student-details {
 .muscle-group > .chip:first-child { font-weight: 800; }
 .chip-sub { font-size: 14px; padding-block: 8px; background: rgba(255,255,255,.06); }
 .chip-sub.active { background: var(--accent); color: var(--on-accent); }
+.btn-line { width: 100%; min-height: 52px; border: 0; border-radius: 16px; background: #06c755; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
+.btn-line:disabled { opacity: 0.5; }

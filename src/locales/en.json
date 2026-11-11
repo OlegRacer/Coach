@@ -326,5 +326,6 @@
   "muscle.calves": "Calves",
   "muscle.hamstrings.full": "Hamstrings",
   "muscle.adductors.full": "Adductors",
-  "muscle.glutes_small.full": "Small glutes"
+  "muscle.glutes_small.full": "Small glutes",
+  "auth.signInLine": "Sign in with LINE"
 }
