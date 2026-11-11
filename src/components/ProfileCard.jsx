@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Onboarding from './Onboarding.jsx';
 import ProfileDetails from './ProfileDetails.jsx';
 import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
+import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -12,11 +13,20 @@ import { useI18n } from '../i18n/index.jsx';
 // Тренеру (адміну) додатково показується перехід до списку учнів.
 export default function ProfileCard() {
   const { t } = useI18n();
+  const [pendingPay, setPendingPay] = useState(0);
   const { user, isAdmin, details, signInGoogle, signInLine, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);
   const filled = !!(details && details.completed_at);
   const online = useOnline();
+  useEffect(() => {
+    if (!isAdmin || !online) return;
+    supabase
+      .from('payment_requests')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'pending')
+      .then(({ count }) => setPendingPay(count || 0));
+  }, [isAdmin, online]);
   const canOpen = !!user && !isAdmin && online;
 
   const Tag = canOpen ? 'button' : 'div';
@@ -78,10 +88,28 @@ export default function ProfileCard() {
         </p>
       )}
 
+      {user && !isAdmin && (
+        <Link to="/plans" className="set-row link-row">
+          <span className="set-label">{t('pay.title')}</span>
+          <span className="muted">
+            <Icon name="chevron" size={20} />
+          </span>
+        </Link>
+      )}
+
       {isAdmin && (
         <>
           <Link to="/admin/students" className="set-row link-row">
             <span className="set-label">{t('students.title')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/payments" className="set-row link-row">
+            <span className="set-label">
+              {t('pay.admin')}
+              {pendingPay > 0 && <span className="badge-count">{pendingPay}</span>}
+            </span>
             <span className="muted">
               <Icon name="chevron" size={20} />
             </span>

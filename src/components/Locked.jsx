@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import TopBar from './TopBar.jsx';
 import Icon from './Icon.jsx';
 import { useAuth } from '../auth/index.jsx';
@@ -19,6 +20,7 @@ export default function Locked({ section, title }) {
         <h2 className="h2">{t('access.lockedTitle')}</h2>
         <p className="body">{user ? t('access.lockedText') : t('access.signin')}</p>
         {user && date && <p className="muted small">{t('access.expired', { date })}</p>}
+        {user && <Link to="/plans" className="btn-primary">{t('pay.howToOpen')}</Link>}
       </div>
     </main>
   );

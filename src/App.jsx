@@ -5,6 +5,7 @@ import Schedule from './pages/Schedule.jsx';
 import Section from './pages/Section.jsx';
 import Exercise from './pages/Exercise.jsx';
 import Anatomy from './pages/Anatomy.jsx';
+import Plans from './pages/Plans.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
@@ -12,6 +13,7 @@ import OnboardingGate from './components/OnboardingGate.jsx';
 // Адмінка вантажиться окремим шматком коду, тільки коли її відкривають.
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
+const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
 const ContentAdmin = lazy(() => import('./admin/ContentAdmin.jsx'));
 const SectionEditor = lazy(() => import('./admin/SectionEditor.jsx'));
 const ExerciseEditor = lazy(() => import('./admin/ExerciseEditor.jsx'));
@@ -55,6 +57,15 @@ export default function App() {
           element={
             <AdminBoundary>
               <ExerciseEditor />
+            </AdminBoundary>
+          }
+        />
+        <Route path="/plans" element={<Plans />} />
+        <Route
+          path="/admin/payments"
+          element={
+            <AdminBoundary>
+              <PaymentsAdmin />
             </AdminBoundary>
           }
         />

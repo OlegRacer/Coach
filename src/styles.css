@@ -407,3 +407,21 @@ input, textarea, select, [contenteditable], .student-details {
 .chip-sub.active { background: var(--accent); color: var(--on-accent); }
 .btn-line { width: 100%; min-height: 52px; border: 0; border-radius: 16px; background: #06c755; color: #fff; font: inherit; font-weight: 800; cursor: pointer; }
 .btn-line:disabled { opacity: 0.5; }
+
+/* Оплата */
+.plan-card { display: flex; flex-direction: column; gap: 6px; text-align: left; width: 100%; border: 0; color: inherit; font: inherit; cursor: pointer; }
+.plan-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.plan-title { font-size: 18px; }
+.plan-price { font-weight: 800; color: var(--accent); white-space: nowrap; }
+.plan-row { text-align: left; width: 100%; border: 0; color: inherit; font: inherit; cursor: pointer; background: none; }
+.pay-amount { font-size: 32px; font-weight: 800; color: var(--accent); margin: 0; }
+.pay-id { display: flex; flex-direction: column; gap: 6px; padding: 12px; border-radius: 16px; background: var(--card-2); }
+.pay-id b { font-size: 20px; word-break: break-all; }
+.pay-qr, .pay-proof { max-width: 100%; border-radius: 16px; background: #fff; align-self: center; }
+.pay-proof { max-height: 420px; object-fit: contain; }
+.pay-sent { display: flex; gap: 10px; align-items: center; color: var(--accent); }
+.back-link { align-self: flex-start; padding-left: 0; }
+.badge-status { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: #3a2f12; color: #ffd166; }
+.badge-status.approved { background: #1f3a12; color: #9be564; }
+.badge-status.rejected { background: #3a1616; color: #ff8a8a; }
+.badge-count { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 12px; font-weight: 800; }
