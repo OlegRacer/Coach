@@ -154,3 +154,9 @@ create policy payments_files_admin_delete on storage.objects for delete to authe
   using (bucket_id = 'payments' and public.is_admin());
 
 notify pgrst, 'reload schema';
+
+-- Миттєве оновлення статусу оплати в додатку учня (Realtime). Без цього додаток перевіряє кожні 6 секунд.
+do $$ begin
+  alter publication supabase_realtime add table public.payment_requests;
+exception when duplicate_object then null; when undefined_object then null;
+end $$;

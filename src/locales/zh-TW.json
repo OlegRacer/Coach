@@ -405,5 +405,10 @@
   "mem.old": "刪除超過 90 天的付款",
   "mem.oldHint": "已處理的付款及其截圖。學員的權限不變。",
   "mem.cleaned": "已刪除：{n}",
-  "mem.rows": "資料表筆數"
+  "mem.rows": "資料表筆數",
+  "pay.toast.approved": "付款已確認，已開通！",
+  "pay.toast.rejected": "付款未確認",
+  "pay.toast.open": "開啟課程",
+  "pay.toast.details": "詳情",
+  "pay.toast.close": "關閉"
 }

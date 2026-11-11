@@ -405,5 +405,10 @@
   "mem.old": "Delete payments older than 90 days",
   "mem.oldHint": "Decided payments with their screenshots. Student access is unchanged.",
   "mem.cleaned": "Deleted: {n}",
-  "mem.rows": "Table rows"
+  "mem.rows": "Table rows",
+  "pay.toast.approved": "Payment confirmed. Access unlocked!",
+  "pay.toast.rejected": "Payment was not confirmed",
+  "pay.toast.open": "Open the course",
+  "pay.toast.details": "Details",
+  "pay.toast.close": "Close"
 }

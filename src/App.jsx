@@ -7,6 +7,7 @@ import Exercise from './pages/Exercise.jsx';
 import Anatomy from './pages/Anatomy.jsx';
 import Plans from './pages/Plans.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
+import PayWatcher from './components/PayWatcher.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
 
@@ -24,6 +25,7 @@ export default function App() {
     <div className="app">
       <OnboardingGate />
       <UpdateBanner />
+      <PayWatcher />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/schedule" element={<Schedule />} />

@@ -43,6 +43,11 @@ export default function Plans() {
   useEffect(() => {
     if (online) load();
   }, [online, load]);
+  // Статус оплати змінився (підтвердив тренер): оновлюємо список без перезавантаження.
+  useEffect(() => {
+    window.addEventListener('pay-changed', load);
+    return () => window.removeEventListener('pay-changed', load);
+  }, [load]);
 
   if (!ready) return <main className="page" />;
   if (!user) {
@@ -110,6 +115,7 @@ export default function Plans() {
     setNote('');
     setFile(null);
     load();
+    window.dispatchEvent(new Event('pay-sent'));
   };
 
   const status = (s) => t(`pay.status.${s}`);
