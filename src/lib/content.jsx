@@ -42,7 +42,7 @@ export function mediaUrl(src) {
 }
 
 export function ContentProvider({ children }) {
-  const { user, isAdmin, access } = useAuth();
+  const { user, isAdmin, access, hasAccess, hasExercise } = useAuth();
   const uid = user ? user.id : '';
   const key = 'content:v1:' + (uid || 'guest');
   const [data, setData] = useState(() => read(key, seed));
@@ -113,6 +113,7 @@ export function ContentProvider({ children }) {
       return i < 0 ? 1e6 : i;
     };
     return data.sections
+      .filter((s) => !s.parent_id)
       .map((s, i) => ({ s, i }))
       .sort((a, b) => idx(a.s.id) - idx(b.s.id) || a.i - b.i)
       .map((x) => x.s);
@@ -132,11 +133,54 @@ export function ContentProvider({ children }) {
     [key, data, uid]
   );
 
-  const value = useMemo(
-    () => ({
+  // Дерево розділів: розділ може містити підрозділи і вправи на будь-яку глибину.
+  const tree = useMemo(() => {
+    const byId = new Map(data.sections.map((s) => [s.id, s]));
+    const kids = new Map();
+    data.sections.forEach((s) => {
+      const k = s.parent_id || '';
+      kids.set(k, [...(kids.get(k) || []), s]);
+    });
+    const chainOf = (id) => {
+      const out = [];
+      const seen = new Set();
+      let cur = byId.get(id);
+      while (cur && !seen.has(cur.id)) {
+        seen.add(cur.id);
+        out.unshift(cur);
+        cur = cur.parent_id ? byId.get(cur.parent_id) : null;
+      }
+      return out;
+    };
+    const subtreeIds = (id) => {
+      const out = [id];
+      for (let i = 0; i < out.length; i++) (kids.get(out[i]) || []).forEach((c) => !out.includes(c.id) && out.push(c.id));
+      return out;
+    };
+    return { kids, chainOf, subtreeIds };
+  }, [data]);
+
+  const value = useMemo(() => {
+    const { kids, chainOf, subtreeIds } = tree;
+    // Розділ відкрито повністю: доступ (чи «безкоштовно») на ньому або на будь-якому предку.
+    const sectionOpen = (id) => isAdmin || chainOf(id).some((a) => a.free || hasAccess(a.id));
+    const exerciseOpen = (e) => !!e && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id));
+    const exercisesIn = (id) => {
+      const ids = new Set(subtreeIds(id));
+      return data.exercises.filter((e) => ids.has(e.section_id));
+    };
+    return {
       loaded,
       sections, // у порядку учня
-      rawSections: data.sections, // у порядку тренера (для адмінки)
+      rawSections: data.sections, // усі розділи, у порядку тренера (для адмінки)
+      childrenOf: (id) => kids.get(id || '') || [],
+      chainOf,
+      isFreeSection: (id) => chainOf(id).some((a) => a.free),
+      sectionOpen,
+      exerciseOpen,
+      exercisesIn, // усі видимі вправи розділу разом з підрозділами
+      openCount: (id) => exercisesIn(id).filter(exerciseOpen).length,
+      subtreeIds,
       exercises: data.exercises,
       muscles: GROUPS,
       reload: () => check(true),
@@ -149,9 +193,8 @@ export function ContentProvider({ children }) {
         const want = expand(ids);
         return data.exercises.filter((e) => [...expand(e.muscles)].some((l) => want.has(l)));
       }
-    }),
-    [data, sections, loaded, check, setOrder]
-  );
+    };
+  }, [data, tree, sections, loaded, check, setOrder, isAdmin, hasAccess, hasExercise]);
 
   return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
 }

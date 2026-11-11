@@ -13,8 +13,10 @@ const DAY = 86400000;
 export default function AccessPanel({ student, rows, onChanged }) {
   const { t, locale } = useI18n();
   const { user } = useAuth();
-  const { rawSections: SECTIONS } = useContent();
+  const { rawSections, chainOf } = useContent();
   const L = useL();
+  const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
+  const SECTIONS = [...rawSections].sort((a, b) => pathOf(a.id).localeCompare(pathOf(b.id)));
   const [picked, setPicked] = useState([]);
   const [days, setDays] = useState(30);
   const [busy, setBusy] = useState(false);
@@ -74,7 +76,7 @@ export default function AccessPanel({ student, rows, onChanged }) {
         <label key={s.id} className="access-row">
           <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} />
           <span>
-            {L(s.title)}{!s.published && " ·  " + t("content.draft")}
+            {pathOf(s.id)}{!s.published && " ·  " + t("content.draft")}
             <small>{status(s.id)}</small>
           </span>
         </label>

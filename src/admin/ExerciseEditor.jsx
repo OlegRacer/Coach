@@ -46,7 +46,8 @@ export default function ExerciseEditor() {
         title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [],
         preview: ex.preview || '',
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
-        published: ex.published
+        published: ex.published,
+        free: !!ex.free
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
       const fresh = !has(ex.sets) && !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
@@ -238,6 +239,13 @@ export default function ExerciseEditor() {
           <span>
             {t('content.published')}
             <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
+          </span>
+        </label>
+        <label className="access-row">
+          <input type="checkbox" checked={!!f.free} onChange={(e) => set('free', e.target.checked)} />
+          <span>
+            {t('content.free')}
+            <small>{t('content.freeExHint')}</small>
           </span>
         </label>
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>

@@ -410,5 +410,10 @@
   "pay.toast.rejected": "Payment was not confirmed",
   "pay.toast.open": "Open the course",
   "pay.toast.details": "Details",
-  "pay.toast.close": "Close"
+  "pay.toast.close": "Close",
+  "content.free": "Free",
+  "content.freeSectionHint": "Everything in this section is open to all students",
+  "content.freeExHint": "This exercise is open to all students",
+  "content.subsections": "Subsections",
+  "content.addSubsection": "+ Add subsection"
 }

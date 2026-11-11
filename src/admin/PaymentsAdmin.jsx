@@ -130,7 +130,9 @@ const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: 
 function Plans() {
   const { t, locale } = useI18n();
   const L = useL();
-  const { rawSections, exercises: allEx } = useContent();
+  const { rawSections: flatSections, chainOf, exercises: allEx } = useContent();
+  const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
+  const rawSections = [...flatSections].sort((a, b) => pathOf(a.id).localeCompare(pathOf(b.id)));
   const [plans, setPlans] = useState(null);
   const [edit, setEdit] = useState(null); // {id|null, ...поля}
   const [err, setErr] = useState('');
@@ -181,7 +183,7 @@ function Plans() {
         <div className="chips">
           {rawSections.map((s) => (
             <button type="button" key={s.id} className={'chip' + (edit.sections.includes(s.id) ? ' active' : '')} aria-pressed={edit.sections.includes(s.id)} onClick={() => toggleSection(s.id)}>
-              {L(s.title) || s.id}
+              {pathOf(s.id)}
             </button>
           ))}
         </div>
@@ -193,7 +195,7 @@ function Plans() {
             const n = list.filter((e) => (edit.exercises || []).includes(e.id)).length;
             return (
               <details key={sec.id} className="ex-pick" open={n > 0}>
-                <summary>{L(sec.title) || sec.id}{n > 0 ? ` · ${n}` : ''}</summary>
+                <summary>{pathOf(sec.id)}{n > 0 ? ` · ${n}` : ''}</summary>
                 <div className="chips">
                   {list.map((e) => (
                     <button type="button" key={e.id} className={'chip chip-sub' + ((edit.exercises || []).includes(e.id) ? ' active' : '')} aria-pressed={(edit.exercises || []).includes(e.id)} onClick={() => toggleExercise(e.id)}>

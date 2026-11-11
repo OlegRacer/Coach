@@ -440,3 +440,8 @@ input, textarea, select, [contenteditable], .student-details {
 
 /* Плашка «оплату підтверджено» */
 .pay-toast { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); z-index: 60; display: grid; gap: 12px; border: 1px solid var(--accent, #C6F432); box-shadow: 0 8px 30px rgba(0,0,0,.5); }
+
+/* Вкладені розділи й «Безкоштовно» */
+.badge-free { margin-left: 8px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: var(--accent, #C6F432); color: #101214; vertical-align: middle; }
+.small-icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; color: #101214; margin-right: 12px; }
+.crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }

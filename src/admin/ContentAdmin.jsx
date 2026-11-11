@@ -14,7 +14,8 @@ export default function ContentAdmin() {
   const L = useL();
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { rawSections, exercises, reload } = useContent();
+  const { rawSections: allSections, exercises, reload, subtreeIds } = useContent();
+  const rawSections = allSections.filter((s) => !s.parent_id);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 

@@ -410,5 +410,10 @@
   "pay.toast.rejected": "付款未確認",
   "pay.toast.open": "開啟課程",
   "pay.toast.details": "詳情",
-  "pay.toast.close": "關閉"
+  "pay.toast.close": "關閉",
+  "content.free": "免費",
+  "content.freeSectionHint": "此分類內的所有內容對所有學員開放",
+  "content.freeExHint": "此動作對所有學員開放",
+  "content.subsections": "子分類",
+  "content.addSubsection": "+ 新增子分類"
 }

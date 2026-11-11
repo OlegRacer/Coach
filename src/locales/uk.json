@@ -406,5 +406,10 @@
   "pay.toast.rejected": "Оплату не підтверджено",
   "pay.toast.open": "Відкрити курс",
   "pay.toast.details": "Деталі",
-  "pay.toast.close": "Закрити"
+  "pay.toast.close": "Закрити",
+  "content.free": "Безкоштовно",
+  "content.freeSectionHint": "Усе в цьому розділі відкрите всім учням",
+  "content.freeExHint": "Ця вправа відкрита всім учням",
+  "content.subsections": "Підрозділи",
+  "content.addSubsection": "+ Додати підрозділ"
 }

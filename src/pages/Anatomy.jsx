@@ -18,9 +18,9 @@ const CLIP = Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]));
 // Можна вибрати кілька зон одразу, з різних груп. Вибір зберігається в адресі: ?m=biceps,chest.
 export default function Anatomy() {
   const { t } = useI18n();
-  const { exercisesByMuscles } = useContent();
+  const { exercisesByMuscles, sectionOpen } = useContent();
   const L = useL();
-  const { ready, hasAccess } = useAuth();
+  const { ready } = useAuth();
   const [params, setParams] = useSearchParams();
   // Вибрані «листки» (найдрібніші зони). ?m= може містити і групу, вона розгортається в півзони.
   const sel = expand((params.get('m') || '').split(',').filter(Boolean));
@@ -43,7 +43,7 @@ export default function Anatomy() {
   const names = LEAVES.filter((l) => sel.has(l.id)).map((l) => muscleName(t, l.id));
 
   if (!ready) return <main className="page" />;
-  if (!hasAccess('anatomy')) return <Locked section="anatomy" title={t('anatomy.title')} />;
+  if (!sectionOpen('anatomy')) return <Locked section="anatomy" title={t('anatomy.title')} />;
 
   return (
     <main className="page">

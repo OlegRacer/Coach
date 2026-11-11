@@ -15,7 +15,7 @@ export default function SectionEditor() {
   const L = useL();
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { section, exercisesOf, reload } = useContent();
+  const { section, exercisesOf, childrenOf, chainOf, reload } = useContent();
   const sec = section(sid);
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
@@ -23,7 +23,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -31,6 +31,9 @@ export default function SectionEditor() {
   if (!sec || !f) return <main className="page"><TopBar title={t('content.title')} to="/admin/content" /><p className="muted">{t('section.empty')}</p></main>;
 
   const items = exercisesOf(sid);
+  const subs = childrenOf(sid);
+  const parent = chainOf(sid).slice(-2, -1)[0];
+  const back = parent ? `/admin/content/${parent.id}` : '/admin/content';
   const fail = (e) => setErr(e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
   const set = (k, v) => {
     setSaved(false);
@@ -60,6 +63,37 @@ export default function SectionEditor() {
     reload();
   };
 
+  const moveSub = async (i, d) => {
+    const j = i + d;
+    if (j < 0 || j >= subs.length) return;
+    const ids = subs.map((x) => x.id);
+    [ids[i], ids[j]] = [ids[j], ids[i]];
+    setBusy(true);
+    const res = await Promise.all(ids.map((id, p) => supabase.from('content_sections').update({ position: p }).eq('id', id)));
+    setBusy(false);
+    fail(res.find((r) => r.error)?.error);
+    reload();
+  };
+
+  const addSub = async () => {
+    const id = newId('s');
+    setBusy(true);
+    const { error } = await supabase.from('content_sections').insert({
+      id,
+      kind: 'exercises',
+      parent_id: sid,
+      title: { uk: t('content.newSection') },
+      icon: sec.icon,
+      color: sec.color,
+      position: subs.length,
+      published: false
+    });
+    setBusy(false);
+    if (error) return fail(error);
+    await reload();
+    nav(`/admin/content/${id}`);
+  };
+
   const addEx = async () => {
     const id = newId('e');
     setBusy(true);
@@ -80,12 +114,19 @@ export default function SectionEditor() {
     const { error } = await supabase.from('content_sections').delete().eq('id', sid);
     if (error) return fail(error);
     await reload();
-    nav('/admin/content');
+    nav(back);
   };
 
   return (
     <main className="page">
-      <TopBar title={L(sec.title) || t('content.title')} to="/admin/content" />
+      <TopBar title={L(sec.title) || t('content.title')} to={back} />
+      {parent && (
+        <p className="muted small crumbs">
+          {chainOf(sid).slice(0, -1).map((a) => (
+            <Link key={a.id} to={`/admin/content/${a.id}`} className="link-btn">{L(a.title) || a.id} ›</Link>
+          ))}
+        </p>
+      )}
       {err && <p className="err" role="alert">{err}</p>}
 
       <section className="card stack">
@@ -114,6 +155,13 @@ export default function SectionEditor() {
             <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
           </span>
         </label>
+        <label className="access-row">
+          <input type="checkbox" checked={f.free} onChange={(e) => set('free', e.target.checked)} />
+          <span>
+            {t('content.free')}
+            <small>{t('content.freeSectionHint')}</small>
+          </span>
+        </label>
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>
           {saved ? t('content.saved') : t('content.save')}
         </button>
@@ -121,7 +169,30 @@ export default function SectionEditor() {
 
       {sec.kind === 'exercises' && (
         <>
-          <h2 className="h2 section-title">{t('section.exercises')}</h2>
+          {subs.length > 0 && <h2 className="h2 section-title">{t('content.subsections')}</h2>}
+          <div className="list">
+            {subs.map((x, i) => (
+              <div key={x.id} className="list-item">
+                <Link to={`/admin/content/${x.id}`} className="list-main">
+                  <span className="list-title">
+                    {L(x.title) || x.id}
+                    {!x.published && <span className="badge-draft">{t('content.draft')}</span>}
+                    {x.free && <span className="badge-free">{t('content.free')}</span>}
+                  </span>
+                  <span className="muted small">{t('content.exCount', { n: exercisesOf(x.id).length })}</span>
+                </Link>
+                <span className="sort-btns">
+                  <button type="button" className="icon-btn" aria-label="↑" disabled={busy || i === 0} onClick={() => moveSub(i, -1)}>
+                    <Icon name="up" size={20} />
+                  </button>
+                  <button type="button" className="icon-btn" aria-label="↓" disabled={busy || i === subs.length - 1} onClick={() => moveSub(i, 1)}>
+                    <Icon name="down" size={20} />
+                  </button>
+                </span>
+              </div>
+            ))}
+          </div>
+          {items.length > 0 && <h2 className="h2 section-title">{t('section.exercises')}</h2>}
           <div className="list">
             {items.map((e, i) => (
               <div key={e.id} className="list-item">
@@ -129,6 +200,7 @@ export default function SectionEditor() {
                   <span className="list-title">
                     {L(e.title) || e.id}
                     {!e.published && <span className="badge-draft">{t('content.draft')}</span>}
+                    {e.free && <span className="badge-free">{t('content.free')}</span>}
                   </span>
                   <span className="muted small">{L(e.sets)}</span>
                 </Link>
@@ -143,10 +215,13 @@ export default function SectionEditor() {
               </div>
             ))}
           </div>
+          <button type="button" className="btn-primary" disabled={busy} onClick={addSub}>
+            {t('content.addSubsection')}
+          </button>
           <button type="button" className="btn-primary" disabled={busy} onClick={addEx}>
             {t('content.addExercise')}
           </button>
-          <ConfirmButton label={t('content.deleteSection')} confirmLabel={t('content.deleteSectionSure', { n: items.length })} onConfirm={del} />
+          <ConfirmButton label={t('content.deleteSection')} confirmLabel={t('content.deleteSectionSure', { n: items.length + subs.length })} onConfirm={del} />
         </>
       )}
     </main>
