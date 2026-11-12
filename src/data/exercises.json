@@ -1,0 +1,77 @@
+[
+  {
+    "id": "pushup",
+    "category": "fitness",
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps"
+    ],
+    "sets": "3 × 12",
+    "preview": "",
+    "video": ""
+  },
+  {
+    "id": "squat",
+    "category": "fitness",
+    "muscles": [
+      "quads",
+      "glutes"
+    ],
+    "sets": "4 × 10",
+    "preview": "media/squat-demo.mp4",
+    "video": ""
+  },
+  {
+    "id": "plank",
+    "category": "fitness",
+    "muscles": [
+      "abs"
+    ],
+    "sets": "3 × 45 с",
+    "preview": "",
+    "video": ""
+  },
+  {
+    "id": "mfr-quads",
+    "category": "mfr",
+    "muscles": [
+      "quads"
+    ],
+    "sets": "1–2 хв на ногу",
+    "preview": "",
+    "video": ""
+  },
+  {
+    "id": "mfr-back",
+    "category": "mfr",
+    "muscles": [
+      "back"
+    ],
+    "sets": "1–2 хв",
+    "preview": "",
+    "video": ""
+  },
+  {
+    "id": "hip-opener",
+    "category": "mobility",
+    "muscles": [
+      "glutes",
+      "quads"
+    ],
+    "sets": "2 × 30 с",
+    "preview": "",
+    "video": ""
+  },
+  {
+    "id": "thoracic-rotation",
+    "category": "mobility",
+    "muscles": [
+      "back",
+      "shoulders"
+    ],
+    "sets": "2 × 10",
+    "preview": "",
+    "video": ""
+  }
+]

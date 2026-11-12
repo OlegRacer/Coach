@@ -1,0 +1,194 @@
+[
+ {
+  "id": "chest",
+  "regions": [
+   "r08",
+   "r09"
+  ]
+ },
+ {
+  "id": "arms",
+  "parts": [
+   {
+    "id": "biceps",
+    "regions": [
+     "r10",
+     "r11"
+    ]
+   },
+   {
+    "id": "triceps",
+    "regions": [
+     "r61",
+     "r62"
+    ]
+   },
+   {
+    "id": "forearms",
+    "regions": [
+     "r21",
+     "r22",
+     "r66",
+     "r69"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "shoulders",
+  "parts": [
+   {
+    "id": "shoulders_front",
+    "regions": [
+     "r05",
+     "r06"
+    ]
+   },
+   {
+    "id": "shoulders_middle",
+    "regions": [
+     "r04",
+     "r07",
+     "r52",
+     "r57"
+    ]
+   },
+   {
+    "id": "shoulders_rear",
+    "regions": [
+     "r53",
+     "r56"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "abs",
+  "parts": [
+   {
+    "id": "abdominal",
+    "regions": [
+     "r12",
+     "r13",
+     "r17",
+     "r18",
+     "r19",
+     "r24",
+     "r25",
+     "r27",
+     "r28"
+    ]
+   },
+   {
+    "id": "obliques",
+    "regions": [
+     "r16",
+     "r20",
+     "r67",
+     "r68"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "back",
+  "parts": [
+   {
+    "id": "back_upper",
+    "regions": [
+     "r50",
+     "r51",
+     "r54",
+     "r55",
+     "r58",
+     "r59",
+     "r60"
+    ]
+   },
+   {
+    "id": "back_lats",
+    "regions": [
+     "r63",
+     "r64"
+    ]
+   },
+   {
+    "id": "back_erectors",
+    "regions": [
+     "r65"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "legs",
+  "parts": [
+   {
+    "id": "quads",
+    "regions": [
+     "r31",
+     "r32",
+     "r37",
+     "r38",
+     "r39",
+     "r40"
+    ]
+   },
+   {
+    "id": "hamstrings",
+    "regions": [
+     "r78",
+     "r81",
+     "r83",
+     "r84",
+     "r85",
+     "r86",
+     "r87",
+     "r88",
+     "r89",
+     "r90"
+    ]
+   },
+   {
+    "id": "adductors",
+    "regions": [
+     "r34",
+     "r35",
+     "r79",
+     "r80"
+    ]
+   },
+   {
+    "id": "glutes_small",
+    "regions": [
+     "r29",
+     "r30",
+     "r72",
+     "r73"
+    ]
+   },
+   {
+    "id": "glutes",
+    "regions": [
+     "r74",
+     "r75"
+    ]
+   }
+  ]
+ },
+ {
+  "id": "calves",
+  "regions": [
+   "r43",
+   "r44",
+   "r45",
+   "r46",
+   "r91",
+   "r92",
+   "r93",
+   "r94",
+   "r95",
+   "r96"
+  ]
+ }
+]
