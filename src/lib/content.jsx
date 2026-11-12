@@ -164,7 +164,7 @@ export function ContentProvider({ children }) {
     const { kids, chainOf, subtreeIds } = tree;
     // Розділ відкрито повністю: доступ (чи «безкоштовно») на ньому або на будь-якому предку.
     const sectionOpen = (id) => isAdmin || chainOf(id).some((a) => a.free || hasAccess(a.id));
-    const exerciseOpen = (e) => !!e && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id));
+    const exerciseOpen = (e) => !!e && !e.locked && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id));
     const exercisesIn = (id) => {
       const ids = new Set(subtreeIds(id));
       return data.exercises.filter((e) => ids.has(e.section_id));
@@ -191,7 +191,7 @@ export function ContentProvider({ children }) {
       // Вправи, що працюють хоч одну з вибраних зон (групу чи півзону).
       exercisesByMuscles: (ids) => {
         const want = expand(ids);
-        return data.exercises.filter((e) => [...expand(e.muscles)].some((l) => want.has(l)));
+        return data.exercises.filter((e) => !e.locked && [...expand(e.muscles || [])].some((l) => want.has(l)));
       }
     };
   }, [data, tree, sections, loaded, check, setOrder, isAdmin, hasAccess, hasExercise]);

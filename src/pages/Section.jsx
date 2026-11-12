@@ -17,7 +17,7 @@ export default function Section() {
   const sec = section(category);
   const full = sectionOpen(category);
   const subs = childrenOf(category);
-  const items = exercisesOf(category).filter(exerciseOpen);
+  const items = exercisesOf(category); // закриті (locked) показуємо із замком
   const total = openCount(category);
 
   const title = sec ? L(sec.title) : t('section.exercises');
@@ -64,17 +64,17 @@ export default function Section() {
           );
         })}
         {items.map((e) => (
-          <Link key={e.id} to={`/exercise/${e.id}`} className="list-item">
+          <Link key={e.id} to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="list-main">
               <span className="list-title">
                 {L(e.title)}
                 {!e.published && <span className="badge-draft">{t('content.draft')}</span>}
                 {e.free && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
               </span>
-              <span className="muted small">{L(e.sets)}</span>
+              <span className="muted small">{exerciseOpen(e) ? L(e.sets) : t('access.closed')}</span>
             </span>
             <span className="muted">
-              <Icon name="chevron" size={20} />
+              <Icon name={exerciseOpen(e) ? 'chevron' : 'lock'} size={20} />
             </span>
           </Link>
         ))}
