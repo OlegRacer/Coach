@@ -446,3 +446,4 @@ input, textarea, select, [contenteditable], .student-details {
 .small-icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; color: #101214; margin-right: 12px; }
 .crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .locked-tile .list-title { color: var(--muted); }
+.pack-off { opacity: .55; } .pack-row small { display: block; }

@@ -419,5 +419,10 @@
   "students.accessPartial": "Individual exercises open: {n}",
   "students.accessExercises": "Individual exercises",
   "students.accessRevokeOne": "Close",
-  "students.payments": "Payments"
+  "students.payments": "Payments",
+  "students.packs": "Student packages",
+  "students.packsNone": "No purchased packages yet",
+  "students.packClosed": "closed",
+  "students.packEnded": "ended",
+  "students.manual": "Sections and exercises manually"
 }

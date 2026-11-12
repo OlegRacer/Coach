@@ -415,5 +415,10 @@
   "students.accessPartial": "Відкрито окремі вправи: {n}",
   "students.accessExercises": "Окремі вправи",
   "students.accessRevokeOne": "Закрити",
-  "students.payments": "Оплати"
+  "students.payments": "Оплати",
+  "students.packs": "Пакети учня",
+  "students.packsNone": "Куплених пакетів ще немає",
+  "students.packClosed": "закритий",
+  "students.packEnded": "завершився",
+  "students.manual": "Розділи й вправи вручну"
 }

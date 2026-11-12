@@ -28,7 +28,7 @@ export default function AccessPanel({ student, rows, onChanged }) {
   const loadExtra = useCallback(async () => {
     const [a, b] = await Promise.all([
       supabase.from('exercise_access').select('exercise_id, expires_at').eq('student_id', student.id),
-      supabase.from('payment_requests').select('id, status, plan, created_at, decided_at').eq('student_id', student.id).order('created_at', { ascending: false }).limit(10)
+      supabase.from('payment_requests').select('id, status, plan, created_at, decided_at').eq('student_id', student.id).order('created_at', { ascending: false }).limit(30)
     ]);
     setExRows((a.data || []).filter((r) => new Date(r.expires_at).getTime() > Date.now()));
     setPays(b.data || []);
@@ -46,6 +46,25 @@ export default function AccessPanel({ student, rows, onChanged }) {
       onChanged();
     }
   };
+  // Закрити пакет: забираємо те, що він відкрив (розділи й вправи), і позначаємо його закритим.
+  const closePack = async (p) => {
+    setBusy(true);
+    const secs = (p.plan && p.plan.sections) || [];
+    const exs = (p.plan && p.plan.exercises) || [];
+    const r1 = secs.length ? await supabase.from('section_access').delete().eq('student_id', student.id).in('section', secs) : {};
+    const r2 = exs.length ? await supabase.from('exercise_access').delete().eq('student_id', student.id).in('exercise_id', exs) : {};
+    const r3 = await supabase.from('payment_requests').update({ plan: { ...p.plan, closed_at: new Date().toISOString() } }).eq('id', p.id);
+    setBusy(false);
+    if (r1.error || r2.error || r3.error) setErr(true);
+    loadExtra();
+    onChanged();
+  };
+  const packEnd = (p) => (p.decided_at ? new Date(p.decided_at).getTime() + ((p.plan && p.plan.days) || 0) * DAY : 0);
+  const packs = pays.filter((p) => p.status === 'approved');
+  const packItems = (p) => [
+    ...((p.plan && p.plan.sections) || []).map((id) => pathOf(id)),
+    ...((p.plan && p.plan.exercises) || []).map((id) => { const e = exercise(id); return e ? L(e.title) || id : id; })
+  ].filter(Boolean).join(', ');
   const exInSection = (id) => {
     const ids = new Set(subtreeIds(id));
     return exRows.filter((r) => {
@@ -107,6 +126,28 @@ export default function AccessPanel({ student, rows, onChanged }) {
 
   return (
     <div className="access-panel">
+      <span className="muted small">{t('students.packs')}</span>
+      {!packs.length && <p className="muted small">{t('students.packsNone')}</p>}
+      {packs.map((p) => {
+        const end = packEnd(p);
+        const active = !(p.plan && p.plan.closed_at) && end > Date.now();
+        return (
+          <div key={p.id} className={'access-row pack-row' + (active ? '' : ' pack-off')}>
+            <span>
+              <b>{L(p.plan && p.plan.title) || '—'}</b>
+              <small>
+                {active ? t('students.accessLeft', { date: fmt(new Date(end).toISOString()), n: left(new Date(end).toISOString()) }) : p.plan && p.plan.closed_at ? t('students.packClosed') : t('students.packEnded')}
+                {' · '}{new Date(p.created_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}
+              </small>
+              <small>{packItems(p)}</small>
+            </span>
+            {active && <button type="button" className="btn-ghost" disabled={busy} onClick={() => closePack(p)}>{t('students.accessRevokeOne')}</button>}
+          </div>
+        );
+      })}
+
+      <details className="ex-pick">
+        <summary>{t('students.manual')}</summary>
       {SECTIONS.map((s) => (
         <label key={s.id} className="access-row">
           <input type="checkbox" checked={picked.includes(s.id)} onChange={() => toggle(s.id)} />
@@ -135,20 +176,6 @@ export default function AccessPanel({ student, rows, onChanged }) {
           })}
         </>
       )}
-      {pays.length > 0 && (
-        <>
-          <span className="muted small">{t('students.payments')}</span>
-          {pays.map((p) => (
-            <div key={p.id} className="access-row">
-              <span>
-                {L(p.plan && p.plan.title) || '—'}
-                <small>{new Date(p.created_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })} · {t('pay.status.' + p.status)} · {p.plan && p.plan.price} {p.plan && p.plan.currency}</small>
-              </span>
-            </div>
-          ))}
-        </>
-      )}
-
       <span className="muted small">{t('students.accessDays')}</span>
       <div className="chips">
         {PRESETS.map((d) => (
@@ -174,6 +201,7 @@ export default function AccessPanel({ student, rows, onChanged }) {
       <button type="button" className="btn-danger" disabled={busy || !picked.length} onClick={revoke}>
         {t('students.accessRevoke')}
       </button>
+      </details>
     </div>
   );
 }

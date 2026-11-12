@@ -419,5 +419,10 @@
   "students.accessPartial": "已開通單項動作：{n}",
   "students.accessExercises": "單項動作",
   "students.accessRevokeOne": "關閉",
-  "students.payments": "付款"
+  "students.payments": "付款",
+  "students.packs": "學員方案",
+  "students.packsNone": "尚未購買方案",
+  "students.packClosed": "已關閉",
+  "students.packEnded": "已結束",
+  "students.manual": "手動管理分類與動作"
 }
