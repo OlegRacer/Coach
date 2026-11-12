@@ -424,5 +424,8 @@
   "students.packsNone": "No purchased packages yet",
   "students.packClosed": "closed",
   "students.packEnded": "ended",
-  "students.manual": "Sections and exercises manually"
+  "students.manual": "Sections and exercises manually",
+  "students.packManual": "given manually",
+  "students.packGive": "Give a package…",
+  "students.packGiveBtn": "Give"
 }

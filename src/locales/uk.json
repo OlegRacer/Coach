@@ -420,5 +420,8 @@
   "students.packsNone": "Куплених пакетів ще немає",
   "students.packClosed": "закритий",
   "students.packEnded": "завершився",
-  "students.manual": "Розділи й вправи вручну"
+  "students.manual": "Розділи й вправи вручну",
+  "students.packManual": "видано вручну",
+  "students.packGive": "Видати пакет…",
+  "students.packGiveBtn": "Видати"
 }

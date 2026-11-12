@@ -424,5 +424,8 @@
   "students.packsNone": "尚未購買方案",
   "students.packClosed": "已關閉",
   "students.packEnded": "已結束",
-  "students.manual": "手動管理分類與動作"
+  "students.manual": "手動管理分類與動作",
+  "students.packManual": "手動開通",
+  "students.packGive": "開通方案…",
+  "students.packGiveBtn": "開通"
 }

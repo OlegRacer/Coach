@@ -24,14 +24,18 @@ export default function AccessPanel({ student, rows, onChanged }) {
 
   // Окремі вправи (куплені в пакеті) і історія оплат цього учня.
   const [exRows, setExRows] = useState([]);
-  const [pays, setPays] = useState([]);
+  const [packs, setPacks] = useState([]);
+  const [plans, setPlans] = useState([]);
+  const [planId, setPlanId] = useState('');
   const loadExtra = useCallback(async () => {
     const [a, b] = await Promise.all([
       supabase.from('exercise_access').select('exercise_id, expires_at').eq('student_id', student.id),
-      supabase.from('payment_requests').select('id, status, plan, created_at, decided_at').eq('student_id', student.id).order('created_at', { ascending: false }).limit(30)
+      supabase.from('student_packages').select('*').eq('student_id', student.id).order('granted_at', { ascending: false }).limit(30)
     ]);
     setExRows((a.data || []).filter((r) => new Date(r.expires_at).getTime() > Date.now()));
-    setPays(b.data || []);
+    setPacks(b.data || []);
+    const pl = await supabase.from('access_plans').select('id, title').order('position');
+    setPlans(pl.data || []);
   }, [student.id]);
   useEffect(() => {
     loadExtra();
@@ -46,21 +50,26 @@ export default function AccessPanel({ student, rows, onChanged }) {
       onChanged();
     }
   };
-  // Закрити пакет: забираємо те, що він відкрив (розділи й вправи), і позначаємо його закритим.
+  // Закрити пакет: забираємо те, що він відкрив (розділи й вправи).
   const closePack = async (p) => {
     setBusy(true);
-    const secs = (p.plan && p.plan.sections) || [];
-    const exs = (p.plan && p.plan.exercises) || [];
-    const r1 = secs.length ? await supabase.from('section_access').delete().eq('student_id', student.id).in('section', secs) : {};
-    const r2 = exs.length ? await supabase.from('exercise_access').delete().eq('student_id', student.id).in('exercise_id', exs) : {};
-    const r3 = await supabase.from('payment_requests').update({ plan: { ...p.plan, closed_at: new Date().toISOString() } }).eq('id', p.id);
+    const { error } = await supabase.rpc('close_package', { p_id: p.id });
     setBusy(false);
-    if (r1.error || r2.error || r3.error) setErr(true);
+    setErr(!!error);
     loadExtra();
     onChanged();
   };
-  const packEnd = (p) => (p.decided_at ? new Date(p.decided_at).getTime() + ((p.plan && p.plan.days) || 0) * DAY : 0);
-  const packs = pays.filter((p) => p.status === 'approved');
+  const givePack = async () => {
+    if (!planId) return;
+    setBusy(true);
+    const { error } = await supabase.rpc('grant_plan', { p_student: student.id, p_plan: planId });
+    setBusy(false);
+    setErr(!!error);
+    setPlanId('');
+    loadExtra();
+    onChanged();
+  };
+  const packEnd = (p) => new Date(p.expires_at).getTime();
   const packItems = (p) => [
     ...((p.plan && p.plan.sections) || []).map((id) => pathOf(id)),
     ...((p.plan && p.plan.exercises) || []).map((id) => { const e = exercise(id); return e ? L(e.title) || id : id; })
@@ -130,14 +139,14 @@ export default function AccessPanel({ student, rows, onChanged }) {
       {!packs.length && <p className="muted small">{t('students.packsNone')}</p>}
       {packs.map((p) => {
         const end = packEnd(p);
-        const active = !(p.plan && p.plan.closed_at) && end > Date.now();
+        const active = !p.closed_at && end > Date.now();
         return (
           <div key={p.id} className={'access-row pack-row' + (active ? '' : ' pack-off')}>
             <span>
               <b>{L(p.plan && p.plan.title) || '—'}</b>
               <small>
-                {active ? t('students.accessLeft', { date: fmt(new Date(end).toISOString()), n: left(new Date(end).toISOString()) }) : p.plan && p.plan.closed_at ? t('students.packClosed') : t('students.packEnded')}
-                {' · '}{new Date(p.created_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}
+                {active ? t('students.accessLeft', { date: fmt(new Date(end).toISOString()), n: left(new Date(end).toISOString()) }) : p.closed_at ? t('students.packClosed') : t('students.packEnded')}
+                {' · '}{new Date(p.granted_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}{p.source === 'manual' ? ' · ' + t('students.packManual') : ''}
               </small>
               <small>{packItems(p)}</small>
             </span>
@@ -145,6 +154,16 @@ export default function AccessPanel({ student, rows, onChanged }) {
           </div>
         );
       })}
+
+      {plans.length > 0 && (
+        <div className="row">
+          <select className="field" value={planId} onChange={(e) => setPlanId(e.target.value)} aria-label={t('students.packGive')}>
+            <option value="">{t('students.packGive')}</option>
+            {plans.map((pl) => <option key={pl.id} value={pl.id}>{L(pl.title) || pl.id}</option>)}
+          </select>
+          <button type="button" className="btn-primary" disabled={busy || !planId} onClick={givePack}>{t('students.packGiveBtn')}</button>
+        </div>
+      )}
 
       <details className="ex-pick">
         <summary>{t('students.manual')}</summary>
