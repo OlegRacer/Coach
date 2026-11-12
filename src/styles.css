@@ -451,3 +451,35 @@ input, textarea, select, [contenteditable], .student-details {
 /* Панель доступів у картці учня: текст не виділяється (виділюваними лишаються лише контакти й поля вводу). */
 .access-panel, .access-panel * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .access-panel input, .access-panel select { -webkit-user-select: text; user-select: text; }
+
+/* ===== Горизонтальний режим: планшети, ПК і телефон набік ===== */
+.page { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+
+@media (min-width: 720px) {
+  .app { max-width: 1120px; }
+  .page { padding-left: max(28px, env(safe-area-inset-left)); padding-right: max(28px, env(safe-area-inset-right)); }
+  /* Сторінки з формами лишаються вузькою колонкою по центру. */
+  .page:not(.wide) { max-width: 680px; margin: 0 auto; width: 100%; }
+
+  .wide .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .wide .list { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+
+  /* Вправа: відео й фото ліворуч, підходи та опис праворуч. */
+  .ex-page { max-width: 680px; margin: 0 auto; width: 100%; }
+  .ex-page:has(> .media, > section.stack) { max-width: none; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 24px; align-items: start; grid-auto-flow: row dense; }
+  .ex-page:has(> .media, > section.stack) > :first-child, .ex-page:has(> .media, > section.stack) > .pill { grid-column: 1 / -1; }
+  .ex-page:has(> .media, > section.stack) > .media, .ex-page:has(> .media, > section.stack) > section.stack { grid-column: 1; }
+  .ex-page:has(> .media, > section.stack) > section.card { grid-column: 2; }
+
+  /* Анатомія: фігура ліворуч, зони й вправи праворуч. */
+  .anatomy-page { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); column-gap: 24px; align-items: start; }
+  .anatomy-page > :first-child { grid-column: 1 / -1; }
+  .anatomy-page > :nth-child(2) { grid-column: 1; grid-row: 2 / span 20; position: sticky; top: 16px; }
+  .anatomy-page > :nth-child(n+3) { grid-column: 2; }
+}
+
+/* Телефон набік: мало висоти, тому щільніше. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .page { padding-top: max(10px, env(safe-area-inset-top)); gap: 12px; }
+  .title { font-size: 24px; }
+}

@@ -28,7 +28,7 @@ export default function Home() {
   const dateLabel = now.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
 
   return (
-    <main className="page">
+    <main className="page wide">
       <div className="head">
         <div>
           <div className="muted small">{t('home.todayDate', { date: dateLabel })}</div>

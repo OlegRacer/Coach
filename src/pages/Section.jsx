@@ -23,7 +23,7 @@ export default function Section() {
   const title = sec ? L(sec.title) : t('section.exercises');
   if (!ready) return <main className="page" />;
   if (!sec) return (
-    <main className="page">
+    <main className="page wide">
       <TopBar title={title} />
       <p className="muted">{t('section.empty')}</p>
     </main>
@@ -31,7 +31,7 @@ export default function Section() {
   if (!full && !total) return <Locked section={category} title={title} />;
   const parent = chainOf(category).slice(-2, -1)[0];
   return (
-    <main className="page">
+    <main className="page wide">
       <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} />
       {!full && (
         <div className="card partial-note">

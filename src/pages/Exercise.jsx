@@ -39,7 +39,7 @@ export default function Exercise() {
   const title = L(ex.title);
 
   return (
-    <main className="page">
+    <main className="page wide ex-page">
       <TopBar title={title} to={`/section/${ex.section_id}`} />
       {!ex.published && <div className="pill draft-pill">{t('content.draft')}</div>}
 

@@ -46,7 +46,7 @@ export default function Anatomy() {
   if (!sectionOpen('anatomy')) return <Locked section="anatomy" title={t('anatomy.title')} />;
 
   return (
-    <main className="page">
+    <main className="page wide anatomy-page">
       <TopBar title={t('anatomy.title')} />
 
       <div className="card">
