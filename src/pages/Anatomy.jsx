@@ -49,7 +49,8 @@ export default function Anatomy() {
     <main className="page wide anatomy-page">
       <TopBar title={t('anatomy.title')} />
 
-      <div className="card">
+      <div className="card anat-card" style={{ '--ar': regions.width / regions.height }}>
+        <div className="anat-fig">
         <div className="body-fig">
           <img src={bodyImg} width={regions.width} height={regions.height} alt={t('anatomy.bodyAria')} draggable="false" />
           <svg viewBox={`0 0 ${regions.width} ${regions.height}`} className="body-glow" aria-hidden="true">
@@ -78,6 +79,8 @@ export default function Anatomy() {
             })}
           </svg>
         </div>
+        </div>
+        <div className="anat-ctrl">
         <p className="muted small">{t('anatomy.tapMulti')}</p>
         <div className="muscle-groups">
           {GROUPS.map((g) => {
@@ -114,6 +117,7 @@ export default function Anatomy() {
             {t('anatomy.clear')}
           </button>
         )}
+        </div>
       </div>
 
       {sel.size > 0 && (
