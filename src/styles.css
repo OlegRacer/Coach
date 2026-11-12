@@ -501,3 +501,18 @@ input, textarea, select, [contenteditable], .student-details {
   .update-banner { left: auto; right: max(16px, env(safe-area-inset-right)); transform: none; max-width: 420px; bottom: max(10px, env(safe-area-inset-bottom)); padding: 8px 8px 8px 14px; }
   .sheet, .modal-sheet { max-height: 94vh; }
 }
+
+/* Широкий екран і телефон набік: дві плитки розкладу поряд (мій розклад і розклад тренерів), курси нижче.
+   Висота плитки обмежена: коли занять багато, список усередині прокручується. */
+@media (min-width: 720px) {
+  .home-grid { display: flex; flex-direction: column; align-items: stretch; gap: 20px; width: 100%; }
+  .home-sched, .home-sections { width: 100%; }
+  .widget { background: transparent; padding: 0; overflow: visible; box-shadow: none; }
+  .widget-track { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; overflow: visible; margin: 0; scroll-snap-type: none; align-items: stretch; }
+  .widget-page { background: var(--card); border-radius: 24px; padding: 18px; max-height: clamp(230px, 55vh, 440px); min-height: 0; overflow: hidden; }
+  .widget-page > :last-child { overflow-y: auto; min-height: 0; }
+  .widget-dots { display: none; }
+}
+@media (orientation: landscape) and (max-height: 520px) and (min-width: 720px) {
+  .widget-page { max-height: 80vh; padding: 14px; gap: 10px; }
+}
