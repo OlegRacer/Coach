@@ -213,8 +213,6 @@
   "sa.cancel": "Скасувати",
   "sa.delete": "Видалити",
   "sa.deleteConfirm": "Ще раз, щоб видалити",
-  "sa.students": "Учні",
-  "sa.noStudents": "Учнів ще немає.",
   "sa.needTrainer": "Спершу додайте тренера.",
   "sa.empty": "Занять ще немає.",
   "sa.error": "Не вдалося виконати. Чи виконано supabase-schedule.sql?",

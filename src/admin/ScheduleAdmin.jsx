@@ -1,31 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
 import TopBar from '../components/TopBar.jsx';
+import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 const blank = { trainer_id: '', title: '', place: '', repeat: 'weekly', weekday: 1, on_date: '', start_time: '18:00', duration_min: 60 };
 
-// Адмінка розкладу: тренери, заняття (щотижня або на дату) і запис учнів на заняття.
+// Адмінка розкладу: тренери і заняття (щотижня або на дату).
 export default function ScheduleAdmin() {
   const { t } = useI18n();
   const { ready, isAdmin } = useAuth();
   const [trainers, setTrainers] = useState([]);
   const [slots, setSlots] = useState([]);
-  const [enrol, setEnrol] = useState([]);
-  const [students, setStudents] = useState([]);
   const [newTrainer, setNewTrainer] = useState('');
   const [form, setForm] = useState(null);
-  const [openSlot, setOpenSlot] = useState(null);
   const [armed, setArmed] = useState(null);
   const [err, setErr] = useState(false);
 
   const load = useCallback(async () => {
-    const [tr, sl, en, st] = await Promise.all([
+    const [tr, sl] = await Promise.all([
       supabase.from('trainers').select('*').order('sort').order('created_at'),
-      supabase.from('schedule_slots').select('*').order('start_time'),
-      supabase.from('slot_students').select('slot_id, student_id'),
-      supabase.from('profiles').select('id, full_name, email, role').neq('role', 'admin').order('created_at')
+      supabase.from('schedule_slots').select('*').order('start_time')
     ]);
     if (tr.error || sl.error) {
       setErr(true);
@@ -33,8 +29,6 @@ export default function ScheduleAdmin() {
     }
     setTrainers(tr.data || []);
     setSlots((sl.data || []).map((s) => ({ ...s, start_time: String(s.start_time).slice(0, 5) })));
-    setEnrol(en.data || []);
-    setStudents(st.data || []);
   }, []);
 
   useEffect(() => {
@@ -78,13 +72,6 @@ export default function ScheduleAdmin() {
   };
   const formOk = form && form.trainer_id && form.title.trim() && form.start_time && (form.repeat === 'weekly' || form.on_date);
 
-  const toggleStudent = (slotId, studentId, on) =>
-    run(
-      on
-        ? supabase.from('slot_students').delete().eq('slot_id', slotId).eq('student_id', studentId)
-        : supabase.from('slot_students').insert({ slot_id: slotId, student_id: studentId })
-    );
-
   if (!ready) return <main className="page" />;
   if (!isAdmin) {
     return (
@@ -96,7 +83,6 @@ export default function ScheduleAdmin() {
   }
 
   const when = (s) => (s.weekday != null ? t(`day.short.${s.weekday}`) : s.on_date);
-  const nameOf = (st) => st.full_name || st.email;
 
   return (
     <main className="page">
@@ -185,49 +171,26 @@ export default function ScheduleAdmin() {
         return (
           <section key={tr.id} className="card">
             <h2 className="h2">{tr.name}</h2>
-            {mine.map((s) => {
-              const ids = enrol.filter((e) => e.slot_id === s.id).map((e) => e.student_id);
-              return (
-                <div key={s.id} className="stack" style={{ gap: 10 }}>
-                  <div className="session">
-                    <div className="session-time">
-                      <b>{s.start_time}</b>
-                      <span>{when(s)}</span>
-                    </div>
-                    <div>
-                      <div className="session-title">{s.title}</div>
-                      <div className="muted small">{[t('common.minutes', { n: s.duration_min }), s.place].filter(Boolean).join(' · ')}</div>
-                    </div>
-                  </div>
-                  <div className="row">
-                    <button type="button" className="btn-ghost" onClick={() => setOpenSlot(openSlot === s.id ? null : s.id)}>
-                      {t('sa.students')} ({ids.length})
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-danger"
-                      onClick={() => confirm('s' + s.id, () => run(supabase.from('schedule_slots').delete().eq('id', s.id)))}
-                    >
-                      {armed === 's' + s.id ? t('sa.deleteConfirm') : t('sa.delete')}
-                    </button>
-                  </div>
-                  {openSlot === s.id && (
-                    <div className="access-panel">
-                      {!students.length && <p className="muted small">{t('sa.noStudents')}</p>}
-                      {students.map((st) => {
-                        const on = ids.includes(st.id);
-                        return (
-                          <label key={st.id} className="access-row">
-                            <input type="checkbox" checked={on} onChange={() => toggleStudent(s.id, st.id, on)} />
-                            <span>{nameOf(st)}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  )}
+            {mine.map((s) => (
+              <div key={s.id} className="session">
+                <div className="session-time">
+                  <b>{s.start_time}</b>
+                  <span>{when(s)}</span>
                 </div>
-              );
-            })}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="session-title">{s.title}</div>
+                  <div className="muted small">{[t('common.minutes', { n: s.duration_min }), s.place].filter(Boolean).join(' · ')}</div>
+                </div>
+                <button
+                  type="button"
+                  className={'icon-btn trash-btn' + (armed === 's' + s.id ? ' armed' : '')}
+                  aria-label={t('sa.delete')}
+                  onClick={() => confirm('s' + s.id, () => run(supabase.from('schedule_slots').delete().eq('id', s.id)))}
+                >
+                  {armed === 's' + s.id ? <span className="small">{t('sa.deleteConfirm')}</span> : <Icon name="trash" size={22} />}
+                </button>
+              </div>
+            ))}
           </section>
         );
       })}

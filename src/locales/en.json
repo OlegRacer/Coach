@@ -217,8 +217,6 @@
   "sa.cancel": "Cancel",
   "sa.delete": "Delete",
   "sa.deleteConfirm": "Tap again to delete",
-  "sa.students": "Students",
-  "sa.noStudents": "No students yet.",
   "sa.needTrainer": "Add a trainer first.",
   "sa.empty": "No classes yet.",
   "sa.error": "Failed. Has supabase-schedule.sql been run?",

@@ -217,8 +217,6 @@
   "sa.cancel": "取消",
   "sa.delete": "刪除",
   "sa.deleteConfirm": "再按一次刪除",
-  "sa.students": "學員",
-  "sa.noStudents": "尚無學員。",
   "sa.needTrainer": "請先新增教練。",
   "sa.empty": "尚無課程。",
   "sa.error": "操作失敗。是否已執行 supabase-schedule.sql？",

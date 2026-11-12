@@ -516,3 +516,7 @@ input, textarea, select, [contenteditable], .student-details {
 @media (orientation: landscape) and (max-height: 520px) and (min-width: 720px) {
   .widget-page { max-height: 80vh; padding: 14px; gap: 10px; }
 }
+
+/* Смітник у рядку заняття (адмінка розкладу) */
+.trash-btn { flex: none; min-width: 44px; height: 44px; border-radius: 14px; color: #ff8a8a; background: rgba(255, 90, 90, .12); display: grid; place-items: center; padding: 0 10px; }
+.trash-btn.armed { background: #ff5a5a; color: #101214; font-weight: 700; }
