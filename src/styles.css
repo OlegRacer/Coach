@@ -447,3 +447,7 @@ input, textarea, select, [contenteditable], .student-details {
 .crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .locked-tile .list-title { color: var(--muted); }
 .pack-off { opacity: .55; } .pack-row small { display: block; }
+
+/* Панель доступів у картці учня: текст не виділяється (виділюваними лишаються лише контакти й поля вводу). */
+.access-panel, .access-panel * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.access-panel input, .access-panel select { -webkit-user-select: text; user-select: text; }

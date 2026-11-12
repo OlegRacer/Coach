@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
+import { ConfirmButton } from './ContentCommon.jsx';
 
 const PRESETS = [7, 14, 30, 90];
 const DAY = 86400000;
@@ -58,6 +59,14 @@ export default function AccessPanel({ student, rows, onChanged }) {
     setErr(!!error);
     loadExtra();
     onChanged();
+  };
+  // Прибрати закритий чи завершений пакет зі списку (доступ це не змінює).
+  const deletePack = async (p) => {
+    setBusy(true);
+    const { error } = await supabase.from('student_packages').delete().eq('id', p.id);
+    setBusy(false);
+    setErr(!!error);
+    loadExtra();
   };
   const givePack = async () => {
     if (!planId) return;
@@ -150,7 +159,11 @@ export default function AccessPanel({ student, rows, onChanged }) {
               </small>
               <small>{packItems(p)}</small>
             </span>
-            {active && <button type="button" className="btn-ghost" disabled={busy} onClick={() => closePack(p)}>{t('students.accessRevokeOne')}</button>}
+            {active ? (
+              <button type="button" className="btn-ghost" disabled={busy} onClick={() => closePack(p)}>{t('students.accessRevokeOne')}</button>
+            ) : (
+              <ConfirmButton label={t('mem.delete')} confirmLabel={t('pay.delConfirm')} onConfirm={() => deletePack(p)} />
+            )}
           </div>
         );
       })}
