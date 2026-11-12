@@ -51,8 +51,11 @@ export default function Home() {
         </div>
       )}
 
-      <ScheduleWidget />
-
+      <div className="home-grid">
+      <div className="home-sched">
+        <ScheduleWidget />
+      </div>
+      <div className="home-sections stack">
       <div className="row between">
         <h2 className="h2 section-title">{t('home.sections')}</h2>
         {sections.length > 1 && (
@@ -107,6 +110,8 @@ export default function Home() {
             </Link>
           );
         })}
+      </div>
+      </div>
       </div>
 
       <SettingsSheet open={settingsOpen} onClose={() => setSettingsOpen(false)} />

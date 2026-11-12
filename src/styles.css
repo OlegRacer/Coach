@@ -483,3 +483,21 @@ input, textarea, select, [contenteditable], .student-details {
   .page { padding-top: max(10px, env(safe-area-inset-top)); gap: 12px; }
   .title { font-size: 24px; }
 }
+
+/* Головна на широкому екрані: розклад ліворуч, розділи праворуч. */
+@media (min-width: 1200px) { .app { max-width: 1440px; } }
+@media (min-width: 720px) {
+  .home-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+  .home-sched, .home-sections { min-width: 0; }
+  .home-sections .tiles { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+}
+@media (min-width: 1100px) {
+  .home-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+}
+
+/* Телефон набік: плашки знизу не перекривають пів екрана. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .pay-toast { left: auto; right: max(16px, env(safe-area-inset-right)); max-width: 420px; padding: 10px 14px; gap: 8px; bottom: max(10px, env(safe-area-inset-bottom)); }
+  .update-banner { left: auto; right: max(16px, env(safe-area-inset-right)); transform: none; max-width: 420px; bottom: max(10px, env(safe-area-inset-bottom)); padding: 8px 8px 8px 14px; }
+  .sheet, .modal-sheet { max-height: 94vh; }
+}
