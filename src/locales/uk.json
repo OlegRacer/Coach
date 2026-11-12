@@ -411,5 +411,9 @@
   "content.freeSectionHint": "Усе в цьому розділі відкрите всім учням",
   "content.freeExHint": "Ця вправа відкрита всім учням",
   "content.subsections": "Підрозділи",
-  "content.addSubsection": "+ Додати підрозділ"
+  "content.addSubsection": "+ Додати підрозділ",
+  "students.accessPartial": "Відкрито окремі вправи: {n}",
+  "students.accessExercises": "Окремі вправи",
+  "students.accessRevokeOne": "Закрити",
+  "students.payments": "Оплати"
 }

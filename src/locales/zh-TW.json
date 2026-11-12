@@ -415,5 +415,9 @@
   "content.freeSectionHint": "此分類內的所有內容對所有學員開放",
   "content.freeExHint": "此動作對所有學員開放",
   "content.subsections": "子分類",
-  "content.addSubsection": "+ 新增子分類"
+  "content.addSubsection": "+ 新增子分類",
+  "students.accessPartial": "已開通單項動作：{n}",
+  "students.accessExercises": "單項動作",
+  "students.accessRevokeOne": "關閉",
+  "students.payments": "付款"
 }

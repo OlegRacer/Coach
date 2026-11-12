@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -13,7 +13,7 @@ const DAY = 86400000;
 export default function AccessPanel({ student, rows, onChanged }) {
   const { t, locale } = useI18n();
   const { user } = useAuth();
-  const { rawSections, chainOf } = useContent();
+  const { rawSections, chainOf, exercises, exercise, subtreeIds } = useContent();
   const L = useL();
   const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
   const SECTIONS = [...rawSections].sort((a, b) => pathOf(a.id).localeCompare(pathOf(b.id)));
@@ -22,12 +22,47 @@ export default function AccessPanel({ student, rows, onChanged }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState(false);
 
+  // Окремі вправи (куплені в пакеті) і історія оплат цього учня.
+  const [exRows, setExRows] = useState([]);
+  const [pays, setPays] = useState([]);
+  const loadExtra = useCallback(async () => {
+    const [a, b] = await Promise.all([
+      supabase.from('exercise_access').select('exercise_id, expires_at').eq('student_id', student.id),
+      supabase.from('payment_requests').select('id, status, plan, created_at, decided_at').eq('student_id', student.id).order('created_at', { ascending: false }).limit(10)
+    ]);
+    setExRows((a.data || []).filter((r) => new Date(r.expires_at).getTime() > Date.now()));
+    setPays(b.data || []);
+  }, [student.id]);
+  useEffect(() => {
+    loadExtra();
+  }, [loadExtra, rows]);
+  const revokeEx = async (id) => {
+    setBusy(true);
+    const { error } = await supabase.from('exercise_access').delete().eq('student_id', student.id).eq('exercise_id', id);
+    setBusy(false);
+    if (error) setErr(true);
+    else {
+      loadExtra();
+      onChanged();
+    }
+  };
+  const exInSection = (id) => {
+    const ids = new Set(subtreeIds(id));
+    return exRows.filter((r) => {
+      const e = exercises.find((x) => x.id === r.exercise_id);
+      return e && ids.has(e.section_id);
+    }).length;
+  };
+
   const byId = Object.fromEntries(rows.map((r) => [r.section, r.expires_at]));
   const fmt = (iso) => new Date(iso).toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   const left = (iso) => Math.ceil((new Date(iso).getTime() - Date.now()) / DAY);
   const status = (id) => {
     const exp = byId[id];
-    if (!exp || new Date(exp).getTime() <= Date.now()) return t('students.accessNone');
+    if (!exp || new Date(exp).getTime() <= Date.now()) {
+      const k = exInSection(id);
+      return k ? t('students.accessPartial', { n: k }) : t('students.accessNone');
+    }
     return t('students.accessLeft', { date: fmt(exp), n: left(exp) });
   };
   const toggle = (id) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : [...p, id]));
@@ -81,6 +116,38 @@ export default function AccessPanel({ student, rows, onChanged }) {
           </span>
         </label>
       ))}
+
+      {exRows.length > 0 && (
+        <>
+          <span className="muted small">{t('students.accessExercises')}</span>
+          {exRows.map((r) => {
+            const e = exercise(r.exercise_id);
+            const sec = e && chainOf(e.section_id).map((a) => L(a.title) || a.id).join(' › ');
+            return (
+              <div key={r.exercise_id} className="access-row">
+                <span>
+                  {e ? L(e.title) || e.id : r.exercise_id}
+                  <small>{sec ? sec + ' · ' : ''}{t('students.accessLeft', { date: fmt(r.expires_at), n: left(r.expires_at) })}</small>
+                </span>
+                <button type="button" className="btn-ghost" disabled={busy} onClick={() => revokeEx(r.exercise_id)}>{t('students.accessRevokeOne')}</button>
+              </div>
+            );
+          })}
+        </>
+      )}
+      {pays.length > 0 && (
+        <>
+          <span className="muted small">{t('students.payments')}</span>
+          {pays.map((p) => (
+            <div key={p.id} className="access-row">
+              <span>
+                {L(p.plan && p.plan.title) || '—'}
+                <small>{new Date(p.created_at).toLocaleDateString(locale, { day: 'numeric', month: 'short' })} · {t('pay.status.' + p.status)} · {p.plan && p.plan.price} {p.plan && p.plan.currency}</small>
+              </span>
+            </div>
+          ))}
+        </>
+      )}
 
       <span className="muted small">{t('students.accessDays')}</span>
       <div className="chips">

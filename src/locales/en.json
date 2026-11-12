@@ -415,5 +415,9 @@
   "content.freeSectionHint": "Everything in this section is open to all students",
   "content.freeExHint": "This exercise is open to all students",
   "content.subsections": "Subsections",
-  "content.addSubsection": "+ Add subsection"
+  "content.addSubsection": "+ Add subsection",
+  "students.accessPartial": "Individual exercises open: {n}",
+  "students.accessExercises": "Individual exercises",
+  "students.accessRevokeOne": "Close",
+  "students.payments": "Payments"
 }
