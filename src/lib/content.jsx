@@ -42,7 +42,7 @@ export function mediaUrl(src) {
 }
 
 export function ContentProvider({ children }) {
-  const { user, isAdmin, access, hasAccess, hasExercise } = useAuth();
+  const { user, isAdmin, access, exAccess, hasAccess, hasExercise } = useAuth();
   const uid = user ? user.id : '';
   const key = 'content:v1:' + (uid || 'guest');
   const [data, setData] = useState(() => read(key, seed));
@@ -91,7 +91,7 @@ export function ContentProvider({ children }) {
     [key, uid]
   );
 
-  const accessSig = JSON.stringify(access || {});
+  const accessSig = JSON.stringify([access || {}, exAccess || {}]);
   useEffect(() => {
     check(false);
   }, [check, accessSig, isAdmin]);
