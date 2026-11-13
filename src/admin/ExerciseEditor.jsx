@@ -1,3 +1,4 @@
+import { fixMp4 } from '../lib/mp4fix.js';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
@@ -79,7 +80,15 @@ export default function ExerciseEditor() {
     setErr('');
     const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
     const path = `${eid}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('content').upload(path, file, { contentType: file.type, cacheControl: '31536000' });
+    // mp4 з Flow/Veo: переносимо moov на початок і прибираємо звук (без перекодування), щоб iPhone не підвисав на циклі
+    let body = file;
+    if (/^video\/(mp4|quicktime)$/.test(file.type) && file.size < 31 * 1024 * 1024) {
+      try {
+        const fixed = fixMp4(new Uint8Array(await file.arrayBuffer()));
+        if (fixed) body = new Blob([fixed], { type: file.type });
+      } catch (e) { body = file; }
+    }
+    const { error } = await supabase.storage.from('content').upload(path, body, { contentType: file.type, cacheControl: '31536000' });
     setBusy(false);
     if (error) return fail(error);
     set('preview', path);
