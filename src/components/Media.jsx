@@ -10,54 +10,20 @@ function resolve(src) {
   return /^https?:\/\//.test(src) ? src : BASE + src.replace(/^\//, '');
 }
 
-// Відео-прев'ю крутиться по колу. На iPhone зациклення потокового відео (кожен виток це новий запит до сервера)
-// інколи підвисає на кінці. Тому відео паралельно повністю вантажимо в пам'ять (до 30 МБ) і після цього
-// граємо вже з пам'яті на початку наступного витка: кінець більше не залежить від мережі.
-// Якщо автозапуск заблоковано (економія заряду), відео запускається по дотику.
+// Відео-прев'ю: звичайне нативне зациклення без додаткових завантажень у пам'ять (на iPhone вони вішали вкладку).
+// muted/loop виставляємо явно, бо React не завжди кладе muted в DOM, а iPhone без нього не запускає автоплей.
 function LoopVideo({ url, title }) {
   const ref = useRef(null);
   useEffect(() => {
     const v = ref.current;
     if (!v) return undefined;
-    let blobUrl = '';
-    let pending = '';
-    let dead = false;
     v.muted = true;
     v.loop = true;
     const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
-    const swap = () => {
-      if (!pending || dead) return;
-      blobUrl = pending;
-      pending = '';
-      v.src = blobUrl;
-      v.muted = true;
-      v.loop = true;
-      play();
-    };
-    const tick = () => { if (pending && v.currentTime < 0.4) swap(); };
     const visible = () => { if (!document.hidden && v.paused) play(); };
-    v.addEventListener('timeupdate', tick);
-    v.addEventListener('loadeddata', play);
     document.addEventListener('visibilitychange', visible);
     play();
-    if (typeof fetch === 'function' && typeof URL !== 'undefined' && URL.createObjectURL) {
-      fetch(url)
-        .then((r) => (r.ok ? r.blob() : null))
-        .then((blob) => {
-          if (!blob || dead || blob.size > 40 * 1024 * 1024) return;
-          pending = URL.createObjectURL(blob);
-          if (v.paused) swap();
-        })
-        .catch(() => {});
-    }
-    return () => {
-      dead = true;
-      v.removeEventListener('timeupdate', tick);
-      v.removeEventListener('loadeddata', play);
-      document.removeEventListener('visibilitychange', visible);
-      if (pending) URL.revokeObjectURL(pending);
-      if (blobUrl) URL.revokeObjectURL(blobUrl);
-    };
+    return () => document.removeEventListener('visibilitychange', visible);
   }, [url]);
   return (
     <video

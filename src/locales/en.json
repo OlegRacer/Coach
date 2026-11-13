@@ -432,5 +432,6 @@
   "students.deleteAllIdle": "Delete all inactive ({n})",
   "students.deleteAccount": "Delete account",
   "students.deleteConfirm": "Really delete? Irreversible",
-  "students.deleteError": "Could not delete. Run supabase-cleanup.sql"
+  "students.deleteError": "Could not delete. Run supabase-cleanup.sql",
+  "content.heavyVideo": "Video {res}, {mb} MB, {sec}s. For phones keep it to 720p, under 8 MB and 10 s: heavy videos lag and can freeze iPhones. Compress it before uploading."
 }

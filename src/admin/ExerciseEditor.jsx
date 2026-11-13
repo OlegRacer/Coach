@@ -83,6 +83,22 @@ export default function ExerciseEditor() {
     setBusy(false);
     if (error) return fail(error);
     set('preview', path);
+    // Важке відео (висока роздільність / великий файл) на телефонах гальмує і може завішувати вкладку: попереджаємо.
+    if (file.type.startsWith('video/')) {
+      const url = URL.createObjectURL(file);
+      const v = document.createElement('video');
+      v.preload = 'metadata';
+      v.onloadedmetadata = () => {
+        const w = v.videoWidth;
+        const dur = Math.round(v.duration || 0);
+        if (w > 1280 || file.size > 12 * 1024 * 1024 || dur > 20) {
+          setErr(t('content.heavyVideo', { res: `${w}×${v.videoHeight}`, mb: (file.size / 1048576).toFixed(1), sec: dur }));
+        }
+        URL.revokeObjectURL(url);
+      };
+      v.onerror = () => URL.revokeObjectURL(url);
+      v.src = url;
+    }
   };
 
   const setVideo = (i, patch) => {

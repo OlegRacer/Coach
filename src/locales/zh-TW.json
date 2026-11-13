@@ -432,5 +432,6 @@
   "students.deleteAllIdle": "刪除所有閒置帳號（{n}）",
   "students.deleteAccount": "刪除帳號",
   "students.deleteConfirm": "確定刪除？無法復原",
-  "students.deleteError": "刪除失敗，請執行 supabase-cleanup.sql"
+  "students.deleteError": "刪除失敗，請執行 supabase-cleanup.sql",
+  "content.heavyVideo": "影片 {res}、{mb} MB、{sec} 秒。手機建議 720p、8 MB 以內、10 秒以內：過重的影片會卡頓，iPhone 上甚至會當機。請先壓縮再上傳。"
 }
