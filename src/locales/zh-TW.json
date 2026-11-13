@@ -425,5 +425,12 @@
   "students.manual": "手動管理分類與動作",
   "students.packManual": "手動開通",
   "students.packGive": "開通方案…",
-  "students.packGiveBtn": "開通"
+  "students.packGiveBtn": "開通",
+  "students.filterIdle": "閒置",
+  "students.idleBadge": "閒置 {n} 天",
+  "students.idleHint": "超過 {n} 天未登入且沒有有效權限。",
+  "students.deleteAllIdle": "刪除所有閒置帳號（{n}）",
+  "students.deleteAccount": "刪除帳號",
+  "students.deleteConfirm": "確定刪除？無法復原",
+  "students.deleteError": "刪除失敗，請執行 supabase-cleanup.sql"
 }

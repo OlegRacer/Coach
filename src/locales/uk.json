@@ -421,5 +421,12 @@
   "students.manual": "Розділи й вправи вручну",
   "students.packManual": "видано вручну",
   "students.packGive": "Видати пакет…",
-  "students.packGiveBtn": "Видати"
+  "students.packGiveBtn": "Видати",
+  "students.filterIdle": "Неактивні",
+  "students.idleBadge": "неактивний {n} дн.",
+  "students.idleHint": "Не заходили понад {n} днів і не мають чинного доступу.",
+  "students.deleteAllIdle": "Видалити всіх неактивних ({n})",
+  "students.deleteAccount": "Видалити акаунт",
+  "students.deleteConfirm": "Точно видалити? Незворотно",
+  "students.deleteError": "Не вдалося видалити. Запустіть supabase-cleanup.sql"
 }

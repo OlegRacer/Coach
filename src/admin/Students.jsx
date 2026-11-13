@@ -8,8 +8,11 @@ import { supabase } from '../lib/supabase.js';
 import { avatarUrl } from '../lib/image.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { ConfirmButton } from './ContentCommon.jsx';
 
 const NEW_DAYS = 7;
+const IDLE_DAYS = 60; // не заходив стільки днів і не має чинного доступу → «неактивний'
+const DAY = 864e5;
 
 // Список зареєстрованих учнів для тренера. Нові реєстрації з'являються самі (Realtime).
 export default function Students() {
@@ -22,6 +25,8 @@ export default function Students() {
   const [ownerIds, setOwnerIds] = useState([]);
   const [armed, setArmed] = useState(null);
   const [accessRows, setAccessRows] = useState([]);
+  const [exAccessRows, setExAccessRows] = useState([]);
+  const [delErr, setDelErr] = useState(false);
   const [accessOpen, setAccessOpen] = useState(null);
   const [noteOpen, setNoteOpen] = useState(null);
   const [trainers, setTrainers] = useState([]);
@@ -43,6 +48,8 @@ export default function Students() {
     }
     const acc = await supabase.from('section_access').select('student_id, section, expires_at');
     setAccessRows(acc.error ? [] : acc.data || []);
+    const exa = await supabase.from('exercise_access').select('student_id, expires_at');
+    setExAccessRows(exa.error ? [] : exa.data || []);
     const [tr, ln, nt] = await Promise.all([
       supabase.from('trainers').select('id, name').order('sort').order('created_at'),
       supabase.from('student_trainers').select('student_id, trainer_id'),
@@ -90,8 +97,36 @@ export default function Students() {
   const allStudents = (rows || []).filter((r) => r.role !== 'admin');
   const countFor = (f) =>
     f === 'all' ? allStudents.length : f === 'none' ? allStudents.filter((x) => !myTrainerIds(x.id).length).length : allStudents.filter((x) => myTrainerIds(x.id).includes(f)).length;
+  // Неактивний: давно не заходив (або ніколи, відлік від реєстрації) і без чинного доступу.
+  const hasActiveAccess = (id) =>
+    [...accessRows, ...exAccessRows].some((r) => r.student_id === id && new Date(r.expires_at).getTime() > Date.now());
+  const idleDays = (x) => Math.floor((Date.now() - new Date(x.last_seen_at || x.created_at).getTime()) / DAY);
+  const isIdle = (x) => x.role !== 'admin' && idleDays(x) >= IDLE_DAYS && !hasActiveAccess(x.id);
+  const idleList = allStudents.filter(isIdle);
+
+  const removeFiles = async (x) => {
+    try {
+      const det = Array.isArray(x.student_details) ? x.student_details[0] : x.student_details;
+      if (det && det.photo_path) await supabase.storage.from('avatars').remove([det.photo_path]);
+      const { data } = await supabase.storage.from('payments').list(x.id, { limit: 1000 });
+      if (data && data.length) await supabase.storage.from('payments').remove(data.map((f) => `${x.id}/${f.name}`));
+    } catch {
+      /* файли, що лишились, прибере сторінка «Пам'ять» */
+    }
+  };
+  const deleteStudents = async (list) => {
+    setDelErr(false);
+    for (const x of list) {
+      await removeFiles(x);
+      const { error } = await supabase.rpc('delete_student', { p_id: x.id });
+      if (error) setDelErr(true);
+    }
+    setOpen(null);
+    load();
+  };
+
   const students = allStudents.filter((x) =>
-    filter === 'all' ? true : filter === 'none' ? !myTrainerIds(x.id).length : myTrainerIds(x.id).includes(filter)
+    filter === 'idle' ? isIdle(x) : filter === 'all' ? true : filter === 'none' ? !myTrainerIds(x.id).length : myTrainerIds(x.id).includes(filter)
   );
   const admins = (rows || []).filter((r) => r.role === 'admin');
 
@@ -109,15 +144,22 @@ export default function Students() {
   return (
     <main className="page">
       <TopBar title={t('students.title')} />
-      {trainers.length > 0 && (
+      {(trainers.length > 0 || idleList.length > 0) && (
         <div className="chips filter-row" role="group" aria-label={t('students.trainers')}>
-          {[{ id: 'all', name: t('students.filterAll') }, ...trainers, { id: 'none', name: t('students.filterNone') }].map((x) => (
+          {[{ id: 'all', name: t('students.filterAll') }, ...trainers, ...(trainers.length ? [{ id: 'none', name: t('students.filterNone') }] : []), ...(idleList.length ? [{ id: 'idle', name: t('students.filterIdle') }] : [])].map((x) => (
             <button type="button" key={x.id} className={'chip' + (filter === x.id ? ' active' : '')} aria-pressed={filter === x.id} onClick={() => setFilter(x.id)}>
-              {x.name} · {countFor(x.id)}
+              {x.name} · {x.id === 'idle' ? idleList.length : countFor(x.id)}
             </button>
           ))}
         </div>
       )}
+      {filter === 'idle' && students.length > 0 && (
+        <div className="card stack">
+          <span className="muted small">{t('students.idleHint', { n: IDLE_DAYS })}</span>
+          <ConfirmButton label={t('students.deleteAllIdle', { n: students.length })} confirmLabel={t('students.deleteConfirm')} onConfirm={() => deleteStudents(students)} />
+        </div>
+      )}
+      {delErr && <p className="err" role="alert">{t('students.deleteError')}</p>}
       {failed && <p className="err">{t('auth.error')}</p>}
       {rows && !allStudents.length && <p className="muted">{t('students.empty')}</p>}
       {rows && allStudents.length > 0 && !students.length && <p className="muted">{t('students.filterEmpty')}</p>}
@@ -141,6 +183,7 @@ export default function Students() {
                   <div className="row">
                     <span className="list-title">{fullName || s.full_name || s.email}</span>
                     {isNew(s.created_at) && <span className="badge-new">{t('students.new')}</span>}
+                    {isIdle(s) && <span className="badge-idle">{t('students.idleBadge', { n: idleDays(s) })}</span>}
                   </div>
                   <span className="muted small">
                     {s.provider}
@@ -199,6 +242,7 @@ export default function Students() {
                     {t('students.note')}{notes[s.id] ? ' •' : ''}
                   </button>
                   {noteOpen === s.id && <NotePanel student={s} note={notes[s.id]} onChanged={load} />}
+                  <ConfirmButton label={t('students.deleteAccount')} confirmLabel={t('students.deleteConfirm')} onConfirm={() => deleteStudents([s])} />
                 </div>
               )}
             </div>

@@ -425,5 +425,12 @@
   "students.manual": "Sections and exercises manually",
   "students.packManual": "given manually",
   "students.packGive": "Give a package…",
-  "students.packGiveBtn": "Give"
+  "students.packGiveBtn": "Give",
+  "students.filterIdle": "Inactive",
+  "students.idleBadge": "inactive {n} d",
+  "students.idleHint": "Not seen for over {n} days and no active access.",
+  "students.deleteAllIdle": "Delete all inactive ({n})",
+  "students.deleteAccount": "Delete account",
+  "students.deleteConfirm": "Really delete? Irreversible",
+  "students.deleteError": "Could not delete. Run supabase-cleanup.sql"
 }
