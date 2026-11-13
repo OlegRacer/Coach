@@ -51,7 +51,7 @@ export default function ExerciseEditor() {
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
       const fresh = !has(ex.sets) && !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
-      setOn({ sets: fresh || has(ex.sets), description: fresh || has(ex.description), muscles: fresh || (ex.muscles || []).length > 0, preview: fresh || !!ex.preview });
+      setOn({ sets: fresh || has(ex.sets), description: fresh || has(ex.description), muscles: fresh || (ex.muscles || []).length > 0, preview: true });
     }
   }, [ex, f]);
 
@@ -74,6 +74,7 @@ export default function ExerciseEditor() {
 
   const upload = async (file) => {
     if (!file) return;
+    if (file.size > 30 * 1024 * 1024) return setErr(t('content.fileLimit'));
     setBusy(true);
     setErr('');
     const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
