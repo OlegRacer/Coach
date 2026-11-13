@@ -8,7 +8,28 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
   const [ready, setReady] = useState(false);
-  const [error, setError] = useState('');
+  // Якщо вхід провалився на боці Supabase/провайдера, помилка приходить в адресі повернення: показуємо її текстом.
+  const [error, setError] = useState(() => {
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const h = new URLSearchParams(window.location.hash.replace(/^#\/?/, '').replace(/^\?/, ''));
+      const m = q.get('error_description') || h.get('error_description') || q.get('error') || h.get('error');
+      return m ? decodeURIComponent(m.replace(/\+/g, ' ')) : '';
+    } catch {
+      return '';
+    }
+  });
+  useEffect(() => {
+    try {
+      const u = new URL(window.location.href);
+      if (u.searchParams.has('error') || u.searchParams.has('error_description')) {
+        ['error', 'error_code', 'error_description'].forEach((k) => u.searchParams.delete(k));
+        window.history.replaceState(null, '', u.pathname + (u.search || '') + u.hash);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
   const [details, setDetails] = useState(null);
   const [access, setAccess] = useState({});
   const [exAccess, setExAccess] = useState({});
