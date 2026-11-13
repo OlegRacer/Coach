@@ -5,13 +5,24 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 
-import bodyImg from '../assets/body.webp';
-import litImg from '../assets/body-lit.webp';
-import regions from '../data/bodyRegions.json';
+import bodyImgM from '../assets/body.webp';
+import litImgM from '../assets/body-lit.webp';
+import regionsM from '../data/bodyRegions.json';
+import bodyImgF from '../assets/body-f.webp';
+import litImgF from '../assets/body-f-lit.webp';
+import regionsF from '../data/bodyRegionsF.json';
 import { GROUPS, LEAVES, expand, leavesOfGroup, muscleName } from '../lib/muscles.js';
 
-const REGION = Object.fromEntries(regions.regions.map((r) => [r.id, r.d]));
-const CLIP = Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]));
+// Дві моделі: чоловіча й жіноча (вибирається за статтю з анкети). Області мають ті самі id, тож зони (muscles.json) спільні.
+const build = (bodyImg, litImg, regions) => ({
+  bodyImg,
+  litImg,
+  regions,
+  REGION: Object.fromEntries(regions.regions.map((r) => [r.id, r.d])),
+  CLIP: Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]))
+});
+const MALE = build(bodyImgM, litImgM, regionsM);
+const FEMALE = build(bodyImgF, litImgF, regionsF);
 
 // Картинка розрізана на 99 областей (src/data/bodyRegions.json, id r00…r98).
 // src/data/muscles.json каже, з яких областей складається кожна зона: групи (руки, плечі…) і півзони (біцепс, передня дельта…).
@@ -20,7 +31,8 @@ export default function Anatomy() {
   const { t } = useI18n();
   const { exercisesByMuscles, sectionOpen } = useContent();
   const L = useL();
-  const { ready } = useAuth();
+  const { ready, details } = useAuth();
+  const { bodyImg, litImg, regions, REGION, CLIP } = details && details.gender === 'female' ? FEMALE : MALE;
   const [params, setParams] = useSearchParams();
   // Вибрані «листки» (найдрібніші зони). ?m= може містити і групу, вона розгортається в півзони.
   const sel = expand((params.get('m') || '').split(',').filter(Boolean));
