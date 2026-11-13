@@ -18,12 +18,22 @@ function LoopVideo({ url, title }) {
     const v = ref.current;
     if (!v) return undefined;
     v.muted = true;
+    v.volume = 0;
     v.loop = true;
+    // Відео з Flow/Veo має звукову доріжку; на iPhone вона підвішує стик витків циклу, тому вимикаємо її зовсім.
+    const killAudio = () => {
+      try {
+        const tr = v.audioTracks;
+        if (tr) for (let i = 0; i < tr.length; i += 1) tr[i].enabled = false;
+      } catch (e) { /* не всі браузери підтримують */ }
+    };
+    killAudio();
+    v.addEventListener('loadedmetadata', killAudio);
     const play = () => { const p = v.play(); if (p && p.catch) p.catch(() => {}); };
     const visible = () => { if (!document.hidden && v.paused) play(); };
     document.addEventListener('visibilitychange', visible);
     play();
-    return () => document.removeEventListener('visibilitychange', visible);
+    return () => { document.removeEventListener('visibilitychange', visible); v.removeEventListener('loadedmetadata', killAudio); };
   }, [url]);
   return (
     <video
