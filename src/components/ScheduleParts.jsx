@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+import Icon from './Icon.jsx';
 import { currentWeek, weekdayOf } from '../lib/dates.js';
 import { iso, slotsOn } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -32,7 +34,7 @@ export function WeekStrip({ slots, selected, onSelect }) {
 }
 
 // Перелік занять на день
-export function SessionList({ items, trainers, empty }) {
+export function SessionList({ items, trainers, empty, onDelete }) {
   const { t } = useI18n();
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
@@ -44,10 +46,15 @@ export function SessionList({ items, trainers, empty }) {
             <b>{s.start_time}</b>
             <span>{t('common.minutes', { n: s.duration_min })}</span>
           </div>
-          <div>
-            <div className="session-title">{s.title}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}</div>
             <div className="muted small">{[name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
           </div>
+          {s.personal && onDelete && (
+            <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => onDelete(s)}>
+              <Icon name="trash" size={22} />
+            </button>
+          )}
         </div>
       ))}
     </div>

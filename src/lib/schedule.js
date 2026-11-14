@@ -54,6 +54,23 @@ export function monthGrid(year, month) {
   return cells;
 }
 
+// Власний пункт учня → форма заняття розкладу
+const pathFor = (r) => (r.kind === 'exercise' ? `/exercise/${r.ref_id}` : r.kind === 'section' ? `/section/${r.ref_id}` : '');
+const normPersonal = (r) => ({
+  id: 'p:' + r.id,
+  pid: r.id,
+  personal: true,
+  kind: r.kind,
+  title: r.title,
+  place: r.place || '',
+  to: pathFor(r),
+  weekday: r.weekday,
+  on_date: r.on_date,
+  start_time: String(r.start_time).slice(0, 5),
+  duration_min: r.duration_min,
+  trainer_id: null
+});
+
 const norm = (s) => ({ ...s, start_time: String(s.start_time).slice(0, 5) });
 
 // Розклад із бази. Остання копія лежить у телефоні, тому працює й без інтернету.
@@ -65,6 +82,7 @@ export function useSchedule() {
   const [mineIds, setMineIds] = useState(() => (uid ? read(`${KEY}:m:${uid}`, []) : []));
   const [myStudios, setMyStudios] = useState([]);
   const [myClasses, setMyClasses] = useState([]);
+  const [personal, setPersonal] = useState(() => (uid ? read(`${KEY}:p:${uid}`, []) : []));
   const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
@@ -87,6 +105,12 @@ export function useSchedule() {
         ]);
         if (!ms.error) setMyStudios((ms.data || []).map((r) => r.studio_id));
         if (!mc.error) setMyClasses((mc.data || []).map((r) => r.class_id));
+        const pi = await supabase.from('student_plan_items').select('*').eq('student_id', uid);
+        if (!pi.error) {
+          const list = (pi.data || []).map(normPersonal);
+          setPersonal(list);
+          write(`${KEY}:p:${uid}`, list);
+        }
         if (!my.error) {
           const ids = (my.data || []).map((r) => r.slot_id);
           setMineIds(ids);
@@ -103,6 +127,7 @@ export function useSchedule() {
   useEffect(() => {
     if (!ready) return undefined;
     setMineIds(uid ? read(`${KEY}:m:${uid}`, []) : []);
+    setPersonal(uid ? read(`${KEY}:p:${uid}`, []) : []);
     load();
     const onVisible = () => document.visibilityState === 'visible' && load();
     document.addEventListener('visibilitychange', onVisible);
@@ -110,8 +135,9 @@ export function useSchedule() {
   }, [ready, uid, load]);
 
   // Заняття учня: призначені вручну + ті, що належать його класам (або студії, якщо клас не вказано)
-  const mine = slots.filter(
+  const assigned = slots.filter(
     (s) => mineIds.includes(s.id) || (s.class_id ? myClasses.includes(s.class_id) : s.studio_id && myStudios.includes(s.studio_id))
   );
+  const mine = [...assigned, ...personal];
   return { trainers, slots, mine, loaded, reload: load };
 }

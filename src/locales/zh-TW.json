@@ -194,7 +194,7 @@
   "sched.trainers": "教練",
   "sched.noTrainers": "尚未新增教練。",
   "sched.noSessions": "沒有課程。",
-  "sched.noMine": "你尚未加入任何課程，請詢問教練。",
+  "sched.noMine": "課表目前是空的。請用下方按鈕新增訓練。",
   "sched.next": "下一堂：{when} · {title}",
   "sched.prevMonth": "上個月",
   "sched.nextMonth": "下個月",
@@ -488,5 +488,17 @@
   "logins.link": "綁定",
   "logins.linked": "已綁定",
   "logins.lineDone": "LINE 已綁定到此帳號。",
-  "logins.hint": "綁定後的登入方式會進入同一個帳號：相同的權限、方案與個人資料。"
+  "logins.hint": "綁定後的登入方式會進入同一個帳號：相同的權限、方案與個人資料。",
+  "aw.title": "新增訓練",
+  "aw.add": "新增訓練",
+  "aw.choose": "請選擇…",
+  "aw.sections": "分類",
+  "aw.exercises": "動作",
+  "aw.noPacks": "目前沒有有效方案。",
+  "aw.kind.app": "App 內訓練",
+  "aw.kind.app.hint": "你有權限的分類或動作",
+  "aw.kind.package": "我的方案",
+  "aw.kind.package.hint": "你購買的方案",
+  "aw.kind.class": "實體課程",
+  "aw.kind.class.hint": "在 studio 上的課程"
 }

@@ -529,3 +529,7 @@ input, textarea, select, [contenteditable], .student-details {
 .equip-filter { margin: 4px 0 10px; }
 .equip-actions { margin-top: 14px; }
 .equip-grid { margin-top: 8px; }
+
+.btn-small { min-height: 40px; padding: 0 14px; border-radius: 14px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+.session-title a { color: inherit; }
+.btn-small { white-space: nowrap; }

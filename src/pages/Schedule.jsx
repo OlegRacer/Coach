@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabase.js';
+import AddWorkout from '../components/AddWorkout.jsx';
+import { useAuth } from '../auth/index.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { SessionList } from '../components/ScheduleParts.jsx';
@@ -8,7 +11,13 @@ import { useI18n } from '../i18n/index.jsx';
 // Увесь місяць як календар. Угорі перемикач: мій розклад або конкретний тренер. Тап по дню показує заняття.
 export default function Schedule() {
   const { t, locale } = useI18n();
-  const { trainers, slots, mine } = useSchedule();
+  const { user } = useAuth();
+  const { trainers, slots, mine, reload } = useSchedule();
+  const [adding, setAdding] = useState(false);
+  const removeItem = async (s) => {
+    await supabase.from('student_plan_items').delete().eq('id', s.pid);
+    reload();
+  };
   const now = new Date();
   const [ym, setYm] = useState({ y: now.getFullYear(), m: now.getMonth() });
   const [who, setWho] = useState('mine');
@@ -80,8 +89,14 @@ export default function Schedule() {
       {who === 'mine' && !mine.length ? (
         <p className="muted">{t('sched.noMine')}</p>
       ) : (
-        <SessionList items={slotsOn(list, day)} trainers={trainers} />
+        <SessionList items={slotsOn(list, day)} trainers={trainers} onDelete={removeItem} />
       )}
+      {user && (
+        <button type="button" className="btn-primary btn-small" onClick={() => setAdding(true)}>
+          <Icon name="plus" size={16} /> {t('aw.add')}
+        </button>
+      )}
+      {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}
     </main>
   );
 }

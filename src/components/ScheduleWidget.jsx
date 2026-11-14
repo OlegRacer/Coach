@@ -1,15 +1,24 @@
 import { useRef, useState } from 'react';
+import { supabase } from '../lib/supabase.js';
+import AddWorkout from './AddWorkout.jsx';
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { WeekStrip, SessionList } from './ScheduleParts.jsx';
 import { currentWeek } from '../lib/dates.js';
 import { nextOccurrence, slotsOn, useSchedule } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useAuth } from '../auth/index.jsx';
 
 // «Віджет» розкладу: свайп вліво/вправо перемикає блоки. 1) Мій розклад, 2) Тренери.
 export default function ScheduleWidget() {
   const { t, locale } = useI18n();
-  const { trainers, slots, mine } = useSchedule();
+  const { user } = useAuth();
+  const { trainers, slots, mine, reload } = useSchedule();
+  const [adding, setAdding] = useState(false);
+  const removeItem = async (s) => {
+    await supabase.from('student_plan_items').delete().eq('id', s.pid);
+    reload();
+  };
   const track = useRef(null);
   const [page, setPage] = useState(0);
   const [dayMine, setDayMine] = useState(new Date());
@@ -54,7 +63,7 @@ export default function ScheduleWidget() {
             <p className="muted small">{t('sched.noMine')}</p>
           ) : (
             <>
-              <SessionList items={dayItems} trainers={trainers} />
+              <SessionList items={dayItems} trainers={trainers} onDelete={removeItem} />
               {!dayItems.length && nextText && <p className="small">{nextText}</p>}
             </>
           )}
@@ -102,9 +111,17 @@ export default function ScheduleWidget() {
         ))}
       </div>
 
-      <Link to="/schedule" className="btn-primary">
-        {t('home.fullSchedule')} <Icon name="arrow" size={18} />
-      </Link>
+      <div className="row" style={{ gap: 8 }}>
+        <Link to="/schedule" className="btn-ghost btn-small">
+          {t('home.fullSchedule')}
+        </Link>
+        {user && (
+          <button type="button" className="btn-primary btn-small" onClick={() => setAdding(true)}>
+            <Icon name="plus" size={16} /> {t('aw.add')}
+          </button>
+        )}
+      </div>
+      {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}
     </section>
   );
 }

@@ -194,7 +194,7 @@
   "sched.trainers": "Trainers",
   "sched.noTrainers": "No trainers added yet.",
   "sched.noSessions": "No classes.",
-  "sched.noMine": "You are not enrolled in any classes yet. Ask your coach.",
+  "sched.noMine": "Your schedule is empty. Add a workout with the button below.",
   "sched.next": "Next: {when} · {title}",
   "sched.prevMonth": "Previous month",
   "sched.nextMonth": "Next month",
@@ -488,5 +488,17 @@
   "logins.link": "Link",
   "logins.linked": "Linked",
   "logins.lineDone": "LINE is now linked to this account.",
-  "logins.hint": "Linked sign-in methods open the same account: same access, packages and profile."
+  "logins.hint": "Linked sign-in methods open the same account: same access, packages and profile.",
+  "aw.title": "Add a workout",
+  "aw.add": "Add workout",
+  "aw.choose": "Choose…",
+  "aw.sections": "Sections",
+  "aw.exercises": "Exercises",
+  "aw.noPacks": "No active packages.",
+  "aw.kind.app": "Workout from the app",
+  "aw.kind.app.hint": "A section or exercise you have access to",
+  "aw.kind.package": "My package",
+  "aw.kind.package.hint": "A package you purchased",
+  "aw.kind.class": "Offline class",
+  "aw.kind.class.hint": "A class at a studio"
 }
