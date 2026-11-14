@@ -429,5 +429,7 @@
   "students.deleteAccount": "Видалити акаунт",
   "students.deleteConfirm": "Точно видалити? Незворотно",
   "students.deleteError": "Не вдалося видалити. Запустіть supabase-cleanup.sql",
-  "content.heavyVideo": "Відео {res}, {mb} МБ, {sec} с. Для телефонів краще до 720p, до 8 МБ і до 10 с: важке відео гальмує, а на iPhone може зависати. Стисни його перед завантаженням."
+  "content.heavyVideo": "Відео {res}, {mb} МБ, {sec} с. Для телефонів краще до 720p, до 8 МБ і до 10 с: важке відео гальмує, а на iPhone може зависати. Стисни його перед завантаженням.",
+  "muscle.hands": "Кисті",
+  "muscle.feet": "Стопи"
 }
