@@ -218,7 +218,7 @@
   "sa.delete": "刪除",
   "sa.deleteConfirm": "再按一次刪除",
   "sa.needTrainer": "請先新增教練。",
-  "sa.empty": "尚無課程。",
+  "sa.empty": "課表中還沒有課程。",
   "sa.error": "操作失敗。是否已執行 supabase-schedule.sql？",
   "content.sort": "排序",
   "content.sortDone": "完成",
@@ -477,5 +477,10 @@
   "pay.audienceConfirm": "確定開放？",
   "pay.audienceGranted": "已開放給 {n} 位學員",
   "sa.class": "課程",
-  "sa.allClasses": "此 studio 所有課程"
+  "sa.allClasses": "此 studio 所有課程",
+  "sa.studiosEmpty": "建立第一堂課後，studio 會顯示在這裡。",
+  "sa.pickStudio": "選擇 studio",
+  "sa.newStudio": "+ 新增 studio",
+  "sa.pickClass": "選擇課程",
+  "sa.newClass": "+ 新增課程"
 }

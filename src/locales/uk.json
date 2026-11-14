@@ -199,8 +199,8 @@
   "sa.trainerName": "Ім'я тренера",
   "sa.addTrainer": "Додати",
   "sa.deleteTrainerConfirm": "Видалити з заняттями?",
-  "sa.slots": "Заняття",
-  "sa.addSlot": "Додати заняття",
+  "sa.slots": "Класи",
+  "sa.addSlot": "Додати клас",
   "sa.trainer": "Тренер",
   "sa.titleField": "Назва заняття",
   "sa.place": "Місце",
@@ -214,7 +214,7 @@
   "sa.delete": "Видалити",
   "sa.deleteConfirm": "Ще раз, щоб видалити",
   "sa.needTrainer": "Спершу додайте тренера.",
-  "sa.empty": "Занять ще немає.",
+  "sa.empty": "Класів у розкладі ще немає.",
   "sa.error": "Не вдалося виконати. Чи виконано supabase-schedule.sql?",
   "content.sort": "Порядок",
   "content.sortDone": "Готово",
@@ -473,5 +473,10 @@
   "pay.audienceConfirm": "Точно відкрити?",
   "pay.audienceGranted": "Пакет відкрито учням: {n}",
   "sa.class": "Клас",
-  "sa.allClasses": "Усі класи студії"
+  "sa.allClasses": "Усі класи студії",
+  "sa.studiosEmpty": "Студії з'являться тут, коли ви створите перший клас.",
+  "sa.pickStudio": "Оберіть студію",
+  "sa.newStudio": "+ Нова студія",
+  "sa.pickClass": "Оберіть клас",
+  "sa.newClass": "+ Новий клас"
 }

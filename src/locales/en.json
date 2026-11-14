@@ -204,7 +204,7 @@
   "sa.addTrainer": "Add",
   "sa.deleteTrainerConfirm": "Delete with classes?",
   "sa.slots": "Classes",
-  "sa.addSlot": "Add a class",
+  "sa.addSlot": "Add class",
   "sa.trainer": "Trainer",
   "sa.titleField": "Class name",
   "sa.place": "Place",
@@ -218,7 +218,7 @@
   "sa.delete": "Delete",
   "sa.deleteConfirm": "Tap again to delete",
   "sa.needTrainer": "Add a trainer first.",
-  "sa.empty": "No classes yet.",
+  "sa.empty": "No classes in the schedule yet.",
   "sa.error": "Failed. Has supabase-schedule.sql been run?",
   "content.sort": "Reorder",
   "content.sortDone": "Done",
@@ -477,5 +477,10 @@
   "pay.audienceConfirm": "Open it now?",
   "pay.audienceGranted": "Package opened for students: {n}",
   "sa.class": "Class",
-  "sa.allClasses": "All classes of the studio"
+  "sa.allClasses": "All classes of the studio",
+  "sa.studiosEmpty": "Studios will appear here once you create the first class.",
+  "sa.pickStudio": "Choose a studio",
+  "sa.newStudio": "+ New studio",
+  "sa.pickClass": "Choose a class",
+  "sa.newClass": "+ New class"
 }
