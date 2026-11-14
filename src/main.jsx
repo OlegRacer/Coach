@@ -6,6 +6,7 @@ import { I18nProvider } from './i18n/index.jsx';
 import { AuthProvider } from './auth/index.jsx';
 import { UpdateProvider } from './lib/update.jsx';
 import { ContentProvider } from './lib/content.jsx';
+import { EquipmentProvider } from './lib/equipment.jsx';
 import './styles.css';
 
 createRoot(document.getElementById('root')).render(
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
       <AuthProvider>
         <UpdateProvider>
           <ContentProvider>
-            <HashRouter>
-              <App />
-            </HashRouter>
+            <EquipmentProvider>
+              <HashRouter>
+                <App />
+              </HashRouter>
+            </EquipmentProvider>
           </ContentProvider>
         </UpdateProvider>
       </AuthProvider>

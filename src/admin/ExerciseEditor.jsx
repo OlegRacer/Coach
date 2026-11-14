@@ -7,6 +7,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
+import { useEquipment } from '../lib/equipment.jsx';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
 import TimeInput from './TimeInput.jsx';
 import { GROUPS, muscleName } from '../lib/muscles.js';
@@ -34,6 +35,7 @@ export default function ExerciseEditor() {
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
   const { exercise, section, reload } = useContent();
+  const { list: equipList } = useEquipment();
   const ex = exercise(eid);
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
@@ -44,7 +46,7 @@ export default function ExerciseEditor() {
   useEffect(() => {
     if (ex && !f) {
       setF({
-        title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [],
+        title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [], equipment: ex.equipment || [],
         preview: ex.preview || '',
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
         published: ex.published,
@@ -201,6 +203,20 @@ export default function ExerciseEditor() {
               </div>
             ))}
           </div>
+        )}
+
+        {equipList.length > 0 && (
+          <>
+            <span className="muted small">{t('equip.needed')}</span>
+            <div className="chips">
+              {equipList.map((q) => (
+                <button type="button" key={q.id} className={'chip equip-chip' + (f.equipment.includes(q.id) ? ' active' : '')} aria-pressed={f.equipment.includes(q.id)}
+                  onClick={() => set('equipment', f.equipment.includes(q.id) ? f.equipment.filter((x) => x !== q.id) : [...f.equipment, q.id])}>
+                  <span aria-hidden="true">{q.icon}</span> {L(q.name)}
+                </button>
+              ))}
+            </div>
+          </>
         )}
 
         <Toggle label={t('content.preview')} on={on.preview} onChange={() => flip('preview')} />

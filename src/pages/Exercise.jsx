@@ -9,14 +9,16 @@ import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
+import { useEquipment } from '../lib/equipment.jsx';
 
 const hasText = (o) => !!o && Object.values(o).some((x) => String(x || '').trim());
 
 export default function Exercise() {
   const { id } = useParams();
   const { t } = useI18n();
-  const { ready } = useAuth();
+  const { ready, isAdmin } = useAuth();
   const { exercise, exerciseOpen } = useContent();
+  const { byId, needed, missing } = useEquipment();
   const L = useL();
   const ex = exercise(id);
   const [vi, setVi] = useState(0);
@@ -37,6 +39,8 @@ export default function Exercise() {
 
   const list = (ex.muscles || []).filter(isKnown);
   const title = L(ex.title);
+  const need = needed(ex);
+  const lack = missing(ex);
 
   return (
     <main className="page wide ex-page">
@@ -54,6 +58,25 @@ export default function Exercise() {
             </div>
           )}
           {hasText(ex.description) && <p className="body pre">{L(ex.description)}</p>}
+        </section>
+      )}
+
+      {need.length > 0 && (
+        <section className="card">
+          <h2 className="h2">{t('equip.needed')}</h2>
+          <div className="chips">
+            {need.map((id) => (
+              <span key={id} className={'chip equip-chip' + (!isAdmin && lack.includes(id) ? ' chip-missing' : '')}>
+                <span aria-hidden="true">{byId[id].icon}</span> {L(byId[id].name)}
+              </span>
+            ))}
+          </div>
+          {!isAdmin && lack.length > 0 && (
+            <p className="small equip-warn">
+              {t('equip.missing', { list: lack.map((id) => L(byId[id].name)).join(', ') })}{' '}
+              <Link to="/equipment" className="link-btn">{t('equip.mark')}</Link>
+            </p>
+          )}
         </section>
       )}
 

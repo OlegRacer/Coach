@@ -6,6 +6,7 @@ import Section from './pages/Section.jsx';
 import Exercise from './pages/Exercise.jsx';
 import Anatomy from './pages/Anatomy.jsx';
 import Plans from './pages/Plans.jsx';
+import Equipment from './pages/Equipment.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 import PayWatcher from './components/PayWatcher.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
@@ -19,6 +20,7 @@ const StorageAdmin = lazy(() => import('./admin/StorageAdmin.jsx'));
 const ContentAdmin = lazy(() => import('./admin/ContentAdmin.jsx'));
 const SectionEditor = lazy(() => import('./admin/SectionEditor.jsx'));
 const ExerciseEditor = lazy(() => import('./admin/ExerciseEditor.jsx'));
+const EquipmentAdmin = lazy(() => import('./admin/EquipmentAdmin.jsx'));
 
 export default function App() {
   return (
@@ -64,6 +66,15 @@ export default function App() {
           }
         />
         <Route path="/plans" element={<Plans />} />
+        <Route path="/equipment" element={<Equipment />} />
+        <Route
+          path="/admin/equipment"
+          element={
+            <AdminBoundary>
+              <EquipmentAdmin />
+            </AdminBoundary>
+          }
+        />
         <Route
           path="/admin/payments"
           element={

@@ -521,3 +521,11 @@ input, textarea, select, [contenteditable], .student-details {
 .trash-btn { flex: none; min-width: 44px; height: 44px; border-radius: 14px; color: #ff8a8a; background: rgba(255, 90, 90, .12); display: grid; place-items: center; padding: 0 10px; }
 .trash-btn.armed { background: #ff5a5a; color: #101214; font-weight: 700; }
 .badge-idle { padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(255,170,60,.18); color: #ffb454; }
+
+/* Інвентар */
+.equip-chip { display: inline-flex; align-items: center; gap: 6px; }
+.chip-missing { border-color: #FFB454; color: #FFB454; background: rgba(255, 180, 84, 0.08); }
+.equip-warn { color: #FFB454; display: block; margin-top: 2px; }
+.equip-filter { margin: 4px 0 10px; }
+.equip-actions { margin-top: 14px; }
+.equip-grid { margin-top: 8px; }

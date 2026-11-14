@@ -98,6 +98,13 @@ export default function ProfileCard() {
         </Link>
       )}
 
+      <Link to="/equipment" className="set-row link-row">
+        <span className="set-label">{t('equip.mine')}</span>
+        <span className="muted">
+          <Icon name="chevron" size={20} />
+        </span>
+      </Link>
+
       <PushToggle />
 
       {isAdmin && (
@@ -119,6 +126,12 @@ export default function ProfileCard() {
           </Link>
           <Link to="/admin/content" className="set-row link-row">
             <span className="set-label">{t('content.link')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/equipment" className="set-row link-row">
+            <span className="set-label">{t('equip.admin')}</span>
             <span className="muted">
               <Icon name="chevron" size={20} />
             </span>
