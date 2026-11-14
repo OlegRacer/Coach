@@ -105,19 +105,47 @@ Deno.serve(async (req) => {
     const c = await ver.json();
     if (!ver.ok || !c.sub) return json({ error: `LINE verify: ${c.error_description || c.error || ver.status}` }, 400);
 
-    const email = `line_${String(c.sub).toLowerCase()}@line.local`;
-    const name = c.name || 'LINE';
-    const { error: ce } = await db.auth.admin.createUser({
-      email,
-      email_confirm: true,
-      user_metadata: { full_name: name, name, avatar_url: c.picture || null, line_id: c.sub },
-      app_metadata: { provider: 'line', providers: ['line'] }
-    });
-    // «вже існує» не помилка: це повторний вхід
-    if (ce && !/already|registered|exists/i.test(ce.message)) return json({ error: `create user: ${ce.message}` }, 500);
+    const sub = String(c.sub).toLowerCase();
+    const legacyEmail = `line_${sub}@line.local`;
+    const { data: existing } = await db.from('line_links').select('user_id').eq('line_sub', sub).maybeSingle();
+
+    // Режим «прив'язати»: учень уже увійшов (наприклад, через Google) і додає до свого акаунта LINE
+    if (body.mode === 'link') {
+      const jwt = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+      const { data: u, error: ue } = await db.auth.getUser(jwt);
+      if (ue || !u?.user) return json({ error: 'Спершу увійдіть в акаунт' }, 401);
+      if (existing && existing.user_id !== u.user.id) return json({ error: 'Цей LINE вже привʼязаний до іншого акаунта' }, 409);
+      const { data: legacyId } = await db.rpc('auth_user_id_by_email', { p_email: legacyEmail });
+      if (legacyId && legacyId !== u.user.id) return json({ error: 'З цим LINE уже є окремий акаунт' }, 409);
+      if (!existing) {
+        const { error: ie } = await db.from('line_links').insert({ line_sub: sub, user_id: u.user.id });
+        if (ie) return json({ error: `link: ${ie.message}` }, 500);
+      }
+      return json({ linked: true });
+    }
+
+    let email = legacyEmail;
+    if (existing) {
+      const { data: owner, error: oe } = await db.auth.admin.getUserById(existing.user_id);
+      if (oe || !owner?.user?.email) return json({ error: 'акаунт для цього LINE не знайдено' }, 500);
+      email = owner.user.email;
+    } else {
+      const name = c.name || 'LINE';
+      const { error: ce } = await db.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: { full_name: name, name, avatar_url: c.picture || null, line_id: c.sub },
+        app_metadata: { provider: 'line', providers: ['line'] }
+      });
+      // «вже існує» не помилка: це повторний вхід
+      if (ce && !/already|registered|exists/i.test(ce.message)) return json({ error: `create user: ${ce.message}` }, 500);
+    }
 
     const { data, error: le } = await db.auth.admin.generateLink({ type: 'magiclink', email });
     if (le || !data?.properties?.hashed_token) return json({ error: `link: ${le?.message || 'no token'}` }, 500);
+    if (!existing && data.user?.id) {
+      await db.from('line_links').upsert({ line_sub: sub, user_id: data.user.id }, { onConflict: 'line_sub', ignoreDuplicates: true });
+    }
     return json({ token_hash: data.properties.hashed_token });
   }
 

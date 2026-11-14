@@ -483,5 +483,10 @@
   "sa.newStudio": "+ New studio",
   "sa.pickClass": "Choose a class",
   "sa.newClass": "+ New class",
-  "pay.allClasses": "All classes of the studio"
+  "pay.allClasses": "All classes of the studio",
+  "logins.title": "Sign-in methods",
+  "logins.link": "Link",
+  "logins.linked": "Linked",
+  "logins.lineDone": "LINE is now linked to this account.",
+  "logins.hint": "Linked sign-in methods open the same account: same access, packages and profile."
 }

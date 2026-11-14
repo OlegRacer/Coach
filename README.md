@@ -104,3 +104,10 @@ LINE при вході з браузера підписує ID-токен алг
 5. На iPhone додаток має бути доданий на екран «Додому» (iOS 16.4+).
 
 Приватний VAPID-ключ не кладіть у код додатку. Якщо він потрапив у чат чи на показ, згенеруйте нову пару (`npx web-push generate-vapid-keys`), оновіть секрети й `VAPID_PUBLIC` у `src/lib/push.js`; усі повинні увімкнути сповіщення знову.
+
+## Один акаунт для Google і LINE
+
+1. Supabase -> Authentication -> Sign In / Providers (або Settings) -> увімкнути **Allow manual linking** (потрібно для кнопки «Привʼязати Google»).
+2. SQL Editor -> виконати `supabase-line-links.sql`.
+3. Edge Functions -> `line-login` -> вставити оновлений `supabase/functions/line-login/index.ts` -> Deploy (Verify JWT лишається вимкненим).
+4. Учень входить будь-яким способом і в профілі натискає «Привʼязати» біля другого способу.

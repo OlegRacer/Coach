@@ -483,5 +483,10 @@
   "sa.newStudio": "+ 新增 studio",
   "sa.pickClass": "選擇課程",
   "sa.newClass": "+ 新增課程",
-  "pay.allClasses": "此 studio 所有課程"
+  "pay.allClasses": "此 studio 所有課程",
+  "logins.title": "登入方式",
+  "logins.link": "綁定",
+  "logins.linked": "已綁定",
+  "logins.lineDone": "LINE 已綁定到此帳號。",
+  "logins.hint": "綁定後的登入方式會進入同一個帳號：相同的權限、方案與個人資料。"
 }

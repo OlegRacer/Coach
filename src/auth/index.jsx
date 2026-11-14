@@ -27,6 +27,7 @@ async function fnError(e, data) {
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [linkMsg, setLinkMsg] = useState('');
   const [ready, setReady] = useState(false);
   // Якщо вхід провалився на боці Supabase/провайдера, помилка приходить в адресі повернення: показуємо її текстом.
   const [error, setError] = useState(() => {
@@ -197,7 +198,7 @@ export function AuthProvider({ children }) {
 
   // LINE: LINE підписує токени входу з браузера алгоритмом HS256, а Supabase (власні OIDC) приймає тільки ES256,
   // тому вхід іде через нашу Edge Function «line-login» (див. README, розділ «Вхід через LINE»).
-  const signInLine = useCallback(async () => {
+  const signInLine = useCallback(async (mode) => {
     setError('');
     const { data, error: e } = await supabase.functions.invoke('line-login', {
       body: { action: 'url', redirect_uri: lineRedirect() }
@@ -208,6 +209,8 @@ export function AuthProvider({ children }) {
     }
     try {
       localStorage.setItem('line-state', data.state);
+      if (mode === 'link') localStorage.setItem('line-mode', 'link');
+      else localStorage.removeItem('line-mode');
     } catch {
       /* ignore */
     }
@@ -228,9 +231,12 @@ export function AuthProvider({ children }) {
         return;
       }
       let saved = '';
+      let mode = '';
       try {
         saved = localStorage.getItem('line-state') || '';
+        mode = localStorage.getItem('line-mode') || '';
         localStorage.removeItem('line-state');
+        localStorage.removeItem('line-mode');
       } catch {
         /* вхід міг продовжитись в іншому браузері: тоді перевіряє лише підпис state на сервері */
       }
@@ -239,8 +245,16 @@ export function AuthProvider({ children }) {
         return;
       }
       const { data, error: e } = await supabase.functions.invoke('line-login', {
-        body: { action: 'login', code: q.get('code'), state: q.get('state'), redirect_uri: lineRedirect() }
+        body: { action: 'login', mode, code: q.get('code'), state: q.get('state'), redirect_uri: lineRedirect() }
       });
+      if (mode === 'link') {
+        if (e || !data || !data.linked) setError(await fnError(e, data));
+        else {
+          setLinkMsg('line');
+          window.dispatchEvent(new Event('logins-changed'));
+        }
+        return;
+      }
       if (e || !data || !data.token_hash) {
         setError(await fnError(e, data));
         return;
@@ -248,6 +262,16 @@ export function AuthProvider({ children }) {
       const { error: ve } = await supabase.auth.verifyOtp({ token_hash: data.token_hash, type: 'magiclink' });
       if (ve) setError(ve.message);
     })();
+  }, []);
+
+  // Додати Google до акаунта, у який учень уже увійшов (потрібне «Allow manual linking» у Supabase).
+  const linkGoogle = useCallback(async () => {
+    setError('');
+    const { error: e } = await supabase.auth.linkIdentity({
+      provider: 'google',
+      options: { redirectTo: window.location.origin + window.location.pathname }
+    });
+    if (e) setError(e.message);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -295,11 +319,11 @@ export function AuthProvider({ children }) {
     };
     const needsOnboarding = !!user && !!profile && !isAdmin && detailsLoaded && !(details && details.completed_at) && !dismissed;
     return {
-      ready, user, profile, isAdmin, signInGoogle, signInLine, signOut, error,
+      ready, user, profile, isAdmin, signInGoogle, signInLine, linkGoogle, linkMsg, signOut, error,
       details, refreshDetails, needsOnboarding, dismissOnboarding,
       access, accessLoaded, hasAccess, hasExercise, exAccess, refreshAccess
     };
-  }, [access, exAccess, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
+  }, [linkGoogle, linkMsg, access, exAccess, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
