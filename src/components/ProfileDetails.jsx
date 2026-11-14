@@ -3,13 +3,17 @@ import Icon from './Icon.jsx';
 import { MESSENGERS } from './Onboarding.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { useStudioData, slotLabel } from '../lib/studios.js';
 
 // Перегляд заповненої анкети. Внизу кнопка «Змінити дані» відкриває майстер із готовими відповідями.
 export default function ProfileDetails({ onClose, onEdit }) {
   const { t } = useI18n();
   const { details, user } = useAuth();
   const d = details || {};
+  const sd = useStudioData(user ? user.id : null);
   const none = t('ob.none');
+  const studioNames = d.studio_other ? t('ob.studio.other') : sd.studios.filter((x) => sd.myStudios.includes(x.id)).map((x) => x.name).join(', ');
+  const classNames = sd.slots.filter((x) => sd.mySlots.includes(x.id)).map((x) => slotLabel(x, sd.trainers, t)).join('\n');
   const name = [d.first_name, d.last_name].filter(Boolean).join(' ');
   const msg = MESSENGERS.find((m) => m.id === d.contact_messenger);
   const body = [d.height_cm && `${d.height_cm} cm`, d.weight_kg && `${d.weight_kg} kg`, d.birth_year && `${d.birth_year}`]
@@ -19,6 +23,8 @@ export default function ProfileDetails({ onClose, onEdit }) {
     [t('ob.email'), (user && user.email) || ''],
     [t('ob.firstName') + ' / ' + t('ob.lastName'), name],
     [t('ob.contact.label'), msg && d.contact_handle ? `${msg.label} · ${d.contact_handle}` : ''],
+    [t('ob.studio.label'), studioNames],
+    [t('ob.classes.label'), classNames],
     [t('ob.goals.label'), (d.goals || []).map((g) => t(`ob.goal.${g}`)).join(', ')],
     [t('ob.gender.label'), d.gender ? t(`ob.gender.${d.gender}`) : ''],
     [t('ob.body.label'), body],
@@ -41,7 +47,7 @@ export default function ProfileDetails({ onClose, onEdit }) {
             {rows.map(([label, value]) => (
               <div key={label} className="list-item pd-row">
                 <span className="muted small">{label}</span>
-                <span className={'pd-val' + (value ? '' : ' muted')}>{value || none}</span>
+                <span className={'pd-val' + (value ? '' : ' muted')} style={{ whiteSpace: 'pre-line' }}>{value || none}</span>
               </div>
             ))}
           </div>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { MESSENGERS } from '../components/Onboarding.jsx';
 import AccessPanel from './AccessPanel.jsx';
 import { TrainerPicker, NotePanel } from './StudentExtra.jsx';
+import { slotLabel } from '../lib/studios.js';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -32,6 +33,10 @@ export default function Students() {
   const [trainers, setTrainers] = useState([]);
   const [links, setLinks] = useState([]);
   const [notes, setNotes] = useState({});
+  const [studios, setStudios] = useState([]);
+  const [stLinks, setStLinks] = useState([]);
+  const [slotLinks, setSlotLinks] = useState([]);
+  const [allSlots, setAllSlots] = useState([]);
   const [filter, setFilter] = useState('all');
   const [roleErr, setRoleErr] = useState(false);
   const [ownerErr, setOwnerErr] = useState('');
@@ -58,6 +63,16 @@ export default function Students() {
     setTrainers(tr.error ? [] : tr.data || []);
     setLinks(ln.error ? [] : ln.data || []);
     setNotes(nt.error ? {} : Object.fromEntries((nt.data || []).map((x) => [x.student_id, x.note])));
+    const [gs, gl, sl2, sls] = await Promise.all([
+      supabase.from('studios').select('id, name').order('sort').order('created_at'),
+      supabase.from('student_studios').select('student_id, studio_id'),
+      supabase.from('slot_students').select('student_id, slot_id'),
+      supabase.from('schedule_slots').select('*')
+    ]);
+    setStudios(gs.error ? [] : gs.data || []);
+    setStLinks(gl.error ? [] : gl.data || []);
+    setSlotLinks(sl2.error ? [] : sl2.data || []);
+    setAllSlots(sls.error ? [] : (sls.data || []).map((s) => ({ ...s, start_time: String(s.start_time).slice(0, 5) })));
     const [own, ids] = await Promise.all([supabase.rpc('is_owner'), supabase.rpc('owner_ids')]);
     setOwnerErr(own.error ? `${own.error.code || ''} ${own.error.message || ''}`.trim() : '');
     setIsOwner(own.data === true);
@@ -221,6 +236,12 @@ export default function Students() {
                       )}
                       {(det.height_cm || det.weight_kg || det.birth_year) && (
                         <p className="small"><b>{t('students.body')}:</b> {[det.height_cm && `${det.height_cm} cm`, det.weight_kg && `${det.weight_kg} kg`, det.birth_year && `${det.birth_year}`].filter(Boolean).join(' · ')}</p>
+                      )}
+                      {(det.studio_other || stLinks.some((l) => l.student_id === s.id)) && (
+                        <p className="small"><b>{t('ob.studio.label')}:</b> {det.studio_other ? t('ob.studio.other') : studios.filter((g) => stLinks.some((l) => l.student_id === s.id && l.studio_id === g.id)).map((g) => g.name).join(', ')}</p>
+                      )}
+                      {slotLinks.some((l) => l.student_id === s.id) && (
+                        <p className="small"><b>{t('ob.classes.label')}:</b> {allSlots.filter((x) => slotLinks.some((l) => l.student_id === s.id && l.slot_id === x.id)).map((x) => slotLabel(x, trainers, t)).join('; ')}</p>
                       )}
                       {det.goals && det.goals.length > 0 && (
                         <p className="small"><b>{t('students.goals')}:</b> {det.goals.map((g) => t(`ob.goal.${g}`)).join(', ')}</p>

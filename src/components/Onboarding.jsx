@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { avatarUrl, squarePhoto } from '../lib/image.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useStudioData, slotLabel, saveStudioChoice } from '../lib/studios.js';
 
 export const GOALS = ['lose_weight', 'muscle', 'mobility', 'recovery', 'maintain'];
 export const MESSENGERS = [
@@ -16,6 +17,7 @@ export const MESSENGERS = [
 const STEPS = [
   { key: 'name', icon: 'user' },
   { key: 'contact', icon: 'chat' },
+  { key: 'studio', icon: 'barbell' },
   { key: 'goals', icon: 'target' },
   { key: 'body', icon: 'anatomy' },
   { key: 'limits', icon: 'heart' },
@@ -42,6 +44,30 @@ export default function Onboarding({ onClose }) {
   const [photoGone, setPhotoGone] = useState(false);
   const [limits, setLimits] = useState(d.limitations || '');
   const [consent, setConsent] = useState(!!d.consent_at);
+  const sd = useStudioData(user ? user.id : null);
+  const [studioSel, setStudioSel] = useState(null);
+  const [slotSel, setSlotSel] = useState(null);
+  const [other, setOther] = useState(!!d.studio_other);
+  const selStudios = studioSel || sd.myStudios;
+  const selSlots = slotSel || sd.mySlots;
+  const toggleStudio = (id) => {
+    setOther(false);
+    const on = selStudios.includes(id);
+    setStudioSel(on ? selStudios.filter((x) => x !== id) : [...selStudios, id]);
+    if (on) {
+      const drop = sd.slots.filter((s) => s.studio_id === id).map((s) => s.id);
+      setSlotSel(selSlots.filter((x) => !drop.includes(x)));
+    }
+  };
+  const toggleOther = () => {
+    const v = !other;
+    setOther(v);
+    if (v) {
+      setStudioSel([]);
+      setSlotSel([]);
+    }
+  };
+  const toggleSlot = (id) => setSlotSel(selSlots.includes(id) ? selSlots.filter((x) => x !== id) : [...selSlots, id]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const [armed, setArmed] = useState(false);
@@ -104,6 +130,7 @@ export default function Onboarding({ onClose }) {
       weight_kg: num(weight, 20, 400),
       birth_year: num(year, 1920, new Date().getFullYear()),
       gender: gender || null,
+      studio_other: other,
       photo_path,
       limitations: clean(limits),
       consent_at: d.consent_at || now,
@@ -114,6 +141,13 @@ export default function Onboarding({ onClose }) {
     if (error) {
       setErr(t('ob.saveError') + ' [' + (error.code || '') + ' ' + (error.message || '') + ']');
       return;
+    }
+    if (sd.loaded) {
+      const sErr = await saveStudioChoice(user.id, other ? [] : selStudios, other ? [] : selSlots.filter((id) => sd.slots.some((s) => s.id === id && selStudios.includes(s.studio_id))));
+      if (sErr) {
+        setErr(t('ob.saveError') + ' [' + (sErr.code || '') + ' ' + (sErr.message || '') + ']');
+        return;
+      }
     }
     if (d.photo_path && d.photo_path !== photo_path) supabase.storage.from('avatars').remove([d.photo_path]);
     await refreshDetails();
@@ -214,6 +248,39 @@ export default function Onboarding({ onClose }) {
               {messenger && (
                 <input className="field" value={handle} maxLength={100} onChange={(e) => setHandle(e.target.value)} placeholder={t('ob.contact.handle')} autoCapitalize="none" autoCorrect="off" />
               )}
+            </div>
+          )}
+
+          {cur === 'studio' && (
+            <div className="stack">
+              <div className="chips">
+                {sd.studios.map((x) => (
+                  <button type="button" key={x.id} className={'chip' + (selStudios.includes(x.id) ? ' active' : '')} aria-pressed={selStudios.includes(x.id)} onClick={() => toggleStudio(x.id)}>
+                    {x.name}
+                  </button>
+                ))}
+                <button type="button" className={'chip' + (other ? ' active' : '')} aria-pressed={other} onClick={toggleOther}>
+                  {t('ob.studio.other')}
+                </button>
+              </div>
+              {other && <p className="small muted">{t('ob.studio.otherNote')}</p>}
+              {selStudios.map((id) => {
+                const st = sd.studios.find((x) => x.id === id);
+                const list = sd.slots.filter((s) => s.studio_id === id);
+                if (!st) return null;
+                return (
+                  <div key={id} className="stack">
+                    <b>{st.name}</b>
+                    {!list.length && <span className="muted small">{t('ob.studio.noClasses')}</span>}
+                    {list.map((s) => (
+                      <label key={s.id} className="consent">
+                        <input type="checkbox" checked={selSlots.includes(s.id)} onChange={() => toggleSlot(s.id)} />
+                        <span>{slotLabel(s, sd.trainers, t)}</span>
+                      </label>
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           )}
 

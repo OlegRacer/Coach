@@ -453,5 +453,18 @@
   "equip.icon": "圖示（表情符號）",
   "equip.name": "名稱",
   "equip.add": "新增器材",
-  "equip.delete": "刪除"
+  "equip.delete": "刪除",
+  "ob.studio.title": "你的studio",
+  "ob.studio.sub": "選擇你上課的studio，並勾選你參加的課程。選填。",
+  "ob.studio.other": "其他",
+  "ob.studio.otherNote": "沒有studio：我不在studio上課。",
+  "ob.studio.noClasses": "目前沒有課程。",
+  "ob.studio.label": "Studio",
+  "ob.classes.label": "課程",
+  "sa.studios": "Studio",
+  "sa.studioName": "Studio名稱",
+  "sa.addStudio": "新增",
+  "sa.deleteStudioConfirm": "確定？",
+  "sa.studio": "Studio",
+  "sa.noStudio": "無studio"
 }

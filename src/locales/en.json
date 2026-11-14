@@ -453,5 +453,18 @@
   "equip.icon": "Icon (emoji)",
   "equip.name": "Name",
   "equip.add": "Add equipment",
-  "equip.delete": "Delete"
+  "equip.delete": "Delete",
+  "ob.studio.title": "Your studio",
+  "ob.studio.sub": "Pick the studios you train at and tick the classes you attend. Optional.",
+  "ob.studio.other": "Other",
+  "ob.studio.otherNote": "No studio: I don't train at a studio.",
+  "ob.studio.noClasses": "No classes yet.",
+  "ob.studio.label": "Studio",
+  "ob.classes.label": "Classes",
+  "sa.studios": "Studios",
+  "sa.studioName": "Studio name",
+  "sa.addStudio": "Add",
+  "sa.deleteStudioConfirm": "Sure?",
+  "sa.studio": "Studio",
+  "sa.noStudio": "No studio"
 }

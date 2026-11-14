@@ -449,5 +449,18 @@
   "equip.icon": "Значок (емодзі)",
   "equip.name": "Назва",
   "equip.add": "Додати інвентар",
-  "equip.delete": "Видалити"
+  "equip.delete": "Видалити",
+  "ob.studio.title": "Твоя студія",
+  "ob.studio.sub": "Обери студії, у яких займаєшся, і відміть класи, які відвідуєш. Необов'язково.",
+  "ob.studio.other": "Інше",
+  "ob.studio.otherNote": "Без студії: займаюсь не в студії.",
+  "ob.studio.noClasses": "Класів поки немає.",
+  "ob.studio.label": "Студія",
+  "ob.classes.label": "Класи",
+  "sa.studios": "Студії",
+  "sa.studioName": "Назва студії",
+  "sa.addStudio": "Додати",
+  "sa.deleteStudioConfirm": "Точно?",
+  "sa.studio": "Студія",
+  "sa.noStudio": "Без студії"
 }
