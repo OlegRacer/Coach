@@ -462,5 +462,14 @@
   "sa.addStudio": "Додати",
   "sa.deleteStudioConfirm": "Точно?",
   "sa.studio": "Студія",
-  "sa.noStudio": "Без студії"
+  "sa.noStudio": "Без студії",
+  "students.studios": "Студії та класи",
+  "sa.className": "Назва класу",
+  "sa.addClass": "Додати клас",
+  "sa.deleteClassConfirm": "Видалити «{name}»?",
+  "pay.planAudience": "Тільки для студій і класів",
+  "pay.planAudienceHint": "Нічого не обрано: пакет бачать усі. Обрано: його бачать лише учні цих студій чи класів.",
+  "pay.audienceGrant": "Відкрити всім учням цієї аудиторії",
+  "pay.audienceConfirm": "Точно відкрити?",
+  "pay.audienceGranted": "Пакет відкрито учням: {n}"
 }

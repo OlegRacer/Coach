@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MESSENGERS } from '../components/Onboarding.jsx';
 import AccessPanel from './AccessPanel.jsx';
-import { TrainerPicker, NotePanel } from './StudentExtra.jsx';
-import { slotLabel } from '../lib/studios.js';
+import { TrainerPicker, NotePanel, StudioEditor } from './StudentExtra.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -35,8 +34,9 @@ export default function Students() {
   const [notes, setNotes] = useState({});
   const [studios, setStudios] = useState([]);
   const [stLinks, setStLinks] = useState([]);
-  const [slotLinks, setSlotLinks] = useState([]);
-  const [allSlots, setAllSlots] = useState([]);
+  const [classLinks, setClassLinks] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [studioOpen, setStudioOpen] = useState(null);
   const [filter, setFilter] = useState('all');
   const [roleErr, setRoleErr] = useState(false);
   const [ownerErr, setOwnerErr] = useState('');
@@ -66,13 +66,13 @@ export default function Students() {
     const [gs, gl, sl2, sls] = await Promise.all([
       supabase.from('studios').select('id, name').order('sort').order('created_at'),
       supabase.from('student_studios').select('student_id, studio_id'),
-      supabase.from('slot_students').select('student_id, slot_id'),
-      supabase.from('schedule_slots').select('*')
+      supabase.from('student_classes').select('student_id, class_id'),
+      supabase.from('studio_classes').select('*').order('sort').order('created_at')
     ]);
     setStudios(gs.error ? [] : gs.data || []);
     setStLinks(gl.error ? [] : gl.data || []);
-    setSlotLinks(sl2.error ? [] : sl2.data || []);
-    setAllSlots(sls.error ? [] : (sls.data || []).map((s) => ({ ...s, start_time: String(s.start_time).slice(0, 5) })));
+    setClassLinks(sl2.error ? [] : sl2.data || []);
+    setClasses(sls.error ? [] : sls.data || []);
     const [own, ids] = await Promise.all([supabase.rpc('is_owner'), supabase.rpc('owner_ids')]);
     setOwnerErr(own.error ? `${own.error.code || ''} ${own.error.message || ''}`.trim() : '');
     setIsOwner(own.data === true);
@@ -240,8 +240,8 @@ export default function Students() {
                       {(det.studio_other || stLinks.some((l) => l.student_id === s.id)) && (
                         <p className="small"><b>{t('ob.studio.label')}:</b> {det.studio_other ? t('ob.studio.other') : studios.filter((g) => stLinks.some((l) => l.student_id === s.id && l.studio_id === g.id)).map((g) => g.name).join(', ')}</p>
                       )}
-                      {slotLinks.some((l) => l.student_id === s.id) && (
-                        <p className="small"><b>{t('ob.classes.label')}:</b> {allSlots.filter((x) => slotLinks.some((l) => l.student_id === s.id && l.slot_id === x.id)).map((x) => slotLabel(x, trainers, t)).join('; ')}</p>
+                      {!det.studio_other && classLinks.some((l) => l.student_id === s.id) && (
+                        <p className="small"><b>{t('ob.classes.label')}:</b> {classes.filter((x) => classLinks.some((l) => l.student_id === s.id && l.class_id === x.id)).map((x) => x.name).join(', ')}</p>
                       )}
                       {det.goals && det.goals.length > 0 && (
                         <p className="small"><b>{t('students.goals')}:</b> {det.goals.map((g) => t(`ob.goal.${g}`)).join(', ')}</p>
@@ -257,6 +257,12 @@ export default function Students() {
                   </button>
                   {accessOpen === s.id && (
                     <AccessPanel student={s} rows={accessRows.filter((r) => r.student_id === s.id)} onChanged={load} />
+                  )}
+                  <button type="button" className="btn-ghost" onClick={() => setStudioOpen(studioOpen === s.id ? null : s.id)}>
+                    {t('students.studios')}
+                  </button>
+                  {studioOpen === s.id && (
+                    <StudioEditor student={s} studios={studios} classes={classes} links={stLinks} classLinks={classLinks} other={det && det.studio_other} onChanged={load} />
                   )}
                   <TrainerPicker student={s} trainers={trainers} mine={myTrainerIds(s.id)} onChanged={load} />
                   <button type="button" className="btn-ghost" onClick={() => setNoteOpen(noteOpen === s.id ? null : s.id)}>

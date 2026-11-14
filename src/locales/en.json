@@ -466,5 +466,14 @@
   "sa.addStudio": "Add",
   "sa.deleteStudioConfirm": "Sure?",
   "sa.studio": "Studio",
-  "sa.noStudio": "No studio"
+  "sa.noStudio": "No studio",
+  "students.studios": "Studios and classes",
+  "sa.className": "Class name",
+  "sa.addClass": "Add class",
+  "sa.deleteClassConfirm": "Delete “{name}”?",
+  "pay.planAudience": "Only for studios and classes",
+  "pay.planAudienceHint": "Nothing selected: everyone sees the package. Selected: only students of those studios or classes see it.",
+  "pay.audienceGrant": "Open for everyone in this audience",
+  "pay.audienceConfirm": "Open it now?",
+  "pay.audienceGranted": "Package opened for students: {n}"
 }

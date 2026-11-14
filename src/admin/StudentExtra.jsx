@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import StudioPicker from '../components/StudioPicker.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -68,6 +69,57 @@ export function NotePanel({ student, note, onChanged }) {
         onChange={(e) => {
           setSaved(false);
           setText(e.target.value);
+        }}
+      />
+      <button type="button" className="btn-primary" disabled={busy} onClick={save}>
+        {saved ? t('content.saved') : t('content.save')}
+      </button>
+      {err && <p className="err" role="alert">{err}</p>}
+    </div>
+  );
+}
+
+// Тренер сам задає студії й класи учня (або «Інше» — без студії).
+export function StudioEditor({ student, studios, classes, links, classLinks, other, onChanged }) {
+  const { t } = useI18n();
+  const init = () => ({
+    studios: links.filter((l) => l.student_id === student.id).map((l) => l.studio_id),
+    classes: classLinks.filter((l) => l.student_id === student.id).map((l) => l.class_id),
+    other: !!other
+  });
+  const [val, setVal] = useState(init);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [err, setErr] = useState('');
+  useEffect(() => {
+    setVal(init());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [links, classLinks, other]);
+  const save = async () => {
+    setBusy(true);
+    setErr('');
+    const { error } = await supabase.rpc('admin_set_student_studios', {
+      p_student: student.id,
+      p_studios: val.studios,
+      p_classes: val.classes,
+      p_other: val.other
+    });
+    setBusy(false);
+    if (error) setErr(`${error.code || ''} ${error.message || ''}`.trim());
+    else {
+      setSaved(true);
+      onChanged();
+    }
+  };
+  return (
+    <div className="stack">
+      <StudioPicker
+        studios={studios}
+        classes={classes}
+        value={val}
+        onChange={(v) => {
+          setSaved(false);
+          setVal(v);
         }}
       />
       <button type="button" className="btn-primary" disabled={busy} onClick={save}>

@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
-const blank = { studio_id: '', trainer_id: '', title: '', place: '', repeat: 'weekly', weekday: 1, on_date: '', start_time: '18:00', duration_min: 60 };
+const blank = { trainer_id: '', title: '', place: '', repeat: 'weekly', weekday: 1, on_date: '', start_time: '18:00', duration_min: 60 };
 
 // Адмінка розкладу: тренери і заняття (щотижня або на дату).
 export default function ScheduleAdmin() {
@@ -14,7 +14,9 @@ export default function ScheduleAdmin() {
   const [trainers, setTrainers] = useState([]);
   const [slots, setSlots] = useState([]);
   const [studios, setStudios] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [newStudio, setNewStudio] = useState('');
+  const [newClass, setNewClass] = useState({});
   const [newTrainer, setNewTrainer] = useState('');
   const [form, setForm] = useState(null);
   const [armed, setArmed] = useState(null);
@@ -23,6 +25,8 @@ export default function ScheduleAdmin() {
   const load = useCallback(async () => {
     const st = await supabase.from('studios').select('*').order('sort').order('created_at');
     setStudios(st.error ? [] : st.data || []);
+    const cl = await supabase.from('studio_classes').select('*').order('sort').order('created_at');
+    setClasses(cl.error ? [] : cl.data || []);
     const [tr, sl] = await Promise.all([
       supabase.from('trainers').select('*').order('sort').order('created_at'),
       supabase.from('schedule_slots').select('*').order('start_time')
@@ -67,11 +71,17 @@ export default function ScheduleAdmin() {
     if (await run(supabase.from('studios').insert({ name, sort: studios.length }))) setNewStudio('');
   };
 
+  const addClass = async (studioId) => {
+    const name = (newClass[studioId] || '').trim();
+    if (!name) return;
+    const n = classes.filter((c) => c.studio_id === studioId).length;
+    if (await run(supabase.from('studio_classes').insert({ studio_id: studioId, name, sort: n }))) setNewClass({ ...newClass, [studioId]: '' });
+  };
+
   const saveSlot = async () => {
     const f = form;
     const row = {
       trainer_id: f.trainer_id,
-      studio_id: f.studio_id || null,
       title: f.title.trim(),
       place: f.place.trim() || null,
       weekday: f.repeat === 'weekly' ? Number(f.weekday) : null,
@@ -135,25 +145,46 @@ export default function ScheduleAdmin() {
       <h2 className="h2 section-title">{t('sa.studios')}</h2>
       <div className="list">
         {studios.map((x) => (
-          <div key={x.id} className="list-item">
-            <input
-              className="field"
-              defaultValue={x.name}
-              maxLength={120}
-              aria-label={t('sa.studioName')}
-              onBlur={(e) => {
-                const v = e.target.value.trim();
-                if (v && v !== x.name) run(supabase.from('studios').update({ name: v }).eq('id', x.id));
-              }}
-            />
-            <button
-              type="button"
-              className="btn-danger"
-              style={{ width: 'auto', padding: '0 14px' }}
-              onClick={() => confirm('g' + x.id, () => run(supabase.from('studios').delete().eq('id', x.id)))}
-            >
-              {armed === 'g' + x.id ? t('sa.deleteStudioConfirm') : t('sa.delete')}
-            </button>
+          <div key={x.id} className="stack">
+            <div className="list-item">
+              <input
+                className="field"
+                defaultValue={x.name}
+                maxLength={120}
+                aria-label={t('sa.studioName')}
+                onBlur={(e) => {
+                  const v = e.target.value.trim();
+                  if (v && v !== x.name) run(supabase.from('studios').update({ name: v }).eq('id', x.id));
+                }}
+              />
+              <button
+                type="button"
+                className="btn-danger"
+                style={{ width: 'auto', padding: '0 14px' }}
+                onClick={() => confirm('g' + x.id, () => run(supabase.from('studios').delete().eq('id', x.id)))}
+              >
+                {armed === 'g' + x.id ? t('sa.deleteStudioConfirm') : t('sa.delete')}
+              </button>
+            </div>
+            <div className="chips" style={{ paddingLeft: 12 }}>
+              {classes.filter((c) => c.studio_id === x.id).map((c) => (
+                <button
+                  type="button"
+                  key={c.id}
+                  className={'chip chip-sub' + (armed === 'c' + c.id ? ' active' : '')}
+                  title={t('sa.delete')}
+                  onClick={() => confirm('c' + c.id, () => run(supabase.from('studio_classes').delete().eq('id', c.id)))}
+                >
+                  {armed === 'c' + c.id ? t('sa.deleteClassConfirm', { name: c.name }) : c.name + ' ×'}
+                </button>
+              ))}
+            </div>
+            <div className="row" style={{ paddingLeft: 12 }}>
+              <input className="field" value={newClass[x.id] || ''} maxLength={120} placeholder={t('sa.className')} onChange={(e) => setNewClass({ ...newClass, [x.id]: e.target.value })} />
+              <button type="button" className="btn-ghost" style={{ width: 'auto', padding: '0 18px' }} disabled={!(newClass[x.id] || '').trim()} onClick={() => addClass(x.id)}>
+                {t('sa.addClass')}
+              </button>
+            </div>
           </div>
         ))}
         <div className="row">
@@ -176,12 +207,6 @@ export default function ScheduleAdmin() {
         <div className="access-panel">
           <select className="field" value={form.trainer_id} onChange={(e) => setForm({ ...form, trainer_id: e.target.value })} aria-label={t('sa.trainer')}>
             {trainers.map((x) => (
-              <option key={x.id} value={x.id}>{x.name}</option>
-            ))}
-          </select>
-          <select className="field" value={form.studio_id} onChange={(e) => setForm({ ...form, studio_id: e.target.value })} aria-label={t('sa.studio')}>
-            <option value="">{t('sa.noStudio')}</option>
-            {studios.map((x) => (
               <option key={x.id} value={x.id}>{x.name}</option>
             ))}
           </select>
@@ -228,7 +253,7 @@ export default function ScheduleAdmin() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="session-title">{s.title}</div>
-                  <div className="muted small">{[t('common.minutes', { n: s.duration_min }), (studios.find((g) => g.id === s.studio_id) || {}).name, s.place].filter(Boolean).join(' · ')}</div>
+                  <div className="muted small">{[t('common.minutes', { n: s.duration_min }), s.place].filter(Boolean).join(' · ')}</div>
                 </div>
                 <button
                   type="button"

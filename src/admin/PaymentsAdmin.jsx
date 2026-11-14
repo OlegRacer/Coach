@@ -5,6 +5,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { formatMoney } from '../lib/money.js';
+import { useStudioData } from '../lib/studios.js';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
 
 const errText = (e) => (e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
@@ -125,7 +126,7 @@ function Requests() {
   );
 }
 
-const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: [], days: '30', price: '', currency: 'TWD', active: false });
+const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: [], studios: [], classes: [], days: '30', price: '', currency: 'TWD', active: false });
 
 function Plans() {
   const { t, locale } = useI18n();
@@ -133,6 +134,8 @@ function Plans() {
   const { rawSections: flatSections, chainOf, exercises: allEx } = useContent();
   const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
   const rawSections = [...flatSections].sort((a, b) => pathOf(a.id).localeCompare(pathOf(b.id)));
+  const sd = useStudioData(null);
+  const [info, setInfo] = useState('');
   const [plans, setPlans] = useState(null);
   const [edit, setEdit] = useState(null); // {id|null, ...поля}
   const [err, setErr] = useState('');
@@ -153,7 +156,7 @@ function Plans() {
     if ((!edit.sections.length && !(edit.exercises || []).length) || !(days > 0) || !(price >= 0)) return setErr(t('pay.planInvalid'));
     setBusy(true);
     setErr('');
-    const row = { title: edit.title, description: edit.description, sections: edit.sections, exercises: edit.exercises || [], days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active };
+    const row = { title: edit.title, description: edit.description, sections: edit.sections, exercises: edit.exercises || [], studios: edit.studios || [], classes: edit.classes || [], days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active };
     const q = edit.id ? supabase.from('access_plans').update(row).eq('id', edit.id) : supabase.from('access_plans').insert({ ...row, position: (plans || []).length });
     const { error } = await q;
     setBusy(false);
@@ -169,6 +172,15 @@ function Plans() {
   };
   const toggleExercise = (id) =>
     setEdit((x) => ({ ...x, exercises: (x.exercises || []).includes(id) ? x.exercises.filter((e) => e !== id) : [...(x.exercises || []), id] }));
+  const toggleIn = (key, id) =>
+    setEdit((x) => ({ ...x, [key]: (x[key] || []).includes(id) ? x[key].filter((e) => e !== id) : [...(x[key] || []), id] }));
+  const grantAudience = async (id) => {
+    setErr('');
+    setInfo('');
+    const { data, error } = await supabase.rpc('grant_plan_audience', { p_plan: id });
+    if (error) return setErr(errText(error));
+    setInfo(t('pay.audienceGranted', { n: data }));
+  };
   const toggleSection = (id) =>
     setEdit((x) => ({ ...x, sections: x.sections.includes(id) ? x.sections.filter((s) => s !== id) : [...x.sections, id] }));
 
@@ -207,6 +219,32 @@ function Plans() {
             );
           })}
         </div>
+        {(sd.studios.length > 0) && (
+          <>
+            <span className="muted small">{t('pay.planAudience')}</span>
+            <span className="muted small">{t('pay.planAudienceHint')}</span>
+            <div className="chips">
+              {sd.studios.map((g) => (
+                <button type="button" key={g.id} className={'chip' + ((edit.studios || []).includes(g.id) ? ' active' : '')} aria-pressed={(edit.studios || []).includes(g.id)} onClick={() => toggleIn('studios', g.id)}>
+                  {g.name}
+                </button>
+              ))}
+            </div>
+            {sd.studios.map((g) => {
+              const list = sd.classes.filter((c) => c.studio_id === g.id);
+              if (!list.length) return null;
+              return (
+                <div key={g.id} className="chips">
+                  {list.map((c) => (
+                    <button type="button" key={c.id} className={'chip chip-sub' + ((edit.classes || []).includes(c.id) ? ' active' : '')} aria-pressed={(edit.classes || []).includes(c.id)} onClick={() => toggleIn('classes', c.id)}>
+                      {g.name} · {c.name}
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
+          </>
+        )}
         <div className="grid2">
           <label className="stack"><span className="muted small">{t('pay.planDays')}</span>
             <input className="field" inputMode="numeric" value={edit.days} onChange={(e) => setEdit({ ...edit, days: e.target.value.replace(/\D/g, '') })} /></label>
@@ -221,6 +259,10 @@ function Plans() {
         </label>
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>{t('content.save')}</button>
         <button type="button" className="btn-ghost" onClick={() => { setEdit(null); setErr(''); }}>{t('signin.cancel')}</button>
+        {info && <p className="small" role="status">{info}</p>}
+        {edit.id && ((edit.studios || []).length > 0 || (edit.classes || []).length > 0) && (
+          <ConfirmButton label={t('pay.audienceGrant')} confirmLabel={t('pay.audienceConfirm')} className="btn-ghost" onConfirm={() => grantAudience(edit.id)} />
+        )}
         {edit.id && <ConfirmButton label={t('pay.planDelete')} onConfirm={() => del(edit.id)} />}
       </section>
     );

@@ -466,5 +466,14 @@
   "sa.addStudio": "新增",
   "sa.deleteStudioConfirm": "確定？",
   "sa.studio": "Studio",
-  "sa.noStudio": "無studio"
+  "sa.noStudio": "無studio",
+  "students.studios": "Studio 與課程",
+  "sa.className": "課程名稱",
+  "sa.addClass": "新增課程",
+  "sa.deleteClassConfirm": "刪除「{name}」？",
+  "pay.planAudience": "僅限特定 studio 與課程",
+  "pay.planAudienceHint": "未選擇：所有人都看得到。已選擇：只有這些 studio 或課程的學員看得到。",
+  "pay.audienceGrant": "開放給此對象的所有學員",
+  "pay.audienceConfirm": "確定開放？",
+  "pay.audienceGranted": "已開放給 {n} 位學員"
 }
