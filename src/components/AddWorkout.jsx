@@ -55,6 +55,7 @@ export default function AddWorkout({ onClose, onSaved }) {
   const classList = sd.classes.filter((c) => c.studio_id === studio);
   const withSlots = classList.filter((c) => sch.slots.some((x) => x.studio_id === studio && x.class_id === c.id));
   const classOptions = withSlots.length ? withSlots : classList;
+  const effSlot = timeSlots.length === 1 ? timeSlots[0] : timeSlots.find((x) => x.id === slotId) || null;
   const chooseSlot = (id) => {
     setSlotId(id);
     const x = sch.slots.find((y) => y.id === id);
@@ -91,7 +92,8 @@ export default function AddWorkout({ onClose, onSaved }) {
     return c && { kind: 'class', ref_id: c.id, title: c.name, place: [st && st.name, trainerName(trainerSel)].filter(Boolean).join(' · ') || null };
   };
   const item = kind && pick ? resolve() : null;
-  const ok = item && time && (repeat === 'weekly' || date);
+  const isClass = kind === 'class';
+  const ok = item && (isClass ? !!effSlot : time && (repeat === 'weekly' || date));
 
   const save = async () => {
     setBusy(true);
@@ -99,10 +101,14 @@ export default function AddWorkout({ onClose, onSaved }) {
     const { error } = await supabase.from('student_plan_items').insert({
       student_id: user.id,
       ...item,
-      weekday: repeat === 'weekly' ? weekday : null,
-      on_date: repeat === 'once' ? date : null,
-      start_time: time,
-      duration_min: Math.max(5, parseInt(dur, 10) || 60)
+      ...(isClass
+        ? { weekday: effSlot.weekday, on_date: effSlot.on_date, start_time: effSlot.start_time, duration_min: effSlot.duration_min }
+        : {
+            weekday: repeat === 'weekly' ? weekday : null,
+            on_date: repeat === 'once' ? date : null,
+            start_time: time,
+            duration_min: Math.max(5, parseInt(dur, 10) || 60)
+          })
     });
     setBusy(false);
     if (error) return setErr(t('ob.saveError') + ' [' + (error.code || '') + ' ' + (error.message || '') + ']');
@@ -180,7 +186,7 @@ export default function AddWorkout({ onClose, onSaved }) {
                   {trainerIds.map((id) => <option key={id} value={id}>{trainerName(id)}</option>)}
                 </select>
               )}
-              {pick && trainerSel && timeSlots.length > 0 && (
+              {pick && trainerSel && timeSlots.length > 1 && (
                 <select className="field" value={slotId} onChange={(e) => chooseSlot(e.target.value)} aria-label={t('aw.pickSlot')}>
                   <option value="" disabled>{t('aw.pickSlot')}</option>
                   {timeSlots.map((x) => <option key={x.id} value={x.id}>{slotText(x)}</option>)}
@@ -189,7 +195,13 @@ export default function AddWorkout({ onClose, onSaved }) {
             </>
           )}
 
-          {kind && pick && (kind !== 'class' || trainerSel || !classSlots.length) && (
+          {isClass && pick && !classSlots.length && <p className="muted small">{t('aw.noSlots')}</p>}
+          {isClass && effSlot && (
+            <p className="body">
+              <b>{effSlot.weekday != null ? t(`day.long.${effSlot.weekday}`) : effSlot.on_date}, {effSlot.start_time}</b> · {t('common.minutes', { n: effSlot.duration_min })}
+            </p>
+          )}
+          {kind && kind !== 'class' && pick && (
             <div className="stack">
               <div className="chips">
                 {['weekly', 'once'].map((r) => (

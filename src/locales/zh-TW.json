@@ -502,5 +502,6 @@
   "aw.kind.class": "實體課程",
   "aw.kind.class.hint": "在 studio 上的課程",
   "aw.pickTrainer": "選擇教練",
-  "aw.pickSlot": "選擇時段"
+  "aw.pickSlot": "選擇時段",
+  "aw.noSlots": "此課程在課表中還沒有時段。"
 }

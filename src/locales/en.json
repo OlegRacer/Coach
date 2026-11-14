@@ -502,5 +502,6 @@
   "aw.kind.class": "Offline class",
   "aw.kind.class.hint": "A class at a studio",
   "aw.pickTrainer": "Choose a trainer",
-  "aw.pickSlot": "Choose a session"
+  "aw.pickSlot": "Choose a session",
+  "aw.noSlots": "This class has no sessions in the schedule yet."
 }
