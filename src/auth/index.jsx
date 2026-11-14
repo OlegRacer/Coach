@@ -4,6 +4,26 @@ import { avatarUrl } from '../lib/image.js';
 
 const AuthContext = createContext(null);
 
+// Адреса сторінки-повернення з LINE (має бути вписана в Callback URL каналу LINE).
+function lineRedirect() {
+  return new URL('line-callback.html', window.location.href.split('#')[0].split('?')[0]).toString();
+}
+const lineBusy = { v: false };
+
+// Текст помилки Edge Function (invoke кидає загальне повідомлення, а справжній текст лежить у відповіді).
+async function fnError(e, data) {
+  if (data && data.error) return data.error;
+  try {
+    if (e && e.context && e.context.json) {
+      const j = await e.context.json();
+      if (j && j.error) return j.error;
+    }
+  } catch {
+    /* ignore */
+  }
+  return (e && e.message) || 'LINE: помилка входу';
+}
+
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -175,14 +195,59 @@ export function AuthProvider({ children }) {
     if (e) setError(e.message);
   }, []);
 
-  // LINE: власний OIDC-провайдер у Supabase з ідентифікатором custom:line (див. README, розділ «Вхід через LINE»).
+  // LINE: LINE підписує токени входу з браузера алгоритмом HS256, а Supabase (власні OIDC) приймає тільки ES256,
+  // тому вхід іде через нашу Edge Function «line-login» (див. README, розділ «Вхід через LINE»).
   const signInLine = useCallback(async () => {
     setError('');
-    const { error: e } = await supabase.auth.signInWithOAuth({
-      provider: 'custom:line',
-      options: { redirectTo: window.location.origin + window.location.pathname }
+    const { data, error: e } = await supabase.functions.invoke('line-login', {
+      body: { action: 'url', redirect_uri: lineRedirect() }
     });
-    if (e) setError(e.message);
+    if (e || !data || !data.url) {
+      setError(await fnError(e, data));
+      return;
+    }
+    try {
+      localStorage.setItem('line-state', data.state);
+    } catch {
+      /* ignore */
+    }
+    window.location.assign(data.url);
+  }, []);
+
+  // Повернення з LINE: сторінка line-callback.html перекидає сюди як #/line-callback?code=…&state=…
+  useEffect(() => {
+    const m = window.location.hash.match(/^#\/line-callback\?(.*)$/);
+    if (!m || lineBusy.v) return;
+    lineBusy.v = true;
+    const q = new URLSearchParams(m[1]);
+    window.history.replaceState(null, '', window.location.pathname + '#/');
+    (async () => {
+      const bad = q.get('error_description') || q.get('error');
+      if (bad || !q.get('code')) {
+        setError(bad || 'LINE: порожня відповідь');
+        return;
+      }
+      let saved = '';
+      try {
+        saved = localStorage.getItem('line-state') || '';
+        localStorage.removeItem('line-state');
+      } catch {
+        /* вхід міг продовжитись в іншому браузері: тоді перевіряє лише підпис state на сервері */
+      }
+      if (saved && saved !== q.get('state')) {
+        setError('LINE: state не збігається, спробуйте ще раз');
+        return;
+      }
+      const { data, error: e } = await supabase.functions.invoke('line-login', {
+        body: { action: 'login', code: q.get('code'), state: q.get('state'), redirect_uri: lineRedirect() }
+      });
+      if (e || !data || !data.token_hash) {
+        setError(await fnError(e, data));
+        return;
+      }
+      const { error: ve } = await supabase.auth.verifyOtp({ token_hash: data.token_hash, type: 'magiclink' });
+      if (ve) setError(ve.message);
+    })();
   }, []);
 
   const signOut = useCallback(async () => {

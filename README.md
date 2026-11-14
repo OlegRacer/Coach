@@ -79,20 +79,21 @@ npm run build    # збірка в dist/
 
 ## Вхід через LINE
 
-Кнопка «Увійти через LINE» у профілі викликає `supabase.auth.signInWithOAuth({ provider: 'custom:line' })`.
-Для цього в Supabase має бути власний OIDC-провайдер з ідентифікатором `custom:line` (безкоштовний тариф дозволяє до 3 власних провайдерів).
+LINE при вході з браузера підписує ID-токен алгоритмом HS256, а власні OIDC-провайдери Supabase приймають лише ES256,
+тому стандартне підключення (`custom:line`) не працює (помилка `unexpected signature algorithm "HS256"`).
+Вхід іде через Edge Function `line-login` (`supabase/functions/line-login/index.ts`) і сторінку `public/line-callback.html`.
 
-1. LINE Developers Console (developers.line.biz): Provider -> Create channel -> **LINE Login**, тип **Web app**.
-2. У каналі, вкладка **LINE Login**: додайте Callback URL з Supabase (див. п. 3).
-3. Supabase -> Authentication -> Auth Providers -> **New Provider** -> **Auto-discovery (OIDC)**:
-   - Identifier: `custom:line`
-   - Client ID: Channel ID каналу LINE; Client Secret: Channel secret
-   - Issuer URL: `https://access.line.me`
-   - Scopes: `openid profile email`
-   - Увімкніть дозвіл на користувачів без email (`email_optional`), доки LINE не схвалив доступ до email.
-   Callback URL береться з форми створення провайдера (його треба вписати в LINE, п. 2).
-4. Щоб LINE віддавав email: у каналі LINE, Basic settings -> OpenID Connect -> **Apply** (потрібен скріншот, як ви використовуєте email). Без схвалення вхід працює, але email буде порожнім.
-5. Статус каналу LINE переведіть з Developing у **Published**, інакше увійти зможуть лише адміни каналу й тестувальники.
+1. LINE Developers -> канал **LINE Login** (тип Web app). Запишіть Channel ID і Channel secret (Basic settings).
+2. У каналі, вкладка **LINE Login**, Callback URL: `https://olegracer.github.io/Coach/line-callback.html`. Статус каналу: **Published**.
+3. Supabase -> Edge Functions -> Deploy a new function -> назва `line-login`, код із `supabase/functions/line-login/index.ts`.
+   Вимкніть **Verify JWT**.
+4. Edge Functions -> Secrets: `LINE_CHANNEL_ID`, `LINE_CHANNEL_SECRET`. Для іншого сайту (власний домен) додайте
+   `APP_ORIGINS` (адреси через кому, наприклад `https://olegracer.github.io,https://coach.example.com`).
+5. Провайдер `custom:line` у Supabase (Authentication -> Providers) більше не потрібен, його можна видалити.
+
+Як це працює: застосунок просить у функції адресу входу LINE, учень входить у LINE, LINE повертає код на `line-callback.html`,
+функція обмінює код на токен, перевіряє його в LINE, створює (або знаходить) користувача `line_<id>@line.local` і віддає
+одноразовий токен, яким застосунок відкриває звичайну сесію Supabase. Email у LINE-користувачів умовний.
 
 ## Пуш-сповіщення про оплату
 

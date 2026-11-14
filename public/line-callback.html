@@ -1,0 +1,9 @@
+<!doctype html>
+<html lang="uk"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LINE</title>
+<style>html,body{margin:0;height:100%;background:#0e1016;color:#9aa3b2;font:16px system-ui,sans-serif;display:flex;align-items:center;justify-content:center}</style>
+</head><body>…
+<script>
+// LINE повертає сюди ?code=…&state=…; передаємо їх у додаток (HashRouter) і даємо йому завершити вхід.
+location.replace('./#/line-callback' + location.search);
+</script></body></html>
