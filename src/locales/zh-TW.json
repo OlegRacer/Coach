@@ -500,5 +500,7 @@
   "aw.kind.package": "我的方案",
   "aw.kind.package.hint": "你購買的方案",
   "aw.kind.class": "實體課程",
-  "aw.kind.class.hint": "在 studio 上的課程"
+  "aw.kind.class.hint": "在 studio 上的課程",
+  "aw.pickTrainer": "選擇教練",
+  "aw.pickSlot": "選擇時段"
 }

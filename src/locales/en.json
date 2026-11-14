@@ -500,5 +500,7 @@
   "aw.kind.package": "My package",
   "aw.kind.package.hint": "A package you purchased",
   "aw.kind.class": "Offline class",
-  "aw.kind.class.hint": "A class at a studio"
+  "aw.kind.class.hint": "A class at a studio",
+  "aw.pickTrainer": "Choose a trainer",
+  "aw.pickSlot": "Choose a session"
 }

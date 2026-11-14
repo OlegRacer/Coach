@@ -6,7 +6,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import { useStudioData } from '../lib/studios.js';
-import { iso } from '../lib/schedule.js';
+import { iso, useSchedule } from '../lib/schedule.js';
 
 const KINDS = ['app', 'package', 'class'];
 
@@ -17,6 +17,9 @@ export default function AddWorkout({ onClose, onSaved }) {
   const { user } = useAuth();
   const { rawSections, exercises, sectionOpen, exerciseOpen } = useContent();
   const sd = useStudioData(null);
+  const sch = useSchedule();
+  const [trainer, setTrainer] = useState('');
+  const [slotId, setSlotId] = useState('');
   const [kind, setKind] = useState('');
   const [pick, setPick] = useState('');
   const [studio, setStudio] = useState('');
@@ -43,6 +46,31 @@ export default function AddWorkout({ onClose, onSaved }) {
   const secs = rawSections.filter((s) => s.kind === 'exercises' && sectionOpen(s.id));
   const exs = exercises.filter((e) => exerciseOpen(e));
 
+  // Офлайн клас: класи студії, у яких є заняття; тренер (якщо їх кілька); конкретне заняття
+  const classSlots = sch.slots.filter((x) => x.studio_id === studio && x.class_id === pick);
+  const trainerIds = [...new Set(classSlots.map((x) => x.trainer_id))];
+  const trainerName = (id) => (sch.trainers.find((x) => x.id === id) || {}).name || '';
+  const trainerSel = trainerIds.length === 1 ? trainerIds[0] : trainer;
+  const timeSlots = classSlots.filter((x) => !trainerSel || x.trainer_id === trainerSel);
+  const classList = sd.classes.filter((c) => c.studio_id === studio);
+  const withSlots = classList.filter((c) => sch.slots.some((x) => x.studio_id === studio && x.class_id === c.id));
+  const classOptions = withSlots.length ? withSlots : classList;
+  const chooseSlot = (id) => {
+    setSlotId(id);
+    const x = sch.slots.find((y) => y.id === id);
+    if (!x) return;
+    if (x.weekday != null) {
+      setRepeat('weekly');
+      setWeekday(x.weekday);
+    } else {
+      setRepeat('once');
+      setDate(x.on_date);
+    }
+    setTime(x.start_time);
+    setDur(String(x.duration_min));
+  };
+  const slotText = (x) => `${x.weekday != null ? t(`day.short.${x.weekday}`) : x.on_date} ${x.start_time}`;
+
   // що саме обрано → заголовок, місце, посилання
   const resolve = () => {
     if (kind === 'app') {
@@ -60,7 +88,7 @@ export default function AddWorkout({ onClose, onSaved }) {
     }
     const c = sd.classes.find((x) => x.id === pick);
     const st = sd.studios.find((x) => x.id === studio);
-    return c && { kind: 'class', ref_id: c.id, title: c.name, place: st ? st.name : null };
+    return c && { kind: 'class', ref_id: c.id, title: c.name, place: [st && st.name, trainerName(trainerSel)].filter(Boolean).join(' · ') || null };
   };
   const item = kind && pick ? resolve() : null;
   const ok = item && time && (repeat === 'weekly' || date);
@@ -136,20 +164,32 @@ export default function AddWorkout({ onClose, onSaved }) {
           )}
           {kind === 'class' && (
             <>
-              <select className="field" value={studio} onChange={(e) => { setStudio(e.target.value); setPick(''); }} aria-label={t('sa.studio')}>
+              <select className="field" value={studio} onChange={(e) => { setStudio(e.target.value); setPick(''); setTrainer(''); setSlotId(''); }} aria-label={t('sa.studio')}>
                 <option value="" disabled>{t('sa.pickStudio')}</option>
                 {sd.studios.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
               {studio && (
-                <select className="field" value={pick} onChange={(e) => setPick(e.target.value)} aria-label={t('sa.class')}>
+                <select className="field" value={pick} onChange={(e) => { setPick(e.target.value); setTrainer(''); setSlotId(''); }} aria-label={t('sa.class')}>
                   <option value="" disabled>{t('sa.pickClass')}</option>
-                  {sd.classes.filter((c) => c.studio_id === studio).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  {classOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              )}
+              {pick && trainerIds.length > 1 && (
+                <select className="field" value={trainer} onChange={(e) => { setTrainer(e.target.value); setSlotId(''); }} aria-label={t('sa.trainer')}>
+                  <option value="" disabled>{t('aw.pickTrainer')}</option>
+                  {trainerIds.map((id) => <option key={id} value={id}>{trainerName(id)}</option>)}
+                </select>
+              )}
+              {pick && trainerSel && timeSlots.length > 0 && (
+                <select className="field" value={slotId} onChange={(e) => chooseSlot(e.target.value)} aria-label={t('aw.pickSlot')}>
+                  <option value="" disabled>{t('aw.pickSlot')}</option>
+                  {timeSlots.map((x) => <option key={x.id} value={x.id}>{slotText(x)}</option>)}
                 </select>
               )}
             </>
           )}
 
-          {kind && pick && (
+          {kind && pick && (kind !== 'class' || trainerSel || !classSlots.length) && (
             <div className="stack">
               <div className="chips">
                 {['weekly', 'once'].map((r) => (

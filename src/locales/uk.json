@@ -496,5 +496,7 @@
   "aw.kind.package": "Мій пакет",
   "aw.kind.package.hint": "Пакет, який ви придбали",
   "aw.kind.class": "Офлайн клас",
-  "aw.kind.class.hint": "Заняття в студії"
+  "aw.kind.class.hint": "Заняття в студії",
+  "aw.pickTrainer": "Оберіть тренера",
+  "aw.pickSlot": "Оберіть заняття"
 }
