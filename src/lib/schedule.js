@@ -63,6 +63,8 @@ export function useSchedule() {
   const [trainers, setTrainers] = useState(() => read(KEY + ':t', []));
   const [slots, setSlots] = useState(() => read(KEY + ':s', []));
   const [mineIds, setMineIds] = useState(() => (uid ? read(`${KEY}:m:${uid}`, []) : []));
+  const [myStudios, setMyStudios] = useState([]);
+  const [myClasses, setMyClasses] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
   const load = useCallback(async () => {
@@ -79,6 +81,12 @@ export function useSchedule() {
       write(KEY + ':s', s);
       if (uid) {
         const my = await supabase.from('slot_students').select('slot_id').eq('student_id', uid);
+        const [ms, mc] = await Promise.all([
+          supabase.from('student_studios').select('studio_id').eq('student_id', uid),
+          supabase.from('student_classes').select('class_id').eq('student_id', uid)
+        ]);
+        if (!ms.error) setMyStudios((ms.data || []).map((r) => r.studio_id));
+        if (!mc.error) setMyClasses((mc.data || []).map((r) => r.class_id));
         if (!my.error) {
           const ids = (my.data || []).map((r) => r.slot_id);
           setMineIds(ids);
@@ -101,6 +109,9 @@ export function useSchedule() {
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, [ready, uid, load]);
 
-  const mine = slots.filter((s) => mineIds.includes(s.id));
+  // Заняття учня: призначені вручну + ті, що належать його класам (або студії, якщо клас не вказано)
+  const mine = slots.filter(
+    (s) => mineIds.includes(s.id) || (s.class_id ? myClasses.includes(s.class_id) : s.studio_id && myStudios.includes(s.studio_id))
+  );
   return { trainers, slots, mine, loaded, reload: load };
 }

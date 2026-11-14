@@ -471,5 +471,7 @@
   "pay.planAudienceHint": "Нічого не обрано: пакет бачать усі. Обрано: його бачать лише учні цих студій чи класів.",
   "pay.audienceGrant": "Відкрити всім учням цієї аудиторії",
   "pay.audienceConfirm": "Точно відкрити?",
-  "pay.audienceGranted": "Пакет відкрито учням: {n}"
+  "pay.audienceGranted": "Пакет відкрито учням: {n}",
+  "sa.class": "Клас",
+  "sa.allClasses": "Усі класи студії"
 }

@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
-const blank = { trainer_id: '', title: '', place: '', repeat: 'weekly', weekday: 1, on_date: '', start_time: '18:00', duration_min: 60 };
+const blank = { studio_id: '', class_id: '', trainer_id: '', title: '', place: '', repeat: 'weekly', weekday: 1, on_date: '', start_time: '18:00', duration_min: 60 };
 
 // Адмінка розкладу: тренери і заняття (щотижня або на дату).
 export default function ScheduleAdmin() {
@@ -82,7 +82,9 @@ export default function ScheduleAdmin() {
     const f = form;
     const row = {
       trainer_id: f.trainer_id,
-      title: f.title.trim(),
+      title: f.title.trim() || ((classes.find((c) => c.id === f.class_id) || {}).name || ''),
+      studio_id: f.studio_id || null,
+      class_id: f.class_id || null,
       place: f.place.trim() || null,
       weekday: f.repeat === 'weekly' ? Number(f.weekday) : null,
       on_date: f.repeat === 'once' ? f.on_date : null,
@@ -91,7 +93,7 @@ export default function ScheduleAdmin() {
     };
     if (await run(supabase.from('schedule_slots').insert(row))) setForm(null);
   };
-  const formOk = form && form.trainer_id && form.title.trim() && form.start_time && (form.repeat === 'weekly' || form.on_date);
+  const formOk = form && form.trainer_id && (form.title.trim() || form.class_id) && form.start_time && (form.repeat === 'weekly' || form.on_date);
 
   if (!ready) return <main className="page" />;
   if (!isAdmin) {
@@ -210,6 +212,20 @@ export default function ScheduleAdmin() {
               <option key={x.id} value={x.id}>{x.name}</option>
             ))}
           </select>
+          <select className="field" value={form.studio_id} onChange={(e) => setForm({ ...form, studio_id: e.target.value, class_id: '' })} aria-label={t('sa.studio')}>
+            <option value="">{t('sa.noStudio')}</option>
+            {studios.map((x) => (
+              <option key={x.id} value={x.id}>{x.name}</option>
+            ))}
+          </select>
+          {form.studio_id && (
+            <select className="field" value={form.class_id} onChange={(e) => setForm({ ...form, class_id: e.target.value })} aria-label={t('sa.class')}>
+              <option value="">{t('sa.allClasses')}</option>
+              {classes.filter((c) => c.studio_id === form.studio_id).map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          )}
           <input className="field" value={form.title} maxLength={120} placeholder={t('sa.titleField')} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           <input className="field" value={form.place} maxLength={120} placeholder={t('sa.place')} onChange={(e) => setForm({ ...form, place: e.target.value })} />
           <div className="chips">
@@ -253,7 +269,7 @@ export default function ScheduleAdmin() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div className="session-title">{s.title}</div>
-                  <div className="muted small">{[t('common.minutes', { n: s.duration_min }), s.place].filter(Boolean).join(' · ')}</div>
+                  <div className="muted small">{[t('common.minutes', { n: s.duration_min }), (studios.find((g) => g.id === s.studio_id) || {}).name, (classes.find((c) => c.id === s.class_id) || {}).name, s.place].filter(Boolean).join(' · ')}</div>
                 </div>
                 <button
                   type="button"

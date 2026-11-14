@@ -475,5 +475,7 @@
   "pay.planAudienceHint": "未選擇：所有人都看得到。已選擇：只有這些 studio 或課程的學員看得到。",
   "pay.audienceGrant": "開放給此對象的所有學員",
   "pay.audienceConfirm": "確定開放？",
-  "pay.audienceGranted": "已開放給 {n} 位學員"
+  "pay.audienceGranted": "已開放給 {n} 位學員",
+  "sa.class": "課程",
+  "sa.allClasses": "此 studio 所有課程"
 }

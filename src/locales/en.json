@@ -475,5 +475,7 @@
   "pay.planAudienceHint": "Nothing selected: everyone sees the package. Selected: only students of those studios or classes see it.",
   "pay.audienceGrant": "Open for everyone in this audience",
   "pay.audienceConfirm": "Open it now?",
-  "pay.audienceGranted": "Package opened for students: {n}"
+  "pay.audienceGranted": "Package opened for students: {n}",
+  "sa.class": "Class",
+  "sa.allClasses": "All classes of the studio"
 }
