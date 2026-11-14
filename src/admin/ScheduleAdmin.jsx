@@ -19,6 +19,7 @@ export default function ScheduleAdmin() {
   const [newTrainer, setNewTrainer] = useState('');
   const [form, setForm] = useState(null);
   const [armed, setArmed] = useState(null);
+  const [openStudio, setOpenStudio] = useState(null);
   const [err, setErr] = useState(false);
 
   const load = useCallback(async () => {
@@ -153,7 +154,16 @@ export default function ScheduleAdmin() {
       {studios.map((x) => (
         <section key={x.id} className="card">
           <div className="session">
-            <h2 className="h2" style={{ flex: 1, minWidth: 0 }}>{x.name}</h2>
+            <button
+              type="button"
+              className="h2"
+              style={{ flex: 1, minWidth: 0, textAlign: 'left', background: 'none', border: 0, padding: 0, color: 'inherit', font: 'inherit', cursor: 'pointer' }}
+              aria-expanded={openStudio === x.id}
+              onClick={() => setOpenStudio(openStudio === x.id ? null : x.id)}
+            >
+              {x.name}
+              <span className="muted small"> · {classes.filter((c) => c.studio_id === x.id).length} {openStudio === x.id ? '▴' : '▾'}</span>
+            </button>
             <button
               type="button"
               className={'icon-btn trash-btn' + (armed === 'g' + x.id ? ' armed' : '')}
@@ -163,7 +173,7 @@ export default function ScheduleAdmin() {
               {armed === 'g' + x.id ? <span className="small">{t('sa.deleteConfirm')}</span> : <Icon name="trash" size={22} />}
             </button>
           </div>
-          {classes.filter((c) => c.studio_id === x.id).map((c) => (
+          {openStudio === x.id && classes.filter((c) => c.studio_id === x.id).map((c) => (
             <div key={c.id} className="session">
               <div className="session-title" style={{ flex: 1, minWidth: 0 }}>{c.name}</div>
               <button
