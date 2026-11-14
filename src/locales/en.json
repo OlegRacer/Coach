@@ -482,5 +482,6 @@
   "sa.pickStudio": "Choose a studio",
   "sa.newStudio": "+ New studio",
   "sa.pickClass": "Choose a class",
-  "sa.newClass": "+ New class"
+  "sa.newClass": "+ New class",
+  "pay.allClasses": "All classes of the studio"
 }

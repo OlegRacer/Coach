@@ -482,5 +482,6 @@
   "sa.pickStudio": "選擇 studio",
   "sa.newStudio": "+ 新增 studio",
   "sa.pickClass": "選擇課程",
-  "sa.newClass": "+ 新增課程"
+  "sa.newClass": "+ 新增課程",
+  "pay.allClasses": "此 studio 所有課程"
 }

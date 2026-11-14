@@ -478,5 +478,6 @@
   "sa.pickStudio": "Оберіть студію",
   "sa.newStudio": "+ Нова студія",
   "sa.pickClass": "Оберіть клас",
-  "sa.newClass": "+ Новий клас"
+  "sa.newClass": "+ Новий клас",
+  "pay.allClasses": "Усі класи студії"
 }

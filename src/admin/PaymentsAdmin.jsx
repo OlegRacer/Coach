@@ -136,6 +136,7 @@ function Plans() {
   const rawSections = [...flatSections].sort((a, b) => pathOf(a.id).localeCompare(pathOf(b.id)));
   const sd = useStudioData(null);
   const [info, setInfo] = useState('');
+  const [audOpen, setAudOpen] = useState(null);
   const [plans, setPlans] = useState(null);
   const [edit, setEdit] = useState(null); // {id|null, ...поля}
   const [err, setErr] = useState('');
@@ -224,25 +225,28 @@ function Plans() {
             <span className="muted small">{t('pay.planAudience')}</span>
             <span className="muted small">{t('pay.planAudienceHint')}</span>
             <div className="chips">
-              {sd.studios.map((g) => (
-                <button type="button" key={g.id} className={'chip' + ((edit.studios || []).includes(g.id) ? ' active' : '')} aria-pressed={(edit.studios || []).includes(g.id)} onClick={() => toggleIn('studios', g.id)}>
-                  {g.name}
-                </button>
-              ))}
+              {sd.studios.map((g) => {
+                const n = (edit.classes || []).filter((id) => sd.classes.some((c) => c.id === id && c.studio_id === g.id)).length;
+                const on = (edit.studios || []).includes(g.id) || n > 0;
+                return (
+                  <button type="button" key={g.id} className={'chip' + (on ? ' active' : '')} aria-expanded={audOpen === g.id} onClick={() => setAudOpen(audOpen === g.id ? null : g.id)}>
+                    {g.name}{n > 0 ? ` · ${n}` : ''} {audOpen === g.id ? '▴' : '▾'}
+                  </button>
+                );
+              })}
             </div>
-            {sd.studios.map((g) => {
-              const list = sd.classes.filter((c) => c.studio_id === g.id);
-              if (!list.length) return null;
-              return (
-                <div key={g.id} className="chips">
-                  {list.map((c) => (
-                    <button type="button" key={c.id} className={'chip chip-sub' + ((edit.classes || []).includes(c.id) ? ' active' : '')} aria-pressed={(edit.classes || []).includes(c.id)} onClick={() => toggleIn('classes', c.id)}>
-                      {g.name} · {c.name}
-                    </button>
-                  ))}
-                </div>
-              );
-            })}
+            {sd.studios.filter((g) => g.id === audOpen).map((g) => (
+              <div key={g.id} className="chips">
+                <button type="button" className={'chip chip-sub' + ((edit.studios || []).includes(g.id) ? ' active' : '')} aria-pressed={(edit.studios || []).includes(g.id)} onClick={() => toggleIn('studios', g.id)}>
+                  {t('pay.allClasses')}
+                </button>
+                {sd.classes.filter((c) => c.studio_id === g.id).map((c) => (
+                  <button type="button" key={c.id} className={'chip chip-sub' + ((edit.classes || []).includes(c.id) ? ' active' : '')} aria-pressed={(edit.classes || []).includes(c.id)} onClick={() => toggleIn('classes', c.id)}>
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            ))}
           </>
         )}
         <div className="grid2">
