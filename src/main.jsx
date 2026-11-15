@@ -7,6 +7,7 @@ import { AuthProvider } from './auth/index.jsx';
 import { UpdateProvider } from './lib/update.jsx';
 import { ContentProvider } from './lib/content.jsx';
 import { EquipmentProvider } from './lib/equipment.jsx';
+import { UiProvider } from './lib/ui.jsx';
 import './styles.css';
 
 createRoot(document.getElementById('root')).render(
@@ -16,9 +17,11 @@ createRoot(document.getElementById('root')).render(
         <UpdateProvider>
           <ContentProvider>
             <EquipmentProvider>
-              <HashRouter>
-                <App />
-              </HashRouter>
+              <UiProvider>
+                <HashRouter>
+                  <App />
+                </HashRouter>
+              </UiProvider>
             </EquipmentProvider>
           </ContentProvider>
         </UpdateProvider>

@@ -4,6 +4,7 @@ import Onboarding from './Onboarding.jsx';
 import ProfileDetails from './ProfileDetails.jsx';
 import PushToggle from './PushToggle.jsx';
 import LinkedLogins from './LinkedLogins.jsx';
+import UiSwitch from './UiSwitch.jsx';
 import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
@@ -105,6 +106,8 @@ export default function ProfileCard() {
           <Icon name="chevron" size={20} />
         </span>
       </Link>
+
+      <UiSwitch />
 
       <LinkedLogins />
 

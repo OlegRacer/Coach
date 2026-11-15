@@ -521,5 +521,11 @@
   "aw.sets": "組數",
   "aw.setsCount": "組數：{n}",
   "aw.longTap": "長按已選的日期可設定該天的時間。",
-  "aw.anyTime": "全天"
+  "aw.anyTime": "全天",
+  "ui.title": "介面",
+  "ui.classic": "經典",
+  "ui.next": "新版（測試）",
+  "ui.next.title": "新介面",
+  "ui.next.soon": "新介面仍在開發中。",
+  "ui.backToClassic": "回到經典版"
 }

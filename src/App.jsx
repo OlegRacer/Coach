@@ -1,4 +1,5 @@
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
+import { useUi } from './lib/ui.jsx';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Schedule from './pages/Schedule.jsx';
@@ -14,6 +15,7 @@ import UpdateBanner from './components/UpdateBanner.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
 
 // Адмінка вантажиться окремим шматком коду, тільки коли її відкривають.
+const NextApp = lazy(() => import('./ui-next/NextApp.jsx'));
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
 const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
@@ -24,6 +26,17 @@ const ExerciseEditor = lazy(() => import('./admin/ExerciseEditor.jsx'));
 const EquipmentAdmin = lazy(() => import('./admin/EquipmentAdmin.jsx'));
 
 export default function App() {
+  const { ui } = useUi();
+  if (ui === 'next') {
+    return (
+      <div className="app">
+        <UpdateBanner />
+        <Suspense fallback={null}>
+          <NextApp />
+        </Suspense>
+      </div>
+    );
+  }
   return (
     <div className="app">
       <OnboardingGate />
