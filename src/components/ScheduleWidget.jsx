@@ -45,7 +45,7 @@ export default function ScheduleWidget() {
   const dayItems = slotsOn(mine, dayMine);
   const nextText = next
     ? t('sched.next', {
-        when: `${next.delta === 0 ? t('common.today') : t(`day.long.${next.date.getDay() === 0 ? 7 : next.date.getDay()}`)}, ${next.slot.start_time}`,
+        when: `${next.delta === 0 ? t('common.today') : t(`day.long.${next.date.getDay() === 0 ? 7 : next.date.getDay()}`)}${next.slot.personal && next.slot.start_time === '00:00' ? '' : ', ' + next.slot.start_time}`,
         title: next.slot.title
       })
     : '';

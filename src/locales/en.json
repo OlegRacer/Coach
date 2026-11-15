@@ -520,5 +520,6 @@
   "aw.maxDays": "You can pick up to {n} days a week.",
   "aw.sets": "Sets",
   "aw.setsCount": "Sets: {n}",
-  "aw.longTap": "Press and hold a selected day to set its time."
+  "aw.longTap": "Press and hold a selected day to set its time.",
+  "aw.anyTime": "Any time"
 }

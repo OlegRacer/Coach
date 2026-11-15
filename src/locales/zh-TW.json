@@ -520,5 +520,6 @@
   "aw.maxDays": "每週最多可選 {n} 天。",
   "aw.sets": "組數",
   "aw.setsCount": "組數：{n}",
-  "aw.longTap": "長按已選的日期可設定該天的時間。"
+  "aw.longTap": "長按已選的日期可設定該天的時間。",
+  "aw.anyTime": "全天"
 }

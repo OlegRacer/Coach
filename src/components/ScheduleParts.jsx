@@ -43,8 +43,14 @@ export function SessionList({ items, trainers, empty, onDelete }) {
       {items.map((s) => (
         <div key={s.id} className="session">
           <div className="session-time">
-            <b>{s.start_time}</b>
-            <span>{t('common.minutes', { n: s.duration_min })}</span>
+            {s.personal && s.start_time === '00:00' ? (
+              <b>{t('aw.anyTime')}</b>
+            ) : (
+              <>
+                <b>{s.start_time}</b>
+                <span>{t('common.minutes', { n: s.duration_min })}</span>
+              </>
+            )}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}</div>

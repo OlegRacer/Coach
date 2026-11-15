@@ -38,7 +38,7 @@ export function nextOccurrence(slots, now = new Date()) {
   const nowHM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
   for (let i = 0; i < 60; i += 1) {
     const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
-    const list = slotsOn(slots, d).filter((s) => i > 0 || s.start_time >= nowHM);
+    const list = slotsOn(slots, d).filter((s) => i > 0 || s.start_time >= nowHM || (s.personal && s.start_time === '00:00'));
     if (list.length) return { slot: list[0], date: d, delta: i };
   }
   return null;

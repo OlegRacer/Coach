@@ -117,12 +117,13 @@ export default function AddWorkout({ onClose, onSaved }) {
     if (weekdays.length < maxDays) setWeekdays([...weekdays, n].sort());
   };
   const days = weekdays.slice(0, maxDays);
-  const timeOf = (n) => dayTime[n] || time;
+  const needTime = other; // час потрібен лише для класу в іншій студії; програми й пакети без часу
+  const timeOf = (n) => (needTime ? dayTime[n] || time : '00:00');
   const startPress = (n) => {
     press.current.long = false;
     clearTimeout(press.current.timer);
     press.current.timer = setTimeout(() => {
-      if (weekdays.includes(n)) {
+      if (needTime && weekdays.includes(n)) {
         press.current.long = true;
         setEditDay(n);
         if (navigator.vibrate) navigator.vibrate(15);
@@ -151,8 +152,8 @@ export default function AddWorkout({ onClose, onSaved }) {
           ...base,
           weekday: d,
           on_date: repeat === 'once' ? date : null,
-          start_time: d ? timeOf(d) : time,
-          duration_min: Math.max(5, parseInt(dur, 10) || 60)
+          start_time: d ? timeOf(d) : needTime ? time : '00:00',
+          duration_min: needTime ? Math.max(5, parseInt(dur, 10) || 60) : 60
         }));
     const { error } = await supabase.from('student_plan_items').insert(rows);
     setBusy(false);
@@ -331,24 +332,24 @@ export default function AddWorkout({ onClose, onSaved }) {
                       }}
                     >
                       <span>{t(`day.short.${n}`)}</span>
-                      {days.includes(n) && <small className="day-time">{timeOf(n)}</small>}
+                      {needTime && days.includes(n) && <small className="day-time">{timeOf(n)}</small>}
                     </button>
                   ))}
-                  {editDay && days.includes(editDay) && (
+                  {needTime && editDay && days.includes(editDay) && (
                     <div className="row" style={{ width: '100%', alignItems: 'center', gap: 8 }}>
                       <span>{t(`day.long.${editDay}`)}</span>
                       <input className="field" type="time" value={timeOf(editDay)} onChange={(e) => setDayTime({ ...dayTime, [editDay]: e.target.value })} aria-label={t('sa.time')} />
                       <button type="button" className="btn-ghost btn-small" onClick={() => setEditDay(null)}>OK</button>
                     </div>
                   )}
-                  <p className="muted small" style={{ width: '100%' }}>{t('aw.longTap')}</p>
+                  {needTime && <p className="muted small" style={{ width: '100%' }}>{t('aw.longTap')}</p>}
                   {maxDays > 1 && maxDays < 7 && <p className="muted small" style={{ width: '100%' }}>{t('aw.maxDays', { n: maxDays })}</p>}
                 </div>
                 </>
               ) : (
                 <input className="field" type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label={t('sa.date')} />
               )}
-              <div className="row">
+              <div className="row" style={needTime ? undefined : { display: 'none' }}>
                 {repeat === 'once' && <input className="field" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label={t('sa.time')} />}
                 <input className="field" inputMode="numeric" value={dur} maxLength={3} onChange={(e) => setDur(e.target.value.replace(/\D/g, ''))} placeholder={t('sa.duration')} aria-label={t('sa.duration')} />
               </div>
