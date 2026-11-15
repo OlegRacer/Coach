@@ -199,10 +199,14 @@ export default function SectionEditor() {
                 set('program_exercises', a);
               };
               return (
-                <div key={id} className="row" style={{ alignItems: 'center', gap: 6 }}>
-                  <span style={{ flex: 1, minWidth: 0 }}>{e ? L(e.title) : id}</span>
-                  <button type="button" className="btn-ghost btn-small" onClick={() => move(-1)} aria-label="↑">↑</button>
-                  <button type="button" className="btn-ghost btn-small" onClick={() => move(1)} aria-label="↓">↓</button>
+                <div key={id} className="prog-ex">
+                  <span className="prog-ex-title">{e ? L(e.title) : id}</span>
+                  <button type="button" className="icon-btn" aria-label="↑" disabled={i === 0} onClick={() => move(-1)}>
+                    <span style={{ display: 'inline-flex', transform: 'rotate(-90deg)' }}><Icon name="arrow" size={18} /></span>
+                  </button>
+                  <button type="button" className="icon-btn" aria-label="↓" disabled={i === f.program_exercises.length - 1} onClick={() => move(1)}>
+                    <span style={{ display: 'inline-flex', transform: 'rotate(90deg)' }}><Icon name="arrow" size={18} /></span>
+                  </button>
                   <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => set('program_exercises', f.program_exercises.filter((x) => x !== id))}>
                     <Icon name="trash" size={20} />
                   </button>
