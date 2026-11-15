@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
@@ -11,23 +11,33 @@ import { useEquipment } from '../lib/equipment.jsx';
 
 // Розділ містить підрозділи і/або вправи (на будь-яку глибину). Закрите учень бачить із замком,
 // а відкрите окремо (пакет, «безкоштовно») лишається доступним.
-// Мініатюра-превʼю вправи: квадрат із центру відео (або картинки). Відео грає, лише поки видно на екрані.
+// Мініатюра-превʼю вправи: квадрат із центру відео (або картинки).
+// Відео стоїть на першому кадрі; тап по квадрату запускає його (не відкриваючи вправу), одночасно грає лише одне.
+let playing = null;
 function Thumb({ src }) {
   const ref = useRef(null);
+  const [on, setOn] = useState(false);
   const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
-  useEffect(() => {
+  useEffect(() => () => { if (playing === ref.current) playing = null; }, []);
+  if (!isVideo) return <img src={src} alt="" loading="lazy" />;
+  const toggle = (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
     const v = ref.current;
-    if (!isVideo || !v) return undefined;
-    v.muted = true;
-    const io = new IntersectionObserver(([en]) => {
-      if (en.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause();
-    }, { threshold: 0.2 });
-    io.observe(v);
-    return () => io.disconnect();
-  }, [src, isVideo]);
-  return isVideo
-    ? <video ref={ref} src={src} muted loop playsInline preload="metadata" aria-hidden="true" />
-    : <img src={src} alt="" loading="lazy" />;
+    if (!v) return;
+    if (!v.paused) { v.pause(); return; }
+    if (playing && playing !== v) playing.pause();
+    playing = v;
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  };
+  return (
+    <span className="thumb-play" onClick={toggle}>
+      <video ref={ref} src={src + '#t=0.001'} muted loop playsInline preload="metadata" aria-hidden="true"
+        onPlay={() => setOn(true)} onPause={() => setOn(false)} />
+      {!on && <span className="thumb-btn"><Icon name="play" size={18} /></span>}
+    </span>
+  );
 }
 
 export default function Section() {
