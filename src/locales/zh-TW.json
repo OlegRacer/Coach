@@ -527,5 +527,8 @@
   "ui.next": "新版（測試）",
   "ui.next.title": "新介面",
   "ui.next.soon": "新介面仍在開發中。",
-  "ui.backToClassic": "回到經典版"
+  "ui.backToClassic": "回到經典版",
+  "content.programExercises": "計畫動作",
+  "content.programAdd": "新增現有動作…",
+  "content.programExercisesHint": "來自其他分類的動作。開啟此計畫的人可看到這些動作。"
 }

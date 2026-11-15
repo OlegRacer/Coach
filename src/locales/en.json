@@ -527,5 +527,8 @@
   "ui.next": "New (beta)",
   "ui.next.title": "New interface",
   "ui.next.soon": "The new interface is still in development.",
-  "ui.backToClassic": "Back to classic"
+  "ui.backToClassic": "Back to classic",
+  "content.programExercises": "Program exercises",
+  "content.programAdd": "Add an existing exercise…",
+  "content.programExercisesHint": "Exercises from other sections. Whoever opens this program sees these exercises."
 }

@@ -164,7 +164,8 @@ export function ContentProvider({ children }) {
     const { kids, chainOf, subtreeIds } = tree;
     // Розділ відкрито повністю: доступ (чи «безкоштовно») на ньому або на будь-якому предку.
     const sectionOpen = (id) => isAdmin || chainOf(id).some((a) => a.free || hasAccess(a.id));
-    const exerciseOpen = (e) => !!e && !e.locked && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id));
+    const inOpenProgram = (id) => data.sections.some((p) => p.is_program && (p.program_exercises || []).includes(id) && sectionOpen(p.id));
+    const exerciseOpen = (e) => !!e && !e.locked && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id) || inOpenProgram(e.id));
     const exercisesIn = (id) => {
       const ids = new Set(subtreeIds(id));
       return data.exercises.filter((e) => ids.has(e.section_id));
@@ -187,6 +188,12 @@ export function ContentProvider({ children }) {
       setOrder,
       section: (id) => data.sections.find((s) => s.id === id) || null,
       exercisesOf: (sectionId) => data.exercises.filter((e) => e.section_id === sectionId),
+      // Готові вправи з інших розділів, додані до програми, у порядку, який задав тренер
+      programExercisesOf: (sectionId) => {
+        const p = data.sections.find((s) => s.id === sectionId);
+        if (!p || !p.is_program) return [];
+        return (p.program_exercises || []).map((id) => data.exercises.find((e) => e.id === id)).filter((e) => e && e.section_id !== sectionId);
+      },
       exercise: (id) => data.exercises.find((e) => e.id === id) || null,
       // Вправи, що працюють хоч одну з вибраних зон (групу чи півзону).
       exercisesByMuscles: (ids) => {

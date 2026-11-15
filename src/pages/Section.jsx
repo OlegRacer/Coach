@@ -13,13 +13,13 @@ export default function Section() {
   const { category } = useParams();
   const { t } = useI18n();
   const { ready, isAdmin } = useAuth();
-  const { section, exercisesOf, childrenOf, chainOf, sectionOpen, exerciseOpen, openCount, isFreeSection } = useContent();
+  const { section, exercisesOf, childrenOf, chainOf, sectionOpen, exerciseOpen, openCount, isFreeSection, programExercisesOf } = useContent();
   const L = useL();
   const { byId, needed, missing, only, setOnly } = useEquipment();
   const sec = section(category);
   const full = sectionOpen(category);
   const subs = childrenOf(category);
-  const all = exercisesOf(category); // закриті (locked) показуємо із замком
+  const all = [...exercisesOf(category), ...programExercisesOf(category)]; // закриті (locked) показуємо із замком
   const hasEquip = !isAdmin && all.some((e) => needed(e).length > 0);
   const items = hasEquip && only ? all.filter((e) => missing(e).length === 0) : all;
   const total = openCount(category);

@@ -15,7 +15,7 @@ export default function SectionEditor() {
   const L = useL();
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { section, exercisesOf, childrenOf, chainOf, reload } = useContent();
+  const { section, exercisesOf, exercise, rawSections, childrenOf, chainOf, reload } = useContent();
   const sec = section(sid);
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
@@ -23,7 +23,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, days_per_week: sec.days_per_week || '' });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, program_exercises: sec.program_exercises || [], days_per_week: sec.days_per_week || '' });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -169,6 +169,49 @@ export default function SectionEditor() {
             <small>{t('content.programHint')}</small>
           </span>
         </label>
+        {f.is_program && (
+          <div className="stack">
+            <span className="muted small">{t('content.programExercises')}</span>
+            <select
+              className="field"
+              value=""
+              aria-label={t('content.programAdd')}
+              onChange={(e) => e.target.value && set('program_exercises', [...f.program_exercises, e.target.value])}
+            >
+              <option value="">{t('content.programAdd')}</option>
+              {rawSections
+                .filter((s) => s.id !== sid && exercisesOf(s.id).some((e) => !f.program_exercises.includes(e.id)))
+                .map((s) => (
+                  <optgroup key={s.id} label={L(s.title)}>
+                    {exercisesOf(s.id).filter((e) => !f.program_exercises.includes(e.id)).map((e) => (
+                      <option key={e.id} value={e.id}>{L(e.title)}</option>
+                    ))}
+                  </optgroup>
+                ))}
+            </select>
+            {f.program_exercises.map((id, i) => {
+              const e = exercise(id);
+              const move = (d) => {
+                const a = [...f.program_exercises];
+                const j = i + d;
+                if (j < 0 || j >= a.length) return;
+                [a[i], a[j]] = [a[j], a[i]];
+                set('program_exercises', a);
+              };
+              return (
+                <div key={id} className="row" style={{ alignItems: 'center', gap: 6 }}>
+                  <span style={{ flex: 1, minWidth: 0 }}>{e ? L(e.title) : id}</span>
+                  <button type="button" className="btn-ghost btn-small" onClick={() => move(-1)} aria-label="↑">↑</button>
+                  <button type="button" className="btn-ghost btn-small" onClick={() => move(1)} aria-label="↓">↓</button>
+                  <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => set('program_exercises', f.program_exercises.filter((x) => x !== id))}>
+                    <Icon name="trash" size={20} />
+                  </button>
+                </div>
+              );
+            })}
+            <small className="muted">{t('content.programExercisesHint')}</small>
+          </div>
+        )}
         {f.is_program && (
           <label className="stack">
             <span className="muted small">{t('content.daysPerWeek')}</span>

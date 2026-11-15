@@ -523,5 +523,8 @@
   "ui.next": "Новий (бета)",
   "ui.next.title": "Новий інтерфейс",
   "ui.next.soon": "Новий інтерфейс ще в розробці.",
-  "ui.backToClassic": "Повернутись до класичного"
+  "ui.backToClassic": "Повернутись до класичного",
+  "content.programExercises": "Вправи програми",
+  "content.programAdd": "Додати готову вправу…",
+  "content.programExercisesHint": "Вправи з інших розділів. Хто відкрив цю програму, бачить ці вправи."
 }
