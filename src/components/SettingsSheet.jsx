@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ProfileCard from './ProfileCard.jsx';
 import LangSwitcher from './LangSwitcher.jsx';
 import ShareLink from './ShareLink.jsx';
@@ -16,15 +16,10 @@ export default function SettingsSheet({ open, onClose }) {
   const startY = useRef(null);
   const [drag, setDrag] = useState(0);
 
-  useEffect(() => {
-    if (!open) return undefined;
-    lastFocus.current = document.activeElement;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    const onKey = (e) => e.key === 'Escape' && onClose();
-    window.addEventListener('keydown', onKey);
-    const timer = setTimeout(() => closeRef.current && closeRef.current.focus(), 50);
-    // повернулись у налаштування: відновити прокрутку
+  // Повернулись у налаштування: прокрутка відновлюється до першого показу, без видимого «доскролу»
+  useLayoutEffect(() => {
+    if (!open || !sheetRef.current) return undefined;
+    const el = sheetRef.current;
     let y = 0;
     try {
       y = Number(sessionStorage.getItem('settings:scroll')) || 0;
@@ -32,13 +27,39 @@ export default function SettingsSheet({ open, onClose }) {
     } catch {
       /* ігноруємо */
     }
-    const restore = y ? [0, 80, 300].map((ms) => setTimeout(() => sheetRef.current && (sheetRef.current.scrollTop = y), ms)) : [];
+    if (!y) return undefined;
+    el.scrollTop = y;
+    // Вміст може дорости (профіль, входи): тримаємо позицію, поки він росте, але не довше 1.5 с і не після дотику
+    let done = false;
+    const stop = () => {
+      done = true;
+    };
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(() => !done && (el.scrollTop = y)) : null;
+    if (ro && el.firstElementChild) ro.observe(el.querySelector('.sheet-body') || el);
+    el.addEventListener('touchstart', stop, { passive: true });
+    el.addEventListener('wheel', stop, { passive: true });
+    const t = setTimeout(stop, 1500);
+    return () => {
+      clearTimeout(t);
+      if (ro) ro.disconnect();
+      el.removeEventListener('touchstart', stop);
+      el.removeEventListener('wheel', stop);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    lastFocus.current = document.activeElement;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e) => e.key === 'Escape' && onClose();
+    window.addEventListener('keydown', onKey);
+    const timer = setTimeout(() => closeRef.current && closeRef.current.focus({ preventScroll: true }), 50);
     return () => {
       clearTimeout(timer);
-      restore.forEach(clearTimeout);
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
-      if (lastFocus.current && lastFocus.current.focus) lastFocus.current.focus();
+      if (lastFocus.current && lastFocus.current.focus) lastFocus.current.focus({ preventScroll: true });
     };
   }, [open, onClose]);
 
