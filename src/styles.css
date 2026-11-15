@@ -544,7 +544,7 @@ input, textarea, select, [contenteditable], .student-details {
 
 .edit-wrap { position: relative; }
 .edit-fab {
-  position: absolute; top: 50%; right: 52px; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 12px; z-index: 2;
+  position: absolute; top: 50%; right: 12px; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 12px; z-index: 2;
   background: var(--card-2, #23252b); color: var(--text); display: flex; align-items: center; justify-content: center;
   box-shadow: 0 0 0 1px rgba(255,255,255,.08);
 }
@@ -553,5 +553,5 @@ input, textarea, select, [contenteditable], .student-details {
   display: flex; align-items: center; justify-content: center; flex: none;
 }
 /* місце під олівець, щоб він не перекривав назву */
-.edit-wrap:has(.edit-fab) > a:not(.edit-fab) { padding-right: 96px; }
+.edit-wrap:has(.edit-fab) > a:not(.edit-fab) { padding-right: 60px; }
 .edit-wrap:has(.edit-fab) > a:not(.edit-fab) .tile-text, .edit-wrap:has(.edit-fab) > a:not(.edit-fab) .list-main { min-width: 0; overflow-wrap: break-word; }
