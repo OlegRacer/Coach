@@ -309,6 +309,7 @@ export default function AddWorkout({ onClose, onSaved }) {
                 ))}
               </div>
               {repeat === 'weekly' ? (
+                <>
                 <div className="chips">
                   {[1, 2, 3, 4, 5, 6, 7].map((n) => (
                     <button
@@ -343,11 +344,12 @@ export default function AddWorkout({ onClose, onSaved }) {
                   <p className="muted small" style={{ width: '100%' }}>{t('aw.longTap')}</p>
                   {maxDays > 1 && maxDays < 7 && <p className="muted small" style={{ width: '100%' }}>{t('aw.maxDays', { n: maxDays })}</p>}
                 </div>
+                </>
               ) : (
                 <input className="field" type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label={t('sa.date')} />
               )}
               <div className="row">
-                <input className="field" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label={t('sa.time')} />
+                {repeat === 'once' && <input className="field" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label={t('sa.time')} />}
                 <input className="field" inputMode="numeric" value={dur} maxLength={3} onChange={(e) => setDur(e.target.value.replace(/\D/g, ''))} placeholder={t('sa.duration')} aria-label={t('sa.duration')} />
               </div>
             </div>
