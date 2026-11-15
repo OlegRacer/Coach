@@ -6,6 +6,7 @@ import EditFab from '../components/EditFab.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { setsText } from '../lib/setsText.js';
 import { cropStyle } from '../lib/crop.js';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
@@ -43,13 +44,13 @@ function Thumb({ src, crop }) {
 
 export default function Section() {
   const { category } = useParams();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { ready, isAdmin } = useAuth();
   const { section, exercisesOf, childrenOf, chainOf, sectionOpen, exerciseOpen, openCount, isFreeSection, programExercisesOf } = useContent();
   const L = useL();
   const { byId, needed, missing, only, setOnly } = useEquipment();
   const sec = section(category);
-  const progText = (id) => { const x = sec && sec.program_sets && sec.program_sets[id]; return x && (x.s || x.r) ? [x.s, x.r].filter(Boolean).join(' × ') : ''; };
+  const progText = (id) => setsText(sec && sec.program_sets && sec.program_sets[id], lang);
   const full = sectionOpen(category);
   const subs = childrenOf(category);
   const all = [...exercisesOf(category), ...programExercisesOf(category)]; // закриті (locked) показуємо із замком
