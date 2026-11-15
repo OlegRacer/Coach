@@ -23,7 +23,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -160,6 +160,13 @@ export default function SectionEditor() {
           <span>
             {t('content.free')}
             <small>{t('content.freeSectionHint')}</small>
+          </span>
+        </label>
+        <label className="access-row">
+          <input type="checkbox" checked={f.is_program} onChange={(e) => set('is_program', e.target.checked)} />
+          <span>
+            {t('content.program')}
+            <small>{t('content.programHint')}</small>
           </span>
         </label>
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>

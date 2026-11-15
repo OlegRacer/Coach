@@ -503,5 +503,15 @@
   "aw.kind.class.hint": "在 studio 上的課程",
   "aw.pickTrainer": "選擇教練",
   "aw.pickSlot": "選擇時段",
-  "aw.noSlots": "此課程在課表中還沒有時段。"
+  "aw.noSlots": "此課程在課表中還沒有時段。",
+  "content.program": "訓練計畫",
+  "content.programHint": "學員可將此計畫加入自己的課表。",
+  "aw.program": "訓練計畫",
+  "aw.createOwn": "自訂計畫",
+  "aw.programs": "計畫",
+  "aw.myPrograms": "我的計畫",
+  "aw.noPrograms": "目前沒有可用計畫，請自訂。",
+  "aw.programName": "計畫名稱",
+  "aw.addExercise": "新增動作…",
+  "aw.programGone": "找不到計畫。"
 }

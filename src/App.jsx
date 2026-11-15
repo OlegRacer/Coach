@@ -6,6 +6,7 @@ import Section from './pages/Section.jsx';
 import Exercise from './pages/Exercise.jsx';
 import Anatomy from './pages/Anatomy.jsx';
 import Plans from './pages/Plans.jsx';
+import MyProgram from './pages/MyProgram.jsx';
 import Equipment from './pages/Equipment.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 import PayWatcher from './components/PayWatcher.jsx';
@@ -67,6 +68,7 @@ export default function App() {
         />
         <Route path="/plans" element={<Plans />} />
         <Route path="/equipment" element={<Equipment />} />
+        <Route path="/program/:id" element={<MyProgram />} />
         <Route
           path="/admin/equipment"
           element={

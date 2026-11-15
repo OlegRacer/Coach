@@ -55,7 +55,7 @@ export function monthGrid(year, month) {
 }
 
 // Власний пункт учня → форма заняття розкладу
-const pathFor = (r) => (r.kind === 'exercise' ? `/exercise/${r.ref_id}` : r.kind === 'section' ? `/section/${r.ref_id}` : '');
+const pathFor = (r) => (r.kind === 'exercise' ? `/exercise/${r.ref_id}` : r.kind === 'section' ? `/section/${r.ref_id}` : r.kind === 'program' ? `/program/${r.ref_id}` : '');
 const normPersonal = (r) => ({
   id: 'p:' + r.id,
   pid: r.id,

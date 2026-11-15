@@ -503,5 +503,15 @@
   "aw.kind.class.hint": "A class at a studio",
   "aw.pickTrainer": "Choose a trainer",
   "aw.pickSlot": "Choose a session",
-  "aw.noSlots": "This class has no sessions in the schedule yet."
+  "aw.noSlots": "This class has no sessions in the schedule yet.",
+  "content.program": "Workout program",
+  "content.programHint": "Students will be able to add this program to their schedule.",
+  "aw.program": "Workout program",
+  "aw.createOwn": "Create your own",
+  "aw.programs": "Programs",
+  "aw.myPrograms": "My programs",
+  "aw.noPrograms": "No programs available yet. Create your own.",
+  "aw.programName": "Program name",
+  "aw.addExercise": "Add exercise…",
+  "aw.programGone": "Program not found."
 }

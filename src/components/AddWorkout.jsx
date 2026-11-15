@@ -21,6 +21,10 @@ export default function AddWorkout({ onClose, onSaved }) {
   const [trainer, setTrainer] = useState('');
   const [slotId, setSlotId] = useState('');
   const [kind, setKind] = useState('');
+  const [mode, setMode] = useState('prog'); // prog = готова програма, mine = своя
+  const [progs, setProgs] = useState([]);
+  const [name, setName] = useState('');
+  const [chosen, setChosen] = useState([]);
   const [pick, setPick] = useState('');
   const [studio, setStudio] = useState('');
   const [packs, setPacks] = useState([]);
@@ -34,6 +38,7 @@ export default function AddWorkout({ onClose, onSaved }) {
 
   useEffect(() => {
     if (!user) return;
+    supabase.from('student_programs').select('id, title').eq('student_id', user.id).order('created_at', { ascending: false }).then(({ data }) => setProgs(data || []));
     supabase
       .from('student_packages')
       .select('id, plan, expires_at, closed_at')
@@ -43,7 +48,7 @@ export default function AddWorkout({ onClose, onSaved }) {
       .then(({ data }) => setPacks((data || []).filter((p) => new Date(p.expires_at).getTime() > Date.now())));
   }, [user]);
 
-  const secs = rawSections.filter((s) => s.kind === 'exercises' && sectionOpen(s.id));
+  const secs = rawSections.filter((s) => s.kind === 'exercises' && s.is_program && sectionOpen(s.id));
   const exs = exercises.filter((e) => exerciseOpen(e));
 
   // Офлайн клас: класи студії, у яких є заняття; тренер (якщо їх кілька); конкретне заняття
@@ -75,13 +80,14 @@ export default function AddWorkout({ onClose, onSaved }) {
   // що саме обрано → заголовок, місце, посилання
   const resolve = () => {
     if (kind === 'app') {
+      if (mode === 'mine') return name.trim() && chosen.length ? { kind: 'program', ref_id: null, title: name.trim(), place: null } : null;
       const [type, id] = pick.split(':');
-      if (type === 'section') {
-        const s = rawSections.find((x) => x.id === id);
-        return s && { kind: 'section', ref_id: id, title: L(s.title) || id, place: null };
+      if (type === 'program') {
+        const g = progs.find((x) => x.id === id);
+        return g && { kind: 'program', ref_id: id, title: g.title, place: null };
       }
-      const e = exercises.find((x) => x.id === id);
-      return e && { kind: 'exercise', ref_id: id, title: L(e.title) || id, place: null };
+      const sc = rawSections.find((x) => x.id === id);
+      return sc && { kind: 'section', ref_id: id, title: L(sc.title) || id, place: null };
     }
     if (kind === 'package') {
       const p = packs.find((x) => x.id === pick);
@@ -91,16 +97,25 @@ export default function AddWorkout({ onClose, onSaved }) {
     const st = sd.studios.find((x) => x.id === studio);
     return c && { kind: 'class', ref_id: c.id, title: c.name, place: [st && st.name, trainerName(trainerSel)].filter(Boolean).join(' · ') || null };
   };
-  const item = kind && pick ? resolve() : null;
+  const item = kind && (pick || (kind === 'app' && mode === 'mine')) ? resolve() : null;
   const isClass = kind === 'class';
   const ok = item && (isClass ? !!effSlot : time && (repeat === 'weekly' || date));
 
   const save = async () => {
     setBusy(true);
     setErr('');
+    let row = item;
+    if (kind === 'app' && mode === 'mine') {
+      const r = await supabase.from('student_programs').insert({ student_id: user.id, title: name.trim(), exercise_ids: chosen }).select().single();
+      if (r.error) {
+        setBusy(false);
+        return setErr(t('ob.saveError') + ' [' + (r.error.code || '') + ' ' + (r.error.message || '') + ']');
+      }
+      row = { ...item, ref_id: r.data.id };
+    }
     const { error } = await supabase.from('student_plan_items').insert({
       student_id: user.id,
-      ...item,
+      ...row,
       ...(isClass
         ? { weekday: effSlot.weekday, on_date: effSlot.on_date, start_time: effSlot.start_time, duration_min: effSlot.duration_min }
         : {
@@ -143,19 +158,54 @@ export default function AddWorkout({ onClose, onSaved }) {
           )}
 
           {kind === 'app' && (
-            <select className="field" value={pick} onChange={(e) => setPick(e.target.value)} aria-label={t('aw.kind.app')}>
-              <option value="" disabled>{t('aw.choose')}</option>
-              {secs.length > 0 && (
-                <optgroup label={t('aw.sections')}>
-                  {secs.map((s) => <option key={s.id} value={'section:' + s.id}>{L(s.title) || s.id}</option>)}
-                </optgroup>
+            <>
+              <div className="chips">
+                {['prog', 'mine'].map((m) => (
+                  <button key={m} type="button" className={'chip' + (mode === m ? ' active' : '')} onClick={() => { setMode(m); setPick(''); }}>
+                    {t(m === 'prog' ? 'aw.program' : 'aw.createOwn')}
+                  </button>
+                ))}
+              </div>
+              {mode === 'prog' && (
+                <>
+                  {!secs.length && !progs.length && <p className="muted small">{t('aw.noPrograms')}</p>}
+                  {(secs.length > 0 || progs.length > 0) && (
+                    <select className="field" value={pick} onChange={(e) => setPick(e.target.value)} aria-label={t('aw.program')}>
+                      <option value="" disabled>{t('aw.choose')}</option>
+                      {secs.length > 0 && (
+                        <optgroup label={t('aw.programs')}>
+                          {secs.map((x) => <option key={x.id} value={'section:' + x.id}>{L(x.title) || x.id}</option>)}
+                        </optgroup>
+                      )}
+                      {progs.length > 0 && (
+                        <optgroup label={t('aw.myPrograms')}>
+                          {progs.map((x) => <option key={x.id} value={'program:' + x.id}>{x.title}</option>)}
+                        </optgroup>
+                      )}
+                    </select>
+                  )}
+                </>
               )}
-              {exs.length > 0 && (
-                <optgroup label={t('aw.exercises')}>
-                  {exs.map((e) => <option key={e.id} value={'exercise:' + e.id}>{L(e.title) || e.id}</option>)}
-                </optgroup>
+              {mode === 'mine' && (
+                <div className="stack">
+                  <input className="field" value={name} maxLength={120} placeholder={t('aw.programName')} onChange={(e) => setName(e.target.value)} />
+                  <select className="field" value="" onChange={(e) => e.target.value && !chosen.includes(e.target.value) && setChosen([...chosen, e.target.value])} aria-label={t('aw.addExercise')}>
+                    <option value="">{t('aw.addExercise')}</option>
+                    {exs.filter((e) => !chosen.includes(e.id)).map((e) => <option key={e.id} value={e.id}>{L(e.title) || e.id}</option>)}
+                  </select>
+                  <div className="chips">
+                    {chosen.map((id) => {
+                      const e = exercises.find((x) => x.id === id);
+                      return (
+                        <button key={id} type="button" className="chip active" title={t('sa.delete')} onClick={() => setChosen(chosen.filter((x) => x !== id))}>
+                          {e ? L(e.title) : id} ×
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
-            </select>
+            </>
           )}
           {kind === 'package' && (
             <>
@@ -201,7 +251,7 @@ export default function AddWorkout({ onClose, onSaved }) {
               <b>{effSlot.weekday != null ? t(`day.long.${effSlot.weekday}`) : effSlot.on_date}, {effSlot.start_time}</b> · {t('common.minutes', { n: effSlot.duration_min })}
             </p>
           )}
-          {kind && kind !== 'class' && pick && (
+          {kind && kind !== 'class' && (pick || (kind === 'app' && mode === 'mine' && name.trim() && chosen.length > 0)) && (
             <div className="stack">
               <div className="chips">
                 {['weekly', 'once'].map((r) => (
