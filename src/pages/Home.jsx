@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigationType } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import SettingsSheet from '../components/SettingsSheet.jsx';
 import useOnline from '../lib/useOnline.js';
@@ -12,7 +12,18 @@ export default function Home() {
   const { t, locale } = useI18n();
   const online = useOnline();
   const { isAdmin, access } = useAuth();
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  // Повернулись «Назад» зі сторінки, відкритої з налаштувань → налаштування відкриті знову
+  const navType = useNavigationType();
+  const [settingsOpen, setSettingsOpen] = useState(() => {
+    let back = false;
+    try {
+      back = navType === 'POP' && sessionStorage.getItem('settings:return') === '1';
+      sessionStorage.removeItem('settings:return');
+    } catch {
+      /* без сховища просто не відкриваємо */
+    }
+    return back;
+  });
   const [sorting, setSorting] = useState(false);
   const { sections, setOrder, sectionOpen, openCount, isFreeSection } = useContent();
   const L = useL();

@@ -76,7 +76,20 @@ export default function SettingsSheet({ open, onClose }) {
           </button>
         </div>
 
-        <div className="sheet-body">
+        <div
+          className="sheet-body"
+          onClick={(e) => {
+            // перехід на іншу сторінку з налаштувань: запам'ятати, щоб «Назад» повернув у налаштування
+            const a = e.target.closest && e.target.closest('a[href^="#/"]');
+            if (a) {
+              try {
+                sessionStorage.setItem('settings:return', '1');
+              } catch {
+                /* ігноруємо */
+              }
+            }
+          }}
+        >
           <ProfileCard />
           <div className="set-row">
             <span className="set-label">{t('settings.language')}</span>
