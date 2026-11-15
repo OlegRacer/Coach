@@ -6,6 +6,7 @@ import EditFab from '../components/EditFab.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import { cropStyle } from '../lib/crop.js';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 
@@ -14,12 +15,12 @@ import { useEquipment } from '../lib/equipment.jsx';
 // Мініатюра-превʼю вправи: квадрат із центру відео (або картинки).
 // Відео стоїть на першому кадрі; тап по квадрату запускає його (не відкриваючи вправу), одночасно грає лише одне.
 let playing = null;
-function Thumb({ src }) {
+function Thumb({ src, crop }) {
   const ref = useRef(null);
   const [on, setOn] = useState(false);
   const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
   useEffect(() => () => { if (playing === ref.current) playing = null; }, []);
-  if (!isVideo) return <img src={src} alt="" loading="lazy" />;
+  if (!isVideo) return <img src={src} alt="" loading="lazy" style={cropStyle(crop)} />;
   const toggle = (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
@@ -33,7 +34,7 @@ function Thumb({ src }) {
   };
   return (
     <span className="thumb-play" onClick={toggle}>
-      <video ref={ref} src={src + '#t=0.001'} muted loop playsInline preload="metadata" aria-hidden="true"
+      <video ref={ref} src={src + '#t=0.001'} muted loop playsInline preload="metadata" aria-hidden="true" style={cropStyle(crop)}
         onPlay={() => setOn(true)} onPause={() => setOn(false)} />
       {!on && <span className="thumb-btn"><Icon name="play" size={18} /></span>}
     </span>
@@ -111,7 +112,7 @@ export default function Section() {
           <div key={e.id} className="edit-wrap">
           <Link to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
-              {e.preview && <Thumb src={mediaUrl(e.preview)} />}
+              {e.preview && <Thumb src={mediaUrl(e.preview)} crop={e.preview_crop} />}
             </span>
             <span className="list-main">
               <span className="list-title">

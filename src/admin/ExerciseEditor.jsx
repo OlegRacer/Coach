@@ -1,7 +1,8 @@
 import { fixMp4 } from '../lib/mp4fix.js';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
+import { cropOf, cropStyle } from '../lib/crop.js';
 import Media from '../components/Media.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
@@ -28,6 +29,46 @@ function Toggle({ label, on, onChange }) {
 }
 
 // Редактор вправи: тексти трьома мовами, м'язи, прев'ю (фото/mp4 у сховищі), відео YouTube, публікація.
+// Кадрування квадратної мініатюри: перетягни відео пальцем і за потреби збільш.
+function CropBox({ src, crop, onChange }) {
+  const { t } = useI18n();
+  const c = cropOf(crop);
+  const box = useRef(null);
+  const drag = useRef(null);
+  const [ar, setAr] = useState(16 / 9);
+  const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
+  const style = cropStyle(c);
+  const down = (e) => { drag.current = { x: e.clientX, y: e.clientY, c }; e.currentTarget.setPointerCapture(e.pointerId); };
+  const move = (e) => {
+    const d = drag.current;
+    if (!d) return;
+    const size = box.current ? box.current.offsetWidth : 160;
+    const sx = 100 / (size * Math.max(ar - 1, 0.3)) / d.c.z;
+    const sy = 100 / (size * Math.max(1 / ar - 1, 0.3)) / d.c.z;
+    onChange(cropOf({ ...d.c, x: d.c.x - (e.clientX - d.x) * sx, y: d.c.y - (e.clientY - d.y) * sy }));
+  };
+  const up = () => { drag.current = null; };
+  return (
+    <div className="crop-wrap">
+      <span className="muted small">{t('content.cropTitle')}: {t('content.cropHint')}</span>
+      <div className="crop-box" ref={box} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+        {isVideo ? (
+          <video src={src + '#t=0.001'} muted loop playsInline autoPlay style={style}
+            onLoadedMetadata={(e) => e.currentTarget.videoHeight && setAr(e.currentTarget.videoWidth / e.currentTarget.videoHeight)} />
+        ) : (
+          <img src={src} alt="" draggable="false" style={style}
+            onLoad={(e) => e.currentTarget.naturalHeight && setAr(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)} />
+        )}
+      </div>
+      <label className="crop-zoom small muted">
+        {t('content.cropZoom')}
+        <input type="range" min="1" max="3" step="0.05" value={c.z} onChange={(e) => onChange({ ...c, z: Number(e.target.value) })} />
+      </label>
+      <button type="button" className="btn-ghost btn-small" onClick={() => onChange({ x: 50, y: 50, z: 1 })}>{t('content.cropReset')}</button>
+    </div>
+  );
+}
+
 export default function ExerciseEditor() {
   const { sid, eid } = useParams();
   const { t } = useI18n();
@@ -48,6 +89,7 @@ export default function ExerciseEditor() {
       setF({
         title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [], equipment: ex.equipment || [],
         preview: ex.preview || '',
+        preview_crop: cropOf(ex.preview_crop),
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
         published: ex.published,
         free: !!ex.free
@@ -153,6 +195,7 @@ export default function ExerciseEditor() {
         description: on.description ? f.description : {},
         muscles: on.muscles ? f.muscles : [],
         preview: on.preview ? f.preview : '',
+        preview_crop: cropOf(f.preview_crop),
         videos: vids,
         video: vids.length ? vids[0].id : '',
         updated_at: new Date().toISOString()
@@ -228,6 +271,7 @@ export default function ExerciseEditor() {
               <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
             </label>
             <span className="muted small">{t('content.fileLimit')}</span>
+            {f.preview && <CropBox src={mediaUrl(f.preview)} crop={f.preview_crop} onChange={(c) => set('preview_crop', c)} />}
           </>
         )}
 
