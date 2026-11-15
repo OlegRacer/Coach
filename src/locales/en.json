@@ -514,5 +514,8 @@
   "aw.programName": "Program name",
   "aw.addExercise": "Add exercise…",
   "aw.programGone": "Program not found.",
-  "aw.otherStudio": "Other studio"
+  "aw.otherStudio": "Other studio",
+  "content.daysPerWeek": "Workouts per week",
+  "content.daysPerWeekHint": "How many days a week a student can pick for this program. Not set: up to 7.",
+  "aw.maxDays": "You can pick up to {n} days a week."
 }

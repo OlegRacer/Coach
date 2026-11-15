@@ -32,7 +32,7 @@ export default function AddWorkout({ onClose, onSaved }) {
   const [studio, setStudio] = useState('');
   const [packs, setPacks] = useState([]);
   const [repeat, setRepeat] = useState('weekly');
-  const [weekday, setWeekday] = useState(((new Date().getDay() + 6) % 7) + 1);
+  const [weekdays, setWeekdays] = useState([((new Date().getDay() + 6) % 7) + 1]);
   const [date, setDate] = useState(iso(new Date()));
   const [time, setTime] = useState('18:00');
   const [dur, setDur] = useState('60');
@@ -71,7 +71,7 @@ export default function AddWorkout({ onClose, onSaved }) {
     if (!x) return;
     if (x.weekday != null) {
       setRepeat('weekly');
-      setWeekday(x.weekday);
+      setWeekdays([x.weekday]);
     } else {
       setRepeat('once');
       setDate(x.on_date);
@@ -104,6 +104,15 @@ export default function AddWorkout({ onClose, onSaved }) {
   };
   const item = kind && (pick || (kind === 'app' && mode === 'mine') || other) ? resolve() : null;
   const isClass = kind === 'class' && !other;
+  // Скільки днів на тиждень можна обрати: у програмі від тренера — скільки він задав; у власній — до 7; в інших — 1
+  const progSec = kind === 'app' && mode === 'prog' && pick.startsWith('section:') ? rawSections.find((x) => x.id === pick.slice(8)) : null;
+  const maxDays = kind === 'app' ? (mode === 'mine' ? 7 : progSec && progSec.days_per_week ? progSec.days_per_week : 7) : 1;
+  const toggleDay = (n) => {
+    if (weekdays.includes(n)) return weekdays.length > 1 && setWeekdays(weekdays.filter((x) => x !== n));
+    if (maxDays === 1) return setWeekdays([n]);
+    if (weekdays.length < maxDays) setWeekdays([...weekdays, n].sort());
+  };
+  const days = weekdays.slice(0, maxDays);
   const ok = item && (isClass ? !!effSlot : time && (repeat === 'weekly' || date));
 
   const save = async () => {
@@ -118,18 +127,17 @@ export default function AddWorkout({ onClose, onSaved }) {
       }
       row = { ...item, ref_id: r.data.id };
     }
-    const { error } = await supabase.from('student_plan_items').insert({
-      student_id: user.id,
-      ...row,
-      ...(isClass
-        ? { weekday: effSlot.weekday, on_date: effSlot.on_date, start_time: effSlot.start_time, duration_min: effSlot.duration_min }
-        : {
-            weekday: repeat === 'weekly' ? weekday : null,
-            on_date: repeat === 'once' ? date : null,
-            start_time: time,
-            duration_min: Math.max(5, parseInt(dur, 10) || 60)
-          })
-    });
+    const base = { student_id: user.id, ...row };
+    const rows = isClass
+      ? [{ ...base, weekday: effSlot.weekday, on_date: effSlot.on_date, start_time: effSlot.start_time, duration_min: effSlot.duration_min }]
+      : (repeat === 'weekly' ? days : [null]).map((d) => ({
+          ...base,
+          weekday: d,
+          on_date: repeat === 'once' ? date : null,
+          start_time: time,
+          duration_min: Math.max(5, parseInt(dur, 10) || 60)
+        }));
+    const { error } = await supabase.from('student_plan_items').insert(rows);
     setBusy(false);
     if (error) return setErr(t('ob.saveError') + ' [' + (error.code || '') + ' ' + (error.message || '') + ']');
     onSaved();
@@ -275,10 +283,11 @@ export default function AddWorkout({ onClose, onSaved }) {
               {repeat === 'weekly' ? (
                 <div className="chips">
                   {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                    <button key={n} type="button" className={'chip' + (weekday === n ? ' active' : '')} onClick={() => setWeekday(n)}>
+                    <button key={n} type="button" className={'chip' + (days.includes(n) ? ' active' : '')} aria-pressed={days.includes(n)} onClick={() => toggleDay(n)}>
                       {t(`day.short.${n}`)}
                     </button>
                   ))}
+                  {maxDays > 1 && maxDays < 7 && <p className="muted small" style={{ width: '100%' }}>{t('aw.maxDays', { n: maxDays })}</p>}
                 </div>
               ) : (
                 <input className="field" type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label={t('sa.date')} />

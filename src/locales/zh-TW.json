@@ -514,5 +514,8 @@
   "aw.programName": "計畫名稱",
   "aw.addExercise": "新增動作…",
   "aw.programGone": "找不到計畫。",
-  "aw.otherStudio": "其他 studio"
+  "aw.otherStudio": "其他 studio",
+  "content.daysPerWeek": "每週訓練天數",
+  "content.daysPerWeekHint": "學員最多可為此計畫選擇的每週天數。未設定：最多 7 天。",
+  "aw.maxDays": "每週最多可選 {n} 天。"
 }

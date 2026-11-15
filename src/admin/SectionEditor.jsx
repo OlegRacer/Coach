@@ -23,7 +23,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, days_per_week: sec.days_per_week || '' });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -42,7 +42,7 @@ export default function SectionEditor() {
 
   const save = async () => {
     setBusy(true);
-    const { error } = await supabase.from('content_sections').update({ ...f, updated_at: new Date().toISOString() }).eq('id', sid);
+    const { error } = await supabase.from('content_sections').update({ ...f, days_per_week: f.is_program && f.days_per_week ? Math.min(7, Math.max(1, parseInt(f.days_per_week, 10) || 1)) : null, updated_at: new Date().toISOString() }).eq('id', sid);
     setBusy(false);
     fail(error);
     if (!error) {
@@ -169,6 +169,19 @@ export default function SectionEditor() {
             <small>{t('content.programHint')}</small>
           </span>
         </label>
+        {f.is_program && (
+          <label className="stack">
+            <span className="muted small">{t('content.daysPerWeek')}</span>
+            <div className="chips">
+              {[1, 2, 3, 4, 5, 6, 7].map((n) => (
+                <button type="button" key={n} className={'chip' + (Number(f.days_per_week) === n ? ' active' : '')} aria-pressed={Number(f.days_per_week) === n} onClick={() => set('days_per_week', Number(f.days_per_week) === n ? '' : n)}>
+                  {n}
+                </button>
+              ))}
+            </div>
+            <small className="muted">{t('content.daysPerWeekHint')}</small>
+          </label>
+        )}
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>
           {saved ? t('content.saved') : t('content.save')}
         </button>

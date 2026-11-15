@@ -510,5 +510,8 @@
   "aw.programName": "Назва програми",
   "aw.addExercise": "Додати вправу…",
   "aw.programGone": "Програму не знайдено.",
-  "aw.otherStudio": "Інша студія"
+  "aw.otherStudio": "Інша студія",
+  "content.daysPerWeek": "Тренувань на тиждень",
+  "content.daysPerWeekHint": "Скільки днів на тиждень учень зможе обрати для цієї програми. Не обрано: до 7.",
+  "aw.maxDays": "Можна обрати до {n} днів на тиждень."
 }
