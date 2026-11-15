@@ -1,4 +1,4 @@
-import { videosOf, youtubeId } from '../lib/video.js';
+import { useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
@@ -6,11 +6,30 @@ import EditFab from '../components/EditFab.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { useContent, useL } from '../lib/content.jsx';
+import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 
 // Розділ містить підрозділи і/або вправи (на будь-яку глибину). Закрите учень бачить із замком,
 // а відкрите окремо (пакет, «безкоштовно») лишається доступним.
+// Мініатюра-превʼю вправи: квадрат із центру відео (або картинки). Відео грає, лише поки видно на екрані.
+function Thumb({ src }) {
+  const ref = useRef(null);
+  const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
+  useEffect(() => {
+    const v = ref.current;
+    if (!isVideo || !v) return undefined;
+    v.muted = true;
+    const io = new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { const p = v.play(); if (p && p.catch) p.catch(() => {}); } else v.pause();
+    }, { threshold: 0.2 });
+    io.observe(v);
+    return () => io.disconnect();
+  }, [src, isVideo]);
+  return isVideo
+    ? <video ref={ref} src={src} muted loop playsInline preload="metadata" aria-hidden="true" />
+    : <img src={src} alt="" loading="lazy" />;
+}
+
 export default function Section() {
   const { category } = useParams();
   const { t } = useI18n();
@@ -82,9 +101,7 @@ export default function Section() {
           <div key={e.id} className="edit-wrap">
           <Link to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
-              {videosOf(e)[0] && (
-                <img src={`https://i.ytimg.com/vi/${youtubeId(videosOf(e)[0].id)}/mqdefault.jpg`} alt="" loading="lazy" onError={(ev) => { ev.currentTarget.style.display = 'none'; }} />
-              )}
+              {e.preview && <Thumb src={mediaUrl(e.preview)} />}
             </span>
             <span className="list-main">
               <span className="list-title">
