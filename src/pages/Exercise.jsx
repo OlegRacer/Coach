@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
+import EditFab from '../components/EditFab.jsx';
 import Media from '../components/Media.jsx';
 import YouTubePlayer from '../components/YouTubePlayer.jsx';
 import { videosOf } from '../lib/video.js';
@@ -44,7 +45,7 @@ export default function Exercise() {
 
   return (
     <main className="page wide ex-page">
-      <TopBar title={title} to={`/section/${ex.section_id}`} />
+      <TopBar title={title} to={`/section/${ex.section_id}`} action={<EditFab inline to={`/admin/content/${ex.section_id}/${ex.id}`} />} />
       {!ex.published && <div className="pill draft-pill">{t('content.draft')}</div>}
 
       {ex.preview && <Media src={mediaUrl(ex.preview)} title={title} />}

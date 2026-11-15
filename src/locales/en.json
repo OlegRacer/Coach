@@ -530,5 +530,6 @@
   "ui.backToClassic": "Back to classic",
   "content.programExercises": "Program exercises",
   "content.programAdd": "Add an existing exercise…",
-  "content.programExercisesHint": "Exercises from this same section (and its subsections). Whoever opens this program sees them."
+  "content.programExercisesHint": "Exercises from this same section (and its subsections). Whoever opens this program sees them.",
+  "content.edit": "Edit"
 }

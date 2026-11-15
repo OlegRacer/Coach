@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigationType } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import EditFab from '../components/EditFab.jsx';
 import SettingsSheet from '../components/SettingsSheet.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -114,12 +115,15 @@ export default function Home() {
             );
           }
           return (
-            <Link key={x.id} to={to} className={'tile' + (open ? '' : ' locked-tile')}>
-              {body}
-              <span className="muted">
-                <Icon name={open ? 'chevron' : 'lock'} size={22} />
-              </span>
-            </Link>
+            <div key={x.id} className="edit-wrap">
+              <Link to={to} className={'tile' + (open ? '' : ' locked-tile')}>
+                {body}
+                <span className="muted">
+                  <Icon name={open ? 'chevron' : 'lock'} size={22} />
+                </span>
+              </Link>
+              {x.kind !== 'anatomy' && <EditFab to={`/admin/content/${x.id}`} />}
+            </div>
           );
         })}
       </div>

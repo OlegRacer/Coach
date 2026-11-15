@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
+import EditFab from '../components/EditFab.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -36,7 +37,7 @@ export default function Section() {
   const parent = chainOf(category).slice(-2, -1)[0];
   return (
     <main className="page wide">
-      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} />
+      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} action={<EditFab inline to={`/admin/content/${category}`} />} />
       {!full && (
         <div className="card partial-note">
           <span className="muted small">{t('access.partialNote', { n: total })}</span>
@@ -55,7 +56,8 @@ export default function Section() {
           const n = open ? 0 : openCount(s.id);
           const locked = !open && !n;
           return (
-            <Link key={s.id} to={`/section/${s.id}`} className={'list-item' + (locked ? ' locked-tile' : '')}>
+            <div key={s.id} className="edit-wrap">
+            <Link to={`/section/${s.id}`} className={'list-item' + (locked ? ' locked-tile' : '')}>
               <span className="tile-icon small-icon" style={{ background: s.color }}>
                 <Icon name={s.icon} size={22} />
               </span>
@@ -71,10 +73,13 @@ export default function Section() {
                 <Icon name={locked ? 'lock' : 'chevron'} size={20} />
               </span>
             </Link>
+            <EditFab to={`/admin/content/${s.id}`} />
+            </div>
           );
         })}
         {items.map((e) => (
-          <Link key={e.id} to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
+          <div key={e.id} className="edit-wrap">
+          <Link to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="list-main">
               <span className="list-title">
                 {L(e.title)}
@@ -90,6 +95,8 @@ export default function Section() {
               <Icon name={exerciseOpen(e) ? 'chevron' : 'lock'} size={20} />
             </span>
           </Link>
+          <EditFab to={`/admin/content/${e.section_id}/${e.id}`} />
+          </div>
         ))}
       </div>
       {!items.length && !subs.length && <p className="muted">{only && all.length ? t('equip.noneAvail') : t('section.empty')}</p>}
