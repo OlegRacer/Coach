@@ -517,5 +517,7 @@
   "aw.otherStudio": "Other studio",
   "content.daysPerWeek": "Workouts per week",
   "content.daysPerWeekHint": "How many days a week a student can pick for this program. Not set: up to 7.",
-  "aw.maxDays": "You can pick up to {n} days a week."
+  "aw.maxDays": "You can pick up to {n} days a week.",
+  "aw.sets": "Sets",
+  "aw.setsCount": "Sets: {n}"
 }

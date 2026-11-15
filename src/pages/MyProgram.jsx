@@ -36,6 +36,7 @@ export default function MyProgram() {
               <Link key={eid} to={`/exercise/${eid}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
                 <span className="list-main">
                   <span className="list-title">{L(e.title)}</span>
+                  {(prog.exercise_sets || {})[eid] && <span className="muted small">{t('aw.setsCount', { n: prog.exercise_sets[eid] })}</span>}
                 </span>
                 <Icon name={exerciseOpen(e) ? 'chevron' : 'lock'} size={20} />
               </Link>

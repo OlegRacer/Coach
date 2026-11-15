@@ -26,6 +26,7 @@ export default function AddWorkout({ onClose, onSaved }) {
   const [progs, setProgs] = useState([]);
   const [name, setName] = useState('');
   const [chosen, setChosen] = useState([]);
+  const [setsOf, setSetsOf] = useState({});
   const [oStudio, setOStudio] = useState('');
   const [oClass, setOClass] = useState('');
   const [pick, setPick] = useState('');
@@ -120,7 +121,7 @@ export default function AddWorkout({ onClose, onSaved }) {
     setErr('');
     let row = item;
     if (kind === 'app' && mode === 'mine') {
-      const r = await supabase.from('student_programs').insert({ student_id: user.id, title: name.trim(), exercise_ids: chosen }).select().single();
+      const r = await supabase.from('student_programs').insert({ student_id: user.id, title: name.trim(), exercise_ids: chosen, exercise_sets: Object.fromEntries(chosen.map((id) => [id, Math.min(20, Math.max(1, parseInt(setsOf[id], 10) || 3))])) }).select().single();
       if (r.error) {
         setBusy(false);
         return setErr(t('ob.saveError') + ' [' + (r.error.code || '') + ' ' + (r.error.message || '') + ']');
@@ -206,16 +207,27 @@ export default function AddWorkout({ onClose, onSaved }) {
                     <option value="">{t('aw.addExercise')}</option>
                     {exs.filter((e) => !chosen.includes(e.id)).map((e) => <option key={e.id} value={e.id}>{L(e.title) || e.id}</option>)}
                   </select>
-                  <div className="chips">
-                    {chosen.map((id) => {
-                      const e = exercises.find((x) => x.id === id);
-                      return (
-                        <button key={id} type="button" className="chip active" title={t('sa.delete')} onClick={() => setChosen(chosen.filter((x) => x !== id))}>
-                          {e ? L(e.title) : id} ×
+                  {chosen.map((id) => {
+                    const e = exercises.find((x) => x.id === id);
+                    return (
+                      <div key={id} className="row" style={{ alignItems: 'center', gap: 8 }}>
+                        <span style={{ flex: 1, minWidth: 0 }}>{e ? L(e.title) : id}</span>
+                        <input
+                          className="field"
+                          style={{ width: 76, textAlign: 'center' }}
+                          inputMode="numeric"
+                          maxLength={2}
+                          value={setsOf[id] ?? '3'}
+                          onChange={(ev) => setSetsOf({ ...setsOf, [id]: ev.target.value.replace(/\D/g, '') })}
+                          aria-label={t('aw.sets')}
+                          placeholder={t('aw.sets')}
+                        />
+                        <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => setChosen(chosen.filter((x) => x !== id))}>
+                          <Icon name="trash" size={20} />
                         </button>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </>
