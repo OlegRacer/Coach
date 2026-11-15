@@ -519,5 +519,6 @@
   "content.daysPerWeekHint": "How many days a week a student can pick for this program. Not set: up to 7.",
   "aw.maxDays": "You can pick up to {n} days a week.",
   "aw.sets": "Sets",
-  "aw.setsCount": "Sets: {n}"
+  "aw.setsCount": "Sets: {n}",
+  "aw.longTap": "Press and hold a selected day to set its time."
 }

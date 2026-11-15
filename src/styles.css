@@ -533,3 +533,6 @@ input, textarea, select, [contenteditable], .student-details {
 .btn-small { min-height: 40px; padding: 0 14px; border-radius: 14px; font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
 .session-title a { color: inherit; }
 .btn-small { white-space: nowrap; }
+
+.day-chip { flex-direction: column; line-height: 1.1; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
+.day-chip .day-time { font-size: 11px; font-weight: 600; opacity: .75; }

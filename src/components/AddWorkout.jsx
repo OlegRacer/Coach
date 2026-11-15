@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -27,6 +27,9 @@ export default function AddWorkout({ onClose, onSaved }) {
   const [name, setName] = useState('');
   const [chosen, setChosen] = useState([]);
   const [setsOf, setSetsOf] = useState({});
+  const [dayTime, setDayTime] = useState({}); // час окремих днів (довгий тап по обраному дню)
+  const [editDay, setEditDay] = useState(null);
+  const press = useRef({ timer: null, long: false });
   const [oStudio, setOStudio] = useState('');
   const [oClass, setOClass] = useState('');
   const [pick, setPick] = useState('');
@@ -114,6 +117,19 @@ export default function AddWorkout({ onClose, onSaved }) {
     if (weekdays.length < maxDays) setWeekdays([...weekdays, n].sort());
   };
   const days = weekdays.slice(0, maxDays);
+  const timeOf = (n) => dayTime[n] || time;
+  const startPress = (n) => {
+    press.current.long = false;
+    clearTimeout(press.current.timer);
+    press.current.timer = setTimeout(() => {
+      if (weekdays.includes(n)) {
+        press.current.long = true;
+        setEditDay(n);
+        if (navigator.vibrate) navigator.vibrate(15);
+      }
+    }, 450);
+  };
+  const endPress = () => clearTimeout(press.current.timer);
   const ok = item && (isClass ? !!effSlot : time && (repeat === 'weekly' || date));
 
   const save = async () => {
@@ -135,7 +151,7 @@ export default function AddWorkout({ onClose, onSaved }) {
           ...base,
           weekday: d,
           on_date: repeat === 'once' ? date : null,
-          start_time: time,
+          start_time: d ? timeOf(d) : time,
           duration_min: Math.max(5, parseInt(dur, 10) || 60)
         }));
     const { error } = await supabase.from('student_plan_items').insert(rows);
@@ -295,10 +311,36 @@ export default function AddWorkout({ onClose, onSaved }) {
               {repeat === 'weekly' ? (
                 <div className="chips">
                   {[1, 2, 3, 4, 5, 6, 7].map((n) => (
-                    <button key={n} type="button" className={'chip' + (days.includes(n) ? ' active' : '')} aria-pressed={days.includes(n)} onClick={() => toggleDay(n)}>
-                      {t(`day.short.${n}`)}
+                    <button
+                      key={n}
+                      type="button"
+                      className={'chip day-chip' + (days.includes(n) ? ' active' : '')}
+                      aria-pressed={days.includes(n)}
+                      onPointerDown={() => startPress(n)}
+                      onPointerUp={endPress}
+                      onPointerLeave={endPress}
+                      onPointerCancel={endPress}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onClick={() => {
+                        if (press.current.long) {
+                          press.current.long = false;
+                          return;
+                        }
+                        toggleDay(n);
+                      }}
+                    >
+                      <span>{t(`day.short.${n}`)}</span>
+                      {days.includes(n) && <small className="day-time">{timeOf(n)}</small>}
                     </button>
                   ))}
+                  {editDay && days.includes(editDay) && (
+                    <div className="row" style={{ width: '100%', alignItems: 'center', gap: 8 }}>
+                      <span>{t(`day.long.${editDay}`)}</span>
+                      <input className="field" type="time" value={timeOf(editDay)} onChange={(e) => setDayTime({ ...dayTime, [editDay]: e.target.value })} aria-label={t('sa.time')} />
+                      <button type="button" className="btn-ghost btn-small" onClick={() => setEditDay(null)}>OK</button>
+                    </div>
+                  )}
+                  <p className="muted small" style={{ width: '100%' }}>{t('aw.longTap')}</p>
                   {maxDays > 1 && maxDays < 7 && <p className="muted small" style={{ width: '100%' }}>{t('aw.maxDays', { n: maxDays })}</p>}
                 </div>
               ) : (
