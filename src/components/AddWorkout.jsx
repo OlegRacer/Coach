@@ -117,7 +117,7 @@ export default function AddWorkout({ onClose, onSaved }) {
     if (weekdays.length < maxDays) setWeekdays([...weekdays, n].sort());
   };
   const days = weekdays.slice(0, maxDays);
-  const needTime = other; // час потрібен лише для класу в іншій студії; програми й пакети без часу
+  const needTime = true; // час задається довгим тапом по дню; тривалість не питаємо
   const timeOf = (n) => (needTime ? dayTime[n] || time : '00:00');
   const startPress = (n) => {
     press.current.long = false;
@@ -153,7 +153,7 @@ export default function AddWorkout({ onClose, onSaved }) {
           weekday: d,
           on_date: repeat === 'once' ? date : null,
           start_time: d ? timeOf(d) : needTime ? time : '00:00',
-          duration_min: needTime ? Math.max(5, parseInt(dur, 10) || 60) : 60
+          duration_min: 60
         }));
     const { error } = await supabase.from('student_plan_items').insert(rows);
     setBusy(false);
@@ -349,9 +349,8 @@ export default function AddWorkout({ onClose, onSaved }) {
               ) : (
                 <input className="field" type="date" value={date} onChange={(e) => setDate(e.target.value)} aria-label={t('sa.date')} />
               )}
-              <div className="row" style={needTime ? undefined : { display: 'none' }}>
+              <div className="row">
                 {repeat === 'once' && <input className="field" type="time" value={time} onChange={(e) => setTime(e.target.value)} aria-label={t('sa.time')} />}
-                <input className="field" inputMode="numeric" value={dur} maxLength={3} onChange={(e) => setDur(e.target.value.replace(/\D/g, ''))} placeholder={t('sa.duration')} aria-label={t('sa.duration')} />
               </div>
             </div>
           )}

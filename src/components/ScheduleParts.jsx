@@ -43,8 +43,8 @@ export function SessionList({ items, trainers, empty, onDelete }) {
       {items.map((s) => (
         <div key={s.id} className="session">
           <div className="session-time">
-            {s.personal && s.start_time === '00:00' ? (
-              <b>{t('aw.anyTime')}</b>
+            {s.personal ? (
+              <b>{s.start_time === '00:00' ? t('aw.anyTime') : s.start_time}</b>
             ) : (
               <>
                 <b>{s.start_time}</b>
