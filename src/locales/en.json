@@ -537,5 +537,10 @@
   "content.programExercises": "Program exercises",
   "content.programAdd": "Add an existing exercise…",
   "content.programExercisesHint": "Exercises from this same section (and its subsections). Whoever opens this program sees them.",
-  "content.edit": "Edit"
+  "content.edit": "Edit",
+  "nav.tabs": "Main sections",
+  "nav.workouts": "Workouts",
+  "nav.schedule": "Schedule",
+  "nav.plans": "Packages",
+  "nav.profile": "Profile"
 }

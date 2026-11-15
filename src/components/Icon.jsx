@@ -96,6 +96,18 @@ const paths = {
   down: <path d="M5 9l7 7 7-7" />,
   plus: <path d="M12 5v14M5 12h14" />,
   edit: <path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" />,
+  calendar: (
+    <>
+      <rect x="3.5" y="5" width="17" height="15.5" rx="3.5" />
+      <path d="M3.5 10h17M8 3v4M16 3v4" />
+    </>
+  ),
+  ticket: (
+    <>
+      <path d="M4 8a2 2 0 0 0 0 4v0a2 2 0 0 1 0 4v1.5a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5V16a2 2 0 0 1 0-4v0a2 2 0 0 1 0-4V6.5A1.5 1.5 0 0 0 18.5 5h-13A1.5 1.5 0 0 0 4 6.5V8z" />
+      <path d="M14 5v14" strokeDasharray="2 2.5" />
+    </>
+  ),
   wifiOff: (
     <>
       <path d="M2 2l20 20" />

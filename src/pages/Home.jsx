@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigationType } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import EditFab from '../components/EditFab.jsx';
+import { useUi } from '../lib/ui.jsx';
 import SettingsSheet from '../components/SettingsSheet.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -14,6 +15,7 @@ export default function Home() {
   const online = useOnline();
   const { isAdmin, access } = useAuth();
   // Повернулись «Назад» зі сторінки, відкритої з налаштувань → налаштування відкриті знову
+  const { ui } = useUi();
   const navType = useNavigationType();
   const [settingsOpen, setSettingsOpen] = useState(() => {
     let back = false;
@@ -47,7 +49,7 @@ export default function Home() {
           <div className="muted small">{t('home.todayDate', { date: dateLabel })}</div>
           <h1 className="title">{t('home.title')}</h1>
         </div>
-        <button
+        {ui !== 'next' && <button
           type="button"
           className="icon-btn"
           aria-label={t('settings.title')}
@@ -55,7 +57,7 @@ export default function Home() {
           onClick={() => setSettingsOpen(true)}
         >
           <Icon name="settings" size={24} />
-        </button>
+        </button>}
       </div>
 
       {!online && (

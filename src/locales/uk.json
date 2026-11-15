@@ -533,5 +533,10 @@
   "content.programExercises": "Вправи програми",
   "content.programAdd": "Додати готову вправу…",
   "content.programExercisesHint": "Вправи з цього ж розділу (його підрозділів). Хто відкрив цю програму, бачить ці вправи.",
-  "content.edit": "Редагувати"
+  "content.edit": "Редагувати",
+  "nav.tabs": "Головні розділи",
+  "nav.workouts": "Тренування",
+  "nav.schedule": "Розклад",
+  "nav.plans": "Пакети",
+  "nav.profile": "Профіль"
 }

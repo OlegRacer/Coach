@@ -1,20 +1,39 @@
-import { useUi } from '../lib/ui.jsx';
-import { useI18n } from '../i18n/index.jsx';
+import { useEffect } from 'react';
+import { Route } from 'react-router-dom';
+import AppRoutes from '../AppRoutes.jsx';
+import TabBar from './TabBar.jsx';
+import ProfilePage from './ProfilePage.jsx';
+import PayWatcher from '../components/PayWatcher.jsx';
+import ScrollMemory from '../components/ScrollMemory.jsx';
+import OnboardingGate from '../components/OnboardingGate.jsx';
+import './next.css';
 
-// Новий інтерфейс. Тут будуть нові екрани й навігація.
-// Усі дані та логіка спільні зі старим інтерфейсом: useAuth, useContent, useSchedule, useStudioData,
-// useEquipment тощо, тому достатньо написати лише нові компоненти вигляду.
-// Старі сторінки лишаються в src/pages, їх можна використовувати повторно.
+// Новий інтерфейс (iOS 26/27, Liquid Glass): ті самі сторінки й дані, нова оболонка:
+// нижня панель вкладок, скляні верхні панелі, тема за системою (світла/темна), правила доступності.
+// Усі стилі лише під html[data-ui="next"], тому класичний інтерфейс не зачеплений.
 export default function NextApp() {
-  const { t } = useI18n();
-  const { setUi } = useUi();
+  useEffect(() => {
+    const el = document.documentElement;
+    el.dataset.ui = 'next';
+    const meta = document.querySelector('meta[name="theme-color"]');
+    const old = meta && meta.getAttribute('content');
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    const sync = () => meta && meta.setAttribute('content', mq.matches ? '#f2f2f7' : '#0d0e11');
+    sync();
+    mq.addEventListener('change', sync);
+    return () => {
+      delete el.dataset.ui;
+      mq.removeEventListener('change', sync);
+      if (meta && old) meta.setAttribute('content', old);
+    };
+  }, []);
   return (
-    <main className="page">
-      <h1 className="title">{t('ui.next.title')}</h1>
-      <p className="muted">{t('ui.next.soon')}</p>
-      <button type="button" className="btn-primary" onClick={() => setUi('classic')}>
-        {t('ui.backToClassic')}
-      </button>
-    </main>
+    <>
+      <ScrollMemory />
+      <OnboardingGate />
+      <PayWatcher />
+      <AppRoutes extra={<Route path="/profile" element={<ProfilePage />} />} />
+      <TabBar />
+    </>
   );
 }
