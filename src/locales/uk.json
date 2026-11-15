@@ -509,5 +509,6 @@
   "aw.noPrograms": "Доступних програм ще немає. Створіть свою.",
   "aw.programName": "Назва програми",
   "aw.addExercise": "Додати вправу…",
-  "aw.programGone": "Програму не знайдено."
+  "aw.programGone": "Програму не знайдено.",
+  "aw.otherStudio": "Інша студія"
 }

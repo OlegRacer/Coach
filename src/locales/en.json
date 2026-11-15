@@ -513,5 +513,6 @@
   "aw.noPrograms": "No programs available yet. Create your own.",
   "aw.programName": "Program name",
   "aw.addExercise": "Add exercise…",
-  "aw.programGone": "Program not found."
+  "aw.programGone": "Program not found.",
+  "aw.otherStudio": "Other studio"
 }

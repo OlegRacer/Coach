@@ -8,6 +8,7 @@ import { useContent, useL } from '../lib/content.jsx';
 import { useStudioData } from '../lib/studios.js';
 import { iso, useSchedule } from '../lib/schedule.js';
 
+const OTHER = '__other';
 const KINDS = ['app', 'package', 'class'];
 
 // «Додати тренування»: своє тренування з додатка, пакет або офлайн клас у «Мій розклад».
@@ -25,6 +26,8 @@ export default function AddWorkout({ onClose, onSaved }) {
   const [progs, setProgs] = useState([]);
   const [name, setName] = useState('');
   const [chosen, setChosen] = useState([]);
+  const [oStudio, setOStudio] = useState('');
+  const [oClass, setOClass] = useState('');
   const [pick, setPick] = useState('');
   const [studio, setStudio] = useState('');
   const [packs, setPacks] = useState([]);
@@ -52,6 +55,7 @@ export default function AddWorkout({ onClose, onSaved }) {
   const exs = exercises.filter((e) => exerciseOpen(e));
 
   // Офлайн клас: класи студії, у яких є заняття; тренер (якщо їх кілька); конкретне заняття
+  const other = kind === 'class' && studio === OTHER;
   const classSlots = sch.slots.filter((x) => x.studio_id === studio && x.class_id === pick);
   const trainerIds = [...new Set(classSlots.map((x) => x.trainer_id))];
   const trainerName = (id) => (sch.trainers.find((x) => x.id === id) || {}).name || '';
@@ -93,12 +97,13 @@ export default function AddWorkout({ onClose, onSaved }) {
       const p = packs.find((x) => x.id === pick);
       return p && { kind: 'package', ref_id: p.id, title: L((p.plan || {}).title) || t('pay.title'), place: null };
     }
+    if (other) return oStudio.trim() && oClass.trim() ? { kind: 'class', ref_id: null, title: oClass.trim(), place: oStudio.trim() } : null;
     const c = sd.classes.find((x) => x.id === pick);
     const st = sd.studios.find((x) => x.id === studio);
     return c && { kind: 'class', ref_id: c.id, title: c.name, place: [st && st.name, trainerName(trainerSel)].filter(Boolean).join(' · ') || null };
   };
-  const item = kind && (pick || (kind === 'app' && mode === 'mine')) ? resolve() : null;
-  const isClass = kind === 'class';
+  const item = kind && (pick || (kind === 'app' && mode === 'mine') || other) ? resolve() : null;
+  const isClass = kind === 'class' && !other;
   const ok = item && (isClass ? !!effSlot : time && (repeat === 'weekly' || date));
 
   const save = async () => {
@@ -223,8 +228,15 @@ export default function AddWorkout({ onClose, onSaved }) {
               <select className="field" value={studio} onChange={(e) => { setStudio(e.target.value); setPick(''); setTrainer(''); setSlotId(''); }} aria-label={t('sa.studio')}>
                 <option value="" disabled>{t('sa.pickStudio')}</option>
                 {sd.studios.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+                <option value={OTHER}>{t('aw.otherStudio')}</option>
               </select>
-              {studio && (
+              {other && (
+                <>
+                  <input className="field" value={oStudio} maxLength={120} placeholder={t('sa.studioName')} onChange={(e) => setOStudio(e.target.value)} />
+                  <input className="field" value={oClass} maxLength={120} placeholder={t('sa.className')} onChange={(e) => setOClass(e.target.value)} />
+                </>
+              )}
+              {studio && !other && (
                 <select className="field" value={pick} onChange={(e) => { setPick(e.target.value); setTrainer(''); setSlotId(''); }} aria-label={t('sa.class')}>
                   <option value="" disabled>{t('sa.pickClass')}</option>
                   {classOptions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -251,7 +263,7 @@ export default function AddWorkout({ onClose, onSaved }) {
               <b>{effSlot.weekday != null ? t(`day.long.${effSlot.weekday}`) : effSlot.on_date}, {effSlot.start_time}</b> · {t('common.minutes', { n: effSlot.duration_min })}
             </p>
           )}
-          {kind && kind !== 'class' && (pick || (kind === 'app' && mode === 'mine' && name.trim() && chosen.length > 0)) && (
+          {kind && (kind !== 'class' || other) && (other ? oStudio.trim() && oClass.trim() : pick || (kind === 'app' && mode === 'mine' && name.trim() && chosen.length > 0)) && (
             <div className="stack">
               <div className="chips">
                 {['weekly', 'once'].map((r) => (

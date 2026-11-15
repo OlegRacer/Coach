@@ -513,5 +513,6 @@
   "aw.noPrograms": "目前沒有可用計畫，請自訂。",
   "aw.programName": "計畫名稱",
   "aw.addExercise": "新增動作…",
-  "aw.programGone": "找不到計畫。"
+  "aw.programGone": "找不到計畫。",
+  "aw.otherStudio": "其他 studio"
 }
