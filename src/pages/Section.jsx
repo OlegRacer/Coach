@@ -49,6 +49,7 @@ export default function Section() {
   const L = useL();
   const { byId, needed, missing, only, setOnly } = useEquipment();
   const sec = section(category);
+  const progText = (id) => { const x = sec && sec.program_sets && sec.program_sets[id]; return x && (x.s || x.r) ? [x.s, x.r].filter(Boolean).join(' × ') : ''; };
   const full = sectionOpen(category);
   const subs = childrenOf(category);
   const all = [...exercisesOf(category), ...programExercisesOf(category)]; // закриті (locked) показуємо із замком
@@ -120,7 +121,7 @@ export default function Section() {
                 {!e.published && <span className="badge-draft">{t('content.draft')}</span>}
                 {e.free && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
               </span>
-              <span className="muted small">{exerciseOpen(e) ? L(e.sets) : t('access.closed')}</span>
+              <span className="muted small">{exerciseOpen(e) ? progText(e.id) : t('access.closed')}</span>
               {!isAdmin && exerciseOpen(e) && missing(e).length > 0 && (
                 <span className="small equip-warn">{t('equip.missing', { list: missing(e).map((id) => L(byId[id].name)).join(', ') })}</span>
               )}

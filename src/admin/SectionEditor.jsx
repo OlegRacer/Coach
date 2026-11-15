@@ -23,7 +23,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, program_exercises: sec.program_exercises || [], days_per_week: sec.days_per_week || '' });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, program_exercises: sec.program_exercises || [], program_sets: sec.program_sets || {}, days_per_week: sec.days_per_week || '' });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -201,13 +201,17 @@ export default function SectionEditor() {
               return (
                 <div key={id} className="prog-ex">
                   <span className="prog-ex-title">{e ? L(e.title) : id}</span>
+                  <input className="field prog-n" inputMode="numeric" aria-label={t('content.progSets')} placeholder={t('content.progSets')} value={(f.program_sets[id] || {}).s ?? ''}
+                    onChange={(ev) => set('program_sets', { ...f.program_sets, [id]: { ...(f.program_sets[id] || {}), s: ev.target.value.replace(/\D/g, '').slice(0, 2) } })} />
+                  <input className="field prog-n" aria-label={t('content.progReps')} placeholder={t('content.progReps')} maxLength={12} value={(f.program_sets[id] || {}).r ?? ''}
+                    onChange={(ev) => set('program_sets', { ...f.program_sets, [id]: { ...(f.program_sets[id] || {}), r: ev.target.value } })} />
                   <button type="button" className="icon-btn" aria-label="↑" disabled={i === 0} onClick={() => move(-1)}>
                     <span style={{ display: 'inline-flex', transform: 'rotate(-90deg)' }}><Icon name="arrow" size={18} /></span>
                   </button>
                   <button type="button" className="icon-btn" aria-label="↓" disabled={i === f.program_exercises.length - 1} onClick={() => move(1)}>
                     <span style={{ display: 'inline-flex', transform: 'rotate(90deg)' }}><Icon name="arrow" size={18} /></span>
                   </button>
-                  <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => set('program_exercises', f.program_exercises.filter((x) => x !== id))}>
+                  <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => { set('program_exercises', f.program_exercises.filter((x) => x !== id)); const { [id]: _d, ...rest } = f.program_sets; set('program_sets', rest); }}>
                     <Icon name="trash" size={20} />
                   </button>
                 </div>
@@ -269,7 +273,6 @@ export default function SectionEditor() {
                     {!e.published && <span className="badge-draft">{t('content.draft')}</span>}
                     {e.free && <span className="badge-free">{t('content.free')}</span>}
                   </span>
-                  <span className="muted small">{L(e.sets)}</span>
                 </Link>
                 <span className="sort-btns">
                   <button type="button" className="icon-btn" aria-label="↑" disabled={busy || i === 0} onClick={() => move(i, -1)}>
@@ -285,9 +288,11 @@ export default function SectionEditor() {
           <button type="button" className="btn-primary" disabled={busy} onClick={addSub}>
             {t('content.addSubsection')}
           </button>
-          <button type="button" className="btn-primary" disabled={busy} onClick={addEx}>
-            {t('content.addExercise')}
-          </button>
+          {!f.is_program && (
+            <button type="button" className="btn-primary" disabled={busy} onClick={addEx}>
+              {t('content.addExercise')}
+            </button>
+          )}
           <ConfirmButton label={t('content.deleteSection')} confirmLabel={t('content.deleteSectionSure', { n: items.length + subs.length })} onConfirm={del} />
         </>
       )}

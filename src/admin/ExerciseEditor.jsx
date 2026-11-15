@@ -82,12 +82,12 @@ export default function ExerciseEditor() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [on, setOn] = useState({ sets: true, description: true, muscles: true, preview: true });
+  const [on, setOn] = useState({ description: true, muscles: true, preview: true });
 
   useEffect(() => {
     if (ex && !f) {
       setF({
-        title: ex.title, description: ex.description, sets: ex.sets, muscles: ex.muscles || [], equipment: ex.equipment || [],
+        title: ex.title, description: ex.description, muscles: ex.muscles || [], equipment: ex.equipment || [],
         preview: ex.preview || '',
         preview_crop: cropOf(ex.preview_crop),
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
@@ -95,8 +95,8 @@ export default function ExerciseEditor() {
         free: !!ex.free
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
-      const fresh = !has(ex.sets) && !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
-      setOn({ sets: fresh || has(ex.sets), description: fresh || has(ex.description), muscles: fresh || (ex.muscles || []).length > 0, preview: true });
+      const fresh = !has(ex.description) && !(ex.muscles || []).length && !ex.preview;
+      setOn({ description: fresh || has(ex.description), muscles: fresh || (ex.muscles || []).length > 0, preview: true });
     }
   }, [ex, f]);
 
@@ -191,7 +191,6 @@ export default function ExerciseEditor() {
       .from('content_exercises')
       .update({
         ...f,
-        sets: on.sets ? f.sets : {},
         description: on.description ? f.description : {},
         muscles: on.muscles ? f.muscles : [],
         preview: on.preview ? f.preview : '',
@@ -224,8 +223,6 @@ export default function ExerciseEditor() {
 
       <section className="card stack">
         <LangField label={t('content.fieldTitle')} value={f.title} onChange={(v) => set('title', v)} maxLength={100} />
-        <Toggle label={t('exercise.sets')} on={on.sets} onChange={() => flip('sets')} />
-        {on.sets && <LangField value={f.sets} onChange={(v) => set('sets', v)} maxLength={60} />}
 
         <Toggle label={t('content.fieldDescription')} on={on.description} onChange={() => flip('description')} />
         {on.description && <LangField value={f.description} onChange={(v) => set('description', v)} multiline />}

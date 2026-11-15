@@ -263,6 +263,8 @@
   "content.replaceFile": "更換檔案",
   "content.uploadFile": "上傳檔案",
   "content.fileLimit": "最大 30 MB。長影片請放 YouTube。",
+  "content.progSets": "組數",
+  "content.progReps": "次數",
   "content.cropTitle": "縮圖取景",
   "content.cropHint": "拖曳影片以置中",
   "content.cropZoom": "縮放",

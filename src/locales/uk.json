@@ -259,6 +259,8 @@
   "content.replaceFile": "Замінити файл",
   "content.uploadFile": "Завантажити файл",
   "content.fileLimit": "До 30 МБ. Довгі відео краще на YouTube.",
+  "content.progSets": "Підходи",
+  "content.progReps": "Повтори",
   "content.cropTitle": "Кадрування мініатюри",
   "content.cropHint": "Перетягни відео пальцем, щоб відцентрувати",
   "content.cropZoom": "Масштаб",
