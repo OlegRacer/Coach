@@ -526,5 +526,5 @@
   "ui.backToClassic": "Повернутись до класичного",
   "content.programExercises": "Вправи програми",
   "content.programAdd": "Додати готову вправу…",
-  "content.programExercisesHint": "Вправи з інших розділів. Хто відкрив цю програму, бачить ці вправи."
+  "content.programExercisesHint": "Вправи з цього ж розділу (його підрозділів). Хто відкрив цю програму, бачить ці вправи."
 }

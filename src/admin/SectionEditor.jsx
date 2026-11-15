@@ -180,7 +180,7 @@ export default function SectionEditor() {
             >
               <option value="">{t('content.programAdd')}</option>
               {rawSections
-                .filter((s) => s.id !== sid && exercisesOf(s.id).some((e) => !f.program_exercises.includes(e.id)))
+                .filter((s) => s.id !== sid && (chainOf(s.id)[0] || {}).id === (chainOf(sid)[0] || {}).id && exercisesOf(s.id).some((e) => !f.program_exercises.includes(e.id)))
                 .map((s) => (
                   <optgroup key={s.id} label={L(s.title)}>
                     {exercisesOf(s.id).filter((e) => !f.program_exercises.includes(e.id)).map((e) => (
