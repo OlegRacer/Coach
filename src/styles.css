@@ -556,6 +556,6 @@ input, textarea, select, [contenteditable], .student-details {
 .edit-wrap:has(.edit-fab) > a:not(.edit-fab) { padding-right: 60px; }
 .edit-wrap:has(.edit-fab) > a:not(.edit-fab) .tile-text, .edit-wrap:has(.edit-fab) > a:not(.edit-fab) .list-main { min-width: 0; overflow-wrap: break-word; }
 /* мініатюра відео вправи: квадрат 1:1, центр кадру 16:9 */
-.ex-thumb { width: 56px; height: 56px; border-radius: 14px; background: var(--card-2, #23252b); flex: none; overflow: hidden; }
+.ex-thumb { width: 84px; height: 84px; border-radius: 16px; background: var(--card-2, #23252b); flex: none; overflow: hidden; }
 .ex-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .list-item:has(.ex-thumb) > .list-main { flex: 1; min-width: 0; margin-right: auto; }

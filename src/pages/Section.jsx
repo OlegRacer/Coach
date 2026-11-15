@@ -1,4 +1,4 @@
-import { videosOf } from '../lib/video.js';
+import { videosOf, youtubeId } from '../lib/video.js';
 import { Link, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
@@ -83,7 +83,7 @@ export default function Section() {
           <Link to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
               {videosOf(e)[0] && (
-                <img src={`https://i.ytimg.com/vi/${videosOf(e)[0].id}/mqdefault.jpg`} alt="" loading="lazy" onError={(ev) => { ev.currentTarget.style.display = 'none'; }} />
+                <img src={`https://i.ytimg.com/vi/${youtubeId(videosOf(e)[0].id)}/mqdefault.jpg`} alt="" loading="lazy" onError={(ev) => { ev.currentTarget.style.display = 'none'; }} />
               )}
             </span>
             <span className="list-main">
