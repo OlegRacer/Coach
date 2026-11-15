@@ -12,6 +12,7 @@ import Equipment from './pages/Equipment.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 import PayWatcher from './components/PayWatcher.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
+import ScrollMemory from './components/ScrollMemory.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
 
 // Адмінка вантажиться окремим шматком коду, тільки коли її відкривають.
@@ -39,6 +40,7 @@ export default function App() {
   }
   return (
     <div className="app">
+      <ScrollMemory />
       <OnboardingGate />
       <UpdateBanner />
       <PayWatcher />

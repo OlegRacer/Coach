@@ -19,6 +19,7 @@ export default function Home() {
     try {
       back = navType === 'POP' && sessionStorage.getItem('settings:return') === '1';
       sessionStorage.removeItem('settings:return');
+      if (!back) sessionStorage.removeItem('settings:scroll');
     } catch {
       /* без сховища просто не відкриваємо */
     }

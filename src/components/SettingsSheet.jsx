@@ -11,6 +11,7 @@ import { useI18n } from '../i18n/index.jsx';
 export default function SettingsSheet({ open, onClose }) {
   const { t } = useI18n();
   const closeRef = useRef(null);
+  const sheetRef = useRef(null);
   const lastFocus = useRef(null);
   const startY = useRef(null);
   const [drag, setDrag] = useState(0);
@@ -23,8 +24,18 @@ export default function SettingsSheet({ open, onClose }) {
     const onKey = (e) => e.key === 'Escape' && onClose();
     window.addEventListener('keydown', onKey);
     const timer = setTimeout(() => closeRef.current && closeRef.current.focus(), 50);
+    // повернулись у налаштування: відновити прокрутку
+    let y = 0;
+    try {
+      y = Number(sessionStorage.getItem('settings:scroll')) || 0;
+      sessionStorage.removeItem('settings:scroll');
+    } catch {
+      /* ігноруємо */
+    }
+    const restore = y ? [0, 80, 300].map((ms) => setTimeout(() => sheetRef.current && (sheetRef.current.scrollTop = y), ms)) : [];
     return () => {
       clearTimeout(timer);
+      restore.forEach(clearTimeout);
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
       if (lastFocus.current && lastFocus.current.focus) lastFocus.current.focus();
@@ -51,6 +62,7 @@ export default function SettingsSheet({ open, onClose }) {
     <div className={'sheet-root' + (open ? ' open' : '')} aria-hidden={!open}>
       <div className="sheet-backdrop" onClick={onClose} />
       <div
+        ref={sheetRef}
         className="sheet"
         role="dialog"
         aria-modal="true"
@@ -84,6 +96,7 @@ export default function SettingsSheet({ open, onClose }) {
             if (a) {
               try {
                 sessionStorage.setItem('settings:return', '1');
+                sessionStorage.setItem('settings:scroll', String(sheetRef.current ? sheetRef.current.scrollTop : 0));
               } catch {
                 /* ігноруємо */
               }
