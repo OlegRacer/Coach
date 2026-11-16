@@ -194,7 +194,7 @@
   "sched.trainers": "教練",
   "sched.noTrainers": "尚未新增教練。",
   "sched.noSessions": "沒有課程。",
-  "sched.noMine": "課表目前是空的。請用下方按鈕新增訓練。",
+  "sched.noMine": "課表目前是空的。請用「+」按鈕新增訓練。",
   "sched.next": "下一堂：{when} · {title}",
   "sched.prevMonth": "上個月",
   "sched.nextMonth": "下個月",

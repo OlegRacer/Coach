@@ -92,11 +92,6 @@ export default function Schedule() {
       ) : (
         <SessionList items={slotsOn(list, day)} trainers={trainers} onDelete={removeItem} />
       )}
-      {user && (
-        <button type="button" className="btn-primary btn-small" onClick={() => setAdding(true)}>
-          <Icon name="plus" size={16} /> {t('aw.add')}
-        </button>
-      )}
       </div>
       {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}
     </main>

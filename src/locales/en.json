@@ -194,7 +194,7 @@
   "sched.trainers": "Trainers",
   "sched.noTrainers": "No trainers added yet.",
   "sched.noSessions": "No classes.",
-  "sched.noMine": "Your schedule is empty. Add a workout with the button below.",
+  "sched.noMine": "Your schedule is empty. Add a workout with the “+” button.",
   "sched.next": "Next: {when} · {title}",
   "sched.prevMonth": "Previous month",
   "sched.nextMonth": "Next month",
