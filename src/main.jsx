@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
+import RuGate from './RuGate.jsx';
 import App from './App.jsx';
 import { I18nProvider } from './i18n/index.jsx';
 import { AuthProvider } from './auth/index.jsx';
@@ -13,6 +14,7 @@ import './material.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <RuGate>
     <I18nProvider>
       <AuthProvider>
         <UpdateProvider>
@@ -28,5 +30,6 @@ createRoot(document.getElementById('root')).render(
         </UpdateProvider>
       </AuthProvider>
     </I18nProvider>
+    </RuGate>
   </React.StrictMode>
 );
