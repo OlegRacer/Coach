@@ -136,12 +136,16 @@ html[data-ui="next"] .tiles .edit-wrap:has(.edit-fab) > a:not(.edit-fab) { paddi
 html[data-ui="next"] .tiles .edit-fab { top: 12px; right: 12px; transform: none; width: 34px; height: 34px; }
 html[data-ui="next"] .tiles .tile.sorting { grid-column: 1 / -1; flex-direction: row; align-items: center; min-height: 0; }
 
-/* Кнопка «+» праворуч від нижньої панелі */
-html[data-ui="next"] .tabbar.with-add { left: 16px; transform: none; width: auto; right: calc(16px + 68px + 10px); }
+/* Кнопка «+»: невелика скляна, над нижньою панеллю праворуч */
 html[data-ui="next"] .tab-add {
-  position: fixed; z-index: 40; right: 16px; bottom: max(12px, env(safe-area-inset-bottom));
-  width: 68px; height: 68px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-  color: var(--on-accent); background: var(--accent); border-color: transparent; box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 40%, transparent);
+  position: fixed; z-index: 40; right: 16px; bottom: calc(max(12px, env(safe-area-inset-bottom)) + 68px + 12px);
+  width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  color: var(--text);
 }
-html[data-ui="next"] .tab-add:active { transform: scale(0.95); }
-html[data-ui="next"] .tabbar.with-add .tab span { font-size: 10.5px; }
+html[data-ui="next"] .tab-add:active { transform: scale(0.94); }
+html[data-ui="next"] .wd-title { margin-top: 16px; }
+html[data-ui="next"] .ios-switch { width: 51px; height: 31px; border-radius: 99px; border: 0; padding: 2px; background: var(--card-2); flex: none; transition: background 0.2s; }
+html[data-ui="next"] .ios-switch span { display: block; width: 27px; height: 27px; border-radius: 50%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.3); transition: transform 0.2s; }
+html[data-ui="next"] .ios-switch.on { background: var(--accent); }
+html[data-ui="next"] .ios-switch.on span { transform: translateX(20px); }
+@media (prefers-reduced-motion: reduce) { html[data-ui="next"] .ios-switch, html[data-ui="next"] .ios-switch span { transition: none; } }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import WidgetSheet from './WidgetSheet.jsx';
 import AddWorkout from '../components/AddWorkout.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -18,6 +19,7 @@ export default function TabBar() {
   const { pathname } = useLocation();
   const { user } = useAuth();
   const [adding, setAdding] = useState(false);
+  const [sheet, setSheet] = useState(false);
   // на кореневих вкладках кнопка «назад» не потрібна (правило навігації iOS)
   const root = pathname === '/schedule' || pathname === '/plans';
   useEffect(() => {
@@ -31,7 +33,7 @@ export default function TabBar() {
   const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
   return (
     <>
-    <nav className={'tabbar glass' + (showAdd ? ' with-add' : '')} aria-label={t('nav.tabs')}>
+    <nav className={'tabbar glass' + ''} aria-label={t('nav.tabs')}>
       {TABS.map((x) => {
         const active = x.end ? pathname === '/' || (x.also || []).some((p) => pathname.startsWith(p)) : pathname.startsWith(x.to);
         return (
@@ -43,10 +45,11 @@ export default function TabBar() {
       })}
     </nav>
     {showAdd && (
-      <button type="button" className="tab-add glass" aria-label={t('aw.add')} onClick={() => setAdding(true)}>
-        <Icon name="plus" size={28} />
+      <button type="button" className="tab-add glass" aria-label={t('wd.open')} aria-haspopup="dialog" onClick={() => setSheet(true)}>
+        <Icon name="plus" size={24} />
       </button>
     )}
+    <WidgetSheet open={sheet} onClose={() => setSheet(false)} onAddWorkout={() => setAdding(true)} showWidgets={pathname === '/'} />
     {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={() => window.dispatchEvent(new Event('schedule:changed'))} />}
     </>
   );

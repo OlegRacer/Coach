@@ -542,5 +542,8 @@
   "nav.workouts": "Workouts",
   "nav.schedule": "Schedule",
   "nav.plans": "Packages",
-  "nav.profile": "Profile"
+  "nav.profile": "Profile",
+  "wd.title": "Widgets",
+  "wd.hint": "Choose what to show on the home screen.",
+  "wd.open": "Add or hide widgets"
 }

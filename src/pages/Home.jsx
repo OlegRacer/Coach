@@ -3,6 +3,7 @@ import { Link, useNavigationType } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import EditFab from '../components/EditFab.jsx';
 import { useUi } from '../lib/ui.jsx';
+import { useWidgets } from '../lib/widgets.js';
 import SettingsSheet from '../components/SettingsSheet.jsx';
 import useOnline from '../lib/useOnline.js';
 import { useAuth } from '../auth/index.jsx';
@@ -16,6 +17,7 @@ export default function Home() {
   const { isAdmin, access } = useAuth();
   // Повернулись «Назад» зі сторінки, відкритої з налаштувань → налаштування відкриті знову
   const { ui } = useUi();
+  const widgets = useWidgets();
   const navType = useNavigationType();
   const [settingsOpen, setSettingsOpen] = useState(() => {
     let back = false;
@@ -67,9 +69,11 @@ export default function Home() {
       )}
 
       <div className="home-grid">
+      {!(ui === 'next' && widgets.isHidden('schedule')) && (
       <div className="home-sched">
         <ScheduleWidget />
       </div>
+      )}
       <div className="home-sections stack">
       <div className="row between">
         <h2 className="h2 section-title">{t('home.sections')}</h2>
@@ -80,7 +84,7 @@ export default function Home() {
         )}
       </div>
       <div className="tiles">
-        {sections.map((x, i) => {
+        {sections.filter((x) => sorting || ui !== 'next' || !widgets.isHidden('sec:' + x.id)).map((x, i) => {
           const full = sectionOpen(x.id);
           const partN = !full && x.kind !== 'anatomy' ? openCount(x.id) : 0;
           const open = full || partN > 0;
