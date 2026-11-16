@@ -10,7 +10,7 @@ import { ContentProvider } from './lib/content.jsx';
 import { EquipmentProvider } from './lib/equipment.jsx';
 import { UiProvider } from './lib/ui.jsx';
 import './styles.css';
-import './material.css';
+import './oneui.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

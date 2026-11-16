@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useSt
 
 // Версія інтерфейсу: 'classic' (поточний) або 'next' (новий, у розробці).
 // Перемикач у профілі; запасний шлях: відкрити додаток з ?ui=next або ?ui=classic.
-// Перемикач бачать усі учні. Назви тем: classic = Material 3, next = Liquid Glass.
+// Перемикач бачать усі учні. Назви тем: classic = One UI, next = Liquid Glass.
 export const SWITCH_FOR_ALL = true;
 const KEY = 'ui:version';
 const VALID = ['classic', 'next'];
@@ -39,13 +39,13 @@ export function UiProvider({ children }) {
     setState(v);
     window.scrollTo(0, 0);
   }, []);
-  // Тема оформлення на <html>: classic = Material 3 (Android), next = iOS Liquid Glass
+  // Тема оформлення на <html>: classic = One UI (Samsung), next = iOS Liquid Glass
   useLayoutEffect(() => {
     const el = document.documentElement;
     el.dataset.ui = ui;
     const meta = document.querySelector('meta[name="theme-color"]');
     const mq = window.matchMedia('(prefers-color-scheme: light)');
-    const sync = () => meta && meta.setAttribute('content', ui === 'next' ? (mq.matches ? '#f2f2f7' : '#0d0e11') : mq.matches ? '#fafaee' : '#12140e');
+    const sync = () => meta && meta.setAttribute('content', ui === 'next' ? (mq.matches ? '#f2f2f7' : '#0d0e11') : mq.matches ? '#f2f2f4' : '#000000');
     sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);

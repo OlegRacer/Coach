@@ -1,0 +1,233 @@
+/* Тема «One UI» (Samsung): чорний фон і нейтральні сірі картки в темній темі, світло-сірий у світлій,
+   великі заокруглені картки, заголовок-«viewing area» над змістом, таблетки-кнопки, плоска нижня панель.
+   Усе під html[data-ui="classic"], тому тема Liquid Glass не зачеплена. */
+@font-face { font-family: 'One UI Font'; font-weight: 100 900; font-display: swap; src: url('./assets/fonts/roboto-latin-wght-normal.woff2') format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'One UI Font'; font-weight: 100 900; font-display: swap; src: url('./assets/fonts/roboto-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+
+html[data-ui="classic"] {
+  --m-primary: #c6f432; --m-on-primary: #1a2200;
+  --m-primary-container: #2a3408; --m-on-primary-container: #d9ff65;
+  --m-secondary-container: #2a2a2c; --m-on-secondary-container: #ffffff;
+  --m-surface: #000000; --m-surface-low: #121212; --m-surface-container: #1c1c1e; --m-surface-high: #272729; --m-surface-highest: #323235;
+  --m-on-surface: #ffffff; --m-on-surface-variant: #a9a9ae; --m-outline: #5c5c61; --m-outline-variant: #2e2e31;
+  --m-error: #ff8a80; --m-error-container: #4a1713;
+  --bg: var(--m-surface); --card: var(--m-surface-container); --card-2: var(--m-surface-high);
+  --text: var(--m-on-surface); --muted: var(--m-on-surface-variant); --accent: var(--m-primary); --on-accent: var(--m-on-primary);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  html[data-ui="classic"] {
+    --m-primary: #4c6200; --m-on-primary: #ffffff;
+    --m-primary-container: #e3f3a2; --m-on-primary-container: #141f00;
+    --m-secondary-container: #e8e8ea; --m-on-secondary-container: #000000;
+    --m-surface: #f2f2f4; --m-surface-low: #f7f7f8; --m-surface-container: #ffffff; --m-surface-high: #ececee; --m-surface-highest: #e2e2e5;
+    --m-on-surface: #000000; --m-on-surface-variant: #6a6a70; --m-outline: #a2a2a8; --m-outline-variant: #dcdce0;
+    --m-error: #c62828; --m-error-container: #fde0dd;
+    color-scheme: light;
+  }
+}
+
+html[data-ui="classic"] body { font-family: 'One UI Font', Roboto, 'Google Sans', system-ui, sans-serif; background: var(--m-surface); color: var(--m-on-surface); letter-spacing: 0.01em; }
+html[data-ui="classic"] button, html[data-ui="classic"] input, html[data-ui="classic"] textarea, html[data-ui="classic"] select { font-family: inherit; }
+
+/* Типографіка M3: headline / title / body / label */
+html[data-ui="classic"] .title { font-size: 28px; line-height: 36px; font-weight: 400; letter-spacing: 0; }
+html[data-ui="classic"] .h2 { font-size: 22px; line-height: 28px; font-weight: 500; letter-spacing: 0; }
+html[data-ui="classic"] .tile-title, html[data-ui="classic"] .list-title, html[data-ui="classic"] .session-title, html[data-ui="classic"] .profile-name { font-size: 16px; line-height: 24px; font-weight: 500; letter-spacing: 0.01em; }
+html[data-ui="classic"] .tile-title { font-size: 20px; line-height: 28px; font-weight: 500; }
+html[data-ui="classic"] .small { font-size: 12px; line-height: 16px; letter-spacing: 0.03em; }
+html[data-ui="classic"] .body { font-size: 14px; line-height: 20px; }
+html[data-ui="classic"] .set-label, html[data-ui="classic"] .mz-name { font-weight: 500; }
+
+/* Поверхні й форми */
+html[data-ui="classic"] .card { background: var(--m-surface-container); border-radius: 28px; }
+html[data-ui="classic"] .tile { background: var(--m-surface-container); border-radius: 28px; }
+html[data-ui="classic"] .tile:active, html[data-ui="classic"] .list-item:active { background: var(--m-surface-highest); }
+html[data-ui="classic"] .tile-icon { border-radius: 24px; }
+html[data-ui="classic"] .list-item, html[data-ui="classic"] .student { background: var(--m-surface-container); border-radius: 16px; }
+html[data-ui="classic"] .session { background: var(--m-surface-high); border-radius: 16px; }
+html[data-ui="classic"] .session-time { background: var(--m-surface); border-radius: 12px; }
+html[data-ui="classic"] .profile { background: var(--m-surface-high); border-radius: 16px; }
+html[data-ui="classic"] .pill, html[data-ui="classic"] .lang { background: var(--m-surface-high); color: var(--m-on-surface-variant); }
+
+/* Верхня панель (small top app bar): кнопка назад — круглa іконка без фону */
+html[data-ui="classic"] .topbar { gap: 4px; min-height: 64px; }
+html[data-ui="classic"] .topbar h1 { font-size: 22px; line-height: 28px; font-weight: 400; letter-spacing: 0; }
+html[data-ui="classic"] .back, html[data-ui="classic"] .icon-btn { width: 48px; height: 48px; border-radius: 50%; background: transparent; color: var(--m-on-surface); }
+html[data-ui="classic"] .back:active, html[data-ui="classic"] .icon-btn:active { background: color-mix(in srgb, var(--m-on-surface) 12%, transparent); }
+html[data-ui="classic"] .small-btn { background: var(--m-surface-high); border-radius: 50%; }
+
+/* Кнопки: filled / tonal — повністю круглі, мітка label-large */
+html[data-ui="classic"] .btn-primary { background: var(--m-primary); color: var(--m-on-primary); border-radius: 999px; min-height: 56px; font-size: 16px; font-weight: 500; letter-spacing: 0.01em; }
+html[data-ui="classic"] .btn-primary:active { background: color-mix(in srgb, var(--m-primary) 88%, var(--m-on-primary)); }
+html[data-ui="classic"] .btn-ghost, html[data-ui="classic"] .share-btn { background: var(--m-secondary-container); color: var(--m-on-secondary-container); border-radius: 999px; font-weight: 500; min-height: 48px; }
+html[data-ui="classic"] .btn-light { background: var(--m-primary); color: var(--m-on-primary); border-radius: 999px; font-weight: 500; }
+html[data-ui="classic"] .btn-small { border-radius: 999px; min-height: 40px; font-size: 14px; font-weight: 500; letter-spacing: 0.1px; }
+html[data-ui="classic"] .btn-danger { background: var(--m-error-container); color: var(--m-error); border-radius: 999px; font-weight: 500; }
+html[data-ui="classic"] .btn-ghost.danger, html[data-ui="classic"] .danger-text, html[data-ui="classic"] .err { color: var(--m-error); }
+html[data-ui="classic"] .link-btn { color: var(--m-primary); font-weight: 500; }
+
+/* Чіпи (filter chips): радіус 8, вибраний — secondaryContainer із галочкою-кольором */
+html[data-ui="classic"] .chip { background: transparent; box-shadow: inset 0 0 0 1px var(--m-outline); color: var(--m-on-surface-variant); border-radius: 8px; min-height: 40px; font-size: 14px; font-weight: 500; padding: 6px 16px; }
+html[data-ui="classic"] .chip.active { background: var(--m-secondary-container); color: var(--m-on-secondary-container); box-shadow: none; }
+html[data-ui="classic"] .chip.partial { background: color-mix(in srgb, var(--m-secondary-container) 50%, transparent); }
+html[data-ui="classic"] .lang-btn { font-weight: 500; }
+html[data-ui="classic"] .lang-btn.active { background: var(--m-secondary-container); color: var(--m-on-secondary-container); }
+
+/* Дні тижня: вибраний — primary, решта — tonal */
+html[data-ui="classic"] .day { background: var(--m-surface-high); border-radius: 16px; }
+html[data-ui="classic"] .day-num { font-weight: 500; }
+html[data-ui="classic"] .day.today { background: var(--m-primary); color: var(--m-on-primary); }
+html[data-ui="classic"] .day.today .day-name { color: color-mix(in srgb, var(--m-on-primary) 80%, transparent); }
+html[data-ui="classic"] .day.today .dot.on { background: var(--m-on-primary); }
+html[data-ui="classic"] .session-time b { color: var(--m-primary); }
+html[data-ui="classic"] .wdot { background: var(--m-outline-variant); }
+html[data-ui="classic"] .wdot.on { background: var(--m-primary); }
+
+/* Поля (outlined text field) */
+html[data-ui="classic"] .field { background: transparent; border: 1px solid var(--m-outline); border-radius: 12px; color: var(--m-on-surface); }
+html[data-ui="classic"] .field:focus { outline: 0; border-color: var(--m-primary); box-shadow: inset 0 0 0 1px var(--m-primary); }
+html[data-ui="classic"] .field[aria-invalid='true'] { border-color: var(--m-error); }
+html[data-ui="classic"] .consent { background: var(--m-surface-container); border-radius: 12px; }
+html[data-ui="classic"] input[type='checkbox'], html[data-ui="classic"] input[type='radio'] { accent-color: var(--m-primary); }
+
+/* Нижня шторка (modal bottom sheet): радіус 28, ручка 32×4 */
+html[data-ui="classic"] .sheet { background: var(--m-surface-low); border-radius: 28px 28px 0 0; box-shadow: none; }
+html[data-ui="classic"] .sheet-grab { width: 32px; height: 4px; background: var(--m-outline); opacity: 0.4; }
+html[data-ui="classic"] .sheet-backdrop { background: rgba(0, 0, 0, 0.32); }
+html[data-ui="classic"] .set-row, html[data-ui="classic"] .set-block, html[data-ui="classic"] .link-row, html[data-ui="classic"] .mz-subs { border-top-color: var(--m-outline-variant); }
+
+/* Плаваючі кнопки редагування (tonal icon button) */
+html[data-ui="classic"] .edit-fab, html[data-ui="classic"] .edit-inline { background: var(--m-secondary-container); color: var(--m-on-secondary-container); border: 0; border-radius: 50%; }
+
+/* Бейджі, тости, анатомія */
+html[data-ui="classic"] .badge-new, html[data-ui="classic"] .badge-free { background: var(--m-primary-container); color: var(--m-on-primary-container); }
+html[data-ui="classic"] .mz-group, html[data-ui="classic"] .mz-rhead { background: var(--m-surface-container); border-radius: 16px; }
+html[data-ui="classic"] .mz-group.has { box-shadow: inset 0 0 0 1px var(--m-primary); }
+html[data-ui="classic"] .mz-box { border-radius: 2px; border-color: var(--m-on-surface-variant); }
+html[data-ui="classic"] .mz-box.on, html[data-ui="classic"] .mz-box.part { background: var(--m-primary); border-color: var(--m-primary); color: var(--m-on-primary); }
+html[data-ui="classic"] .muscle { fill: var(--m-surface-highest); }
+html[data-ui="classic"] .muscle.active { fill: var(--m-primary); }
+html[data-ui="classic"] .pay-toast { background: var(--m-surface-highest); color: var(--m-on-surface); border-radius: 12px; }
+
+/* Стани натискання: тональний шар замість зміни кольору */
+html[data-ui="classic"] .profile.tappable:active, html[data-ui="classic"] .share-btn:active { background: var(--m-surface-highest); }
+@media (prefers-contrast: more) {
+  html[data-ui="classic"] .chip { box-shadow: inset 0 0 0 2px var(--m-on-surface-variant); }
+}
+
+/* Панель навігації M3 (Navigation bar): висота 80, індикатор-«пігулка» 64×32, підписи 12 */
+html[data-ui="classic"] .page { padding-bottom: calc(104px + env(safe-area-inset-bottom)); }
+html[data-ui="classic"] .tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+  height: calc(80px + env(safe-area-inset-bottom)); padding: 12px 8px max(16px, env(safe-area-inset-bottom));
+  background: var(--m-surface-container); max-width: 600px; margin: 0 auto;
+}
+html[data-ui="classic"] .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--m-on-surface-variant); text-decoration: none; }
+html[data-ui="classic"] .tab-ic { width: 64px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; transition: background 0.2s ease; }
+html[data-ui="classic"] .tab.active .tab-ic { background: var(--m-secondary-container); color: var(--m-on-secondary-container); }
+html[data-ui="classic"] .tab:active .tab-ic { background: color-mix(in srgb, var(--m-on-surface) 12%, transparent); }
+html[data-ui="classic"] .tab-label { font-size: 12px; line-height: 16px; font-weight: 500; letter-spacing: 0.5px; }
+html[data-ui="classic"] .tab.active .tab-label { color: var(--m-on-surface); font-weight: 700; }
+html[data-ui="classic"][data-tab-root] .topbar .back { display: none; }
+/* FAB «+»: 56×56, радіус 16, primaryContainer, над панеллю праворуч */
+html[data-ui="classic"] .tab-add {
+  position: fixed; z-index: 41; right: 16px; bottom: calc(80px + env(safe-area-inset-bottom) + 16px);
+  width: 56px; height: 56px; border: 0; border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  background: var(--m-primary-container); color: var(--m-on-primary-container);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+html[data-ui="classic"] .tab-add:active { transform: scale(0.95); }
+@media (prefers-reduced-motion: reduce) { html[data-ui="classic"] .tab-ic { transition: none; } }
+
+/* Широкий екран і телефон набік: панель стає плаваючою заокругленою «пігулкою» */
+@media (min-width: 600px) {
+  html[data-ui="classic"] .tabbar {
+    left: 50%; right: auto; transform: translateX(-50%); width: min(calc(100% - 32px), 600px);
+    bottom: max(12px, env(safe-area-inset-bottom)); height: 72px; padding: 8px 12px; border-radius: 28px;
+    background: var(--m-surface-high);
+  }
+  html[data-ui="classic"] .tab-add { right: max(16px, calc(50% - 300px)); bottom: calc(max(12px, env(safe-area-inset-bottom)) + 72px + 16px); }
+  html[data-ui="classic"] .page { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  html[data-ui="classic"] .tabbar { height: 64px; padding: 6px 12px; border-radius: 24px; }
+  html[data-ui="classic"] .tab { gap: 0; }
+  html[data-ui="classic"] .tab-ic { height: 28px; }
+  html[data-ui="classic"] .tab-label { line-height: 14px; font-size: 11px; }
+  html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 64px + 12px); width: 52px; height: 52px; }
+}
+
+/* Керування редагуванням віджетів у стилі M3: tonal-поверхні замість скла */
+html[data-ui="classic"] .wd-minus, html[data-ui="classic"] .wd-add { background: var(--m-surface-highest); color: var(--m-on-surface); border: 0; }
+html[data-ui="classic"] .wd-hint { background: var(--m-surface-highest); color: var(--m-on-surface-variant); }
+html[data-ui="classic"] .wd-done { background: var(--m-primary); color: var(--m-on-primary); font-weight: 500; }
+html[data-ui="classic"] .wd-row-add { background: var(--m-primary); color: var(--m-on-primary); }
+html[data-ui="classic"] .wd-row { background: var(--m-surface-container); border-radius: 28px; }
+html[data-ui="classic"] .ios-switch { background: var(--m-surface-highest); }
+html[data-ui="classic"] .ios-switch.on { background: var(--m-primary); }
+html[data-ui="classic"] .nh-w .tile-icon { border-radius: 20px; }
+
+
+/* ===== Особливості One UI ===== */
+/* Заголовок «viewing area»: кнопка назад зверху, великий заголовок окремим рядком, багато повітря */
+html[data-ui="classic"] .page { padding-top: max(20px, env(safe-area-inset-top)); }
+html[data-ui="classic"] .topbar { flex-wrap: wrap; min-height: 0; row-gap: 4px; padding-bottom: 4px; }
+html[data-ui="classic"] .topbar h1 { order: 3; flex: 1 0 100%; font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: -0.2px; margin-top: 12px; }
+html[data-ui="classic"] .topbar .edit-inline { order: 2; margin-left: auto; }
+html[data-ui="classic"] .title { font-size: 32px; line-height: 40px; font-weight: 500; letter-spacing: -0.2px; }
+
+/* Картки та плитки: більший радіус, без рамок */
+html[data-ui="classic"] .card, html[data-ui="classic"] .tile { border-radius: 30px; }
+html[data-ui="classic"] .widget-page, html[data-ui="classic"] .widget { border-radius: 30px; }
+html[data-ui="classic"] .list-item, html[data-ui="classic"] .student { border-radius: 24px; }
+html[data-ui="classic"] .session, html[data-ui="classic"] .profile { border-radius: 22px; }
+html[data-ui="classic"] .tile-icon { border-radius: 50%; }
+
+/* Кнопки: заповнена основна, тональна сіра побічна, обидві — таблетки */
+html[data-ui="classic"] .btn-primary { min-height: 52px; font-weight: 600; letter-spacing: 0; }
+html[data-ui="classic"] .btn-ghost, html[data-ui="classic"] .share-btn, html[data-ui="classic"] .btn-small:not(.btn-primary) { background: var(--m-secondary-container); color: var(--m-on-secondary-container); font-weight: 600; }
+html[data-ui="classic"] .btn-small { min-height: 40px; font-weight: 600; letter-spacing: 0; }
+
+/* Чіпи: таблетки без рамки; вибраний — основний колір */
+html[data-ui="classic"] .chip { border-radius: 999px; box-shadow: none; background: var(--m-surface-high); color: var(--m-on-surface); font-weight: 500; }
+html[data-ui="classic"] .chip.active { background: var(--m-primary); color: var(--m-on-primary); }
+html[data-ui="classic"] .lang-btn.active { background: var(--m-primary); color: var(--m-on-primary); }
+
+/* Поля: заповнені, без рамки */
+html[data-ui="classic"] .field { background: var(--m-surface-high); border: 0; border-radius: 16px; }
+html[data-ui="classic"] .field:focus { box-shadow: 0 0 0 2px var(--m-primary); }
+
+/* Шторка */
+html[data-ui="classic"] .sheet { background: var(--m-surface-container); border-radius: 30px 30px 0 0; }
+
+/* Нижня панель: плоска, з тонкою лінією; вибрана вкладка — «капсула» навколо іконки й підпису */
+html[data-ui="classic"] .tabbar { background: color-mix(in srgb, var(--m-surface) 92%, transparent); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-top: 0.5px solid var(--m-outline-variant); height: calc(72px + env(safe-area-inset-bottom)); padding: 8px 8px max(10px, env(safe-area-inset-bottom)); }
+html[data-ui="classic"] .tab { gap: 2px; border-radius: 22px; justify-content: center; color: var(--m-on-surface-variant); }
+html[data-ui="classic"] .tab-ic { width: auto; height: auto; background: none !important; }
+html[data-ui="classic"] .tab.active { background: var(--m-secondary-container); color: var(--m-on-surface); }
+html[data-ui="classic"] .tab.active .tab-ic { color: var(--m-primary); }
+html[data-ui="classic"] .tab-label { font-size: 11px; line-height: 14px; font-weight: 500; letter-spacing: 0; }
+html[data-ui="classic"] .tab.active .tab-label { font-weight: 600; color: var(--m-on-surface); }
+html[data-ui="classic"] .page { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+/* FAB: коло */
+html[data-ui="classic"] .tab-add { border-radius: 50%; background: var(--m-primary); color: var(--m-on-primary); width: 56px; height: 56px; bottom: calc(72px + env(safe-area-inset-bottom) + 16px); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35); }
+
+/* Перемикачі як у One UI: таблетка з білим «пальцем» */
+html[data-ui="classic"] .ios-switch { width: 52px; height: 32px; background: var(--m-surface-highest); }
+html[data-ui="classic"] .ios-switch.on { background: var(--m-primary); }
+html[data-ui="classic"] .ios-switch span { width: 28px; height: 28px; }
+html[data-ui="classic"] .ios-switch.on span { transform: translateX(20px); }
+
+@media (min-width: 600px) {
+  html[data-ui="classic"] .tabbar { height: 68px; border-top: 0; border-radius: 34px; background: color-mix(in srgb, var(--m-surface-container) 90%, transparent); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25); padding: 6px 10px; bottom: max(12px, env(safe-area-inset-bottom)); }
+  html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 68px + 14px); }
+  html[data-ui="classic"] .page { padding-bottom: calc(108px + env(safe-area-inset-bottom)); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  html[data-ui="classic"] .tabbar { height: 58px; border-radius: 29px; }
+  html[data-ui="classic"] .tab { flex-direction: row; justify-content: center; gap: 6px; }
+  html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 58px + 12px); }
+}
+html[data-ui="classic"] .topbar h1 { text-wrap: balance; }
