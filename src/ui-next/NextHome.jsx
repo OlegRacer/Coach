@@ -192,17 +192,39 @@ export default function NextHome() {
             <div className="sheet-backdrop" onClick={() => setAdding(false)} />
             <div className="sheet" role="dialog" aria-modal="true" aria-label={t('wd.addOne')}>
               <div className="sheet-head"><span className="sheet-grab" aria-hidden="true" /></div>
-              <div className="sheet-body">
-                <h2 className="h2">{t('wd.addOne')}</h2>
-                {!hiddenIds.length && <p className="muted small">{t('wd.none')}</p>}
-                {hiddenIds.map((id) => (
-                  <div key={id} className="set-row">
-                    <span className="set-label">{label(id)}</span>
-                    <button type="button" className="btn-ghost btn-small" onClick={() => { w.toggle(id); if (hiddenIds.length <= 1) setAdding(false); }}>
-                      <Icon name="plus" size={16} /> {t('wd.add')}
+              <div className="sheet-body wd-sheet">
+                <div className="wd-sheet-head">
+                  <h2 className="h2">{t('wd.addOne')}</h2>
+                  <button type="button" className="wd-x" aria-label={t('settings.close')} onClick={() => setAdding(false)}>
+                    <Icon name="close" size={26} />
+                  </button>
+                </div>
+                <p className="muted wd-sheet-hint">{hiddenIds.length ? t('wd.tapHint') : t('wd.none')}</p>
+                {hiddenIds.map((id) => {
+                  const x = sections.find((s) => 'sec:' + s.id === id);
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      className="wd-row"
+                      onClick={() => {
+                        w.toggle(id);
+                        if (hiddenIds.length <= 1) setAdding(false);
+                      }}
+                    >
+                      <span className="wd-row-icon" style={x ? { background: x.color, color: '#101214' } : undefined}>
+                        <Icon name={x ? x.icon : 'calendar'} size={28} />
+                      </span>
+                      <span className="wd-row-text">
+                        <b>{label(id)}</b>
+                        <span className="muted">{x ? L(x.hint) : t('wd.scheduleSub')}</span>
+                      </span>
+                      <span className="wd-row-add" aria-hidden="true">
+                        <Icon name="plus" size={22} />
+                      </span>
                     </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

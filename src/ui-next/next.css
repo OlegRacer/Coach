@@ -178,3 +178,20 @@ html[data-ui="next"] .nh.editing .nh-w .tile, html[data-ui="next"] .nh.editing .
 html[data-ui="next"] .nh.editing .nh-w:nth-child(2n) .tile, html[data-ui="next"] .nh.editing .nh-w:nth-child(2n) .widget { animation-delay: -0.13s; animation-direction: alternate-reverse; }
 html[data-ui="next"] .nh.editing .nh-w.drag .tile, html[data-ui="next"] .nh.editing .nh-w.drag .widget { animation: none; }
 @media (prefers-reduced-motion: reduce) { html[data-ui="next"] .nh.editing .nh-w .tile, html[data-ui="next"] .nh.editing .nh-w .widget { animation: none; } }
+
+/* Меню «Додати віджет» */
+html[data-ui="next"] .wd-sheet { gap: 12px; padding-bottom: 12px; }
+html[data-ui="next"] .wd-sheet-head { display: flex; align-items: center; justify-content: center; position: relative; min-height: 44px; }
+html[data-ui="next"] .wd-sheet-head .h2 { font-size: 22px; }
+html[data-ui="next"] .wd-x { position: absolute; right: 0; top: 0; width: 44px; height: 44px; border: 0; background: transparent; color: var(--text); display: flex; align-items: center; justify-content: center; }
+html[data-ui="next"] .wd-sheet-hint { font-size: 17px; line-height: 1.35; margin: 6px 0 4px; }
+html[data-ui="next"] .wd-row {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px 14px 14px; text-align: left;
+  background: var(--card); border: 0; border-radius: 28px; color: var(--text);
+}
+html[data-ui="next"] .wd-row:active { background: var(--card-2); }
+html[data-ui="next"] .wd-row-icon { flex: none; width: 60px; height: 60px; border-radius: 18px; background: var(--card-2); display: flex; align-items: center; justify-content: center; color: var(--muted); }
+html[data-ui="next"] .wd-row-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+html[data-ui="next"] .wd-row-text b { font-size: 20px; font-weight: 800; }
+html[data-ui="next"] .wd-row-text .muted { font-size: 15px; }
+html[data-ui="next"] .wd-row-add { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--text); color: var(--bg); display: flex; align-items: center; justify-content: center; }

@@ -552,5 +552,7 @@
   "wd.none": "所有小工具都已在首頁。",
   "wd.add": "新增",
   "wd.done": "完成",
-  "wd.edit": "編輯小工具"
+  "wd.edit": "編輯小工具",
+  "wd.tapHint": "點選小工具即可放回首頁",
+  "wd.scheduleSub": "近期課程與教練課表"
 }
