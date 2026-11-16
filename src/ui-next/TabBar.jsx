@@ -1,4 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import AddWorkout from '../components/AddWorkout.jsx';
+import { useAuth } from '../auth/index.jsx';
 import { NavLink, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -14,6 +16,8 @@ const TABS = [
 export default function TabBar() {
   const { t } = useI18n();
   const { pathname } = useLocation();
+  const { user } = useAuth();
+  const [adding, setAdding] = useState(false);
   // на кореневих вкладках кнопка «назад» не потрібна (правило навігації iOS)
   const root = pathname === '/schedule' || pathname === '/plans';
   useEffect(() => {
@@ -24,8 +28,10 @@ export default function TabBar() {
   }, [root]);
   // у редакторах адмінки панель не потрібна: більше місця для форм
   if (pathname.startsWith('/admin')) return null;
+  const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
   return (
-    <nav className="tabbar glass" aria-label={t('nav.tabs')}>
+    <>
+    <nav className={'tabbar glass' + (showAdd ? ' with-add' : '')} aria-label={t('nav.tabs')}>
       {TABS.map((x) => {
         const active = x.end ? pathname === '/' || (x.also || []).some((p) => pathname.startsWith(p)) : pathname.startsWith(x.to);
         return (
@@ -36,5 +42,12 @@ export default function TabBar() {
         );
       })}
     </nav>
+    {showAdd && (
+      <button type="button" className="tab-add glass" aria-label={t('aw.add')} onClick={() => setAdding(true)}>
+        <Icon name="plus" size={28} />
+      </button>
+    )}
+    {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={() => window.dispatchEvent(new Event('schedule:changed'))} />}
+    </>
   );
 }

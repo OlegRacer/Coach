@@ -131,7 +131,11 @@ export function useSchedule() {
     load();
     const onVisible = () => document.visibilityState === 'visible' && load();
     document.addEventListener('visibilitychange', onVisible);
-    return () => document.removeEventListener('visibilitychange', onVisible);
+    window.addEventListener('schedule:changed', load);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener('schedule:changed', load);
+    };
   }, [ready, uid, load]);
 
   // Заняття учня: призначені вручну + ті, що належать його класам (або студії, якщо клас не вказано)

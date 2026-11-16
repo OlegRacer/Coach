@@ -111,7 +111,7 @@ export default function ScheduleWidget() {
         ))}
       </div>
 
-      <div className="row" style={{ gap: 8 }}>
+      <div className="row widget-actions" style={{ gap: 8 }}>
         <Link to="/schedule" className="btn-ghost btn-small">
           {t('home.fullSchedule')}
         </Link>
