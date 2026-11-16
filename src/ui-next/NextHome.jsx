@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import EditFab from '../components/EditFab.jsx';
@@ -46,45 +46,83 @@ export default function NextHome() {
     if (press.current && (Math.abs(e.clientX - press.current.x) > 8 || Math.abs(e.clientY - press.current.y) > 8)) cancel();
   };
 
-  const startDrag = (id) => (e) => {
+  // Перетягування: плитка йде за пальцем, інші плавно розсуваються (FLIP)
+  const gridRef = useRef(null);
+  const drag = useRef(null);
+  const prevPos = useRef({});
+  const items = () => Array.from(gridRef.current ? gridRef.current.querySelectorAll('[data-wid]') : []);
+
+  useLayoutEffect(() => {
+    // після зміни порядку: усі, крім перетягуваної, їдуть зі старого місця на нове
+    const next = {};
+    items().forEach((el) => {
+      const id = el.dataset.wid;
+      next[id] = { x: el.offsetLeft, y: el.offsetTop };
+      const old = prevPos.current[id];
+      if (old && (!drag.current || drag.current.id !== id) && (old.x !== next[id].x || old.y !== next[id].y) && el.animate) {
+        el.animate([{ transform: `translate(${old.x - next[id].x}px, ${old.y - next[id].y}px)` }, { transform: 'translate(0, 0)' }], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+      }
+    });
+    prevPos.current = next;
+    if (drag.current) place();
+  });
+
+  const gridPt = (e) => {
+    const r = gridRef.current.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+  const place = () => {
+    const d = drag.current;
+    if (!d || !d.el) return;
+    const x = d.pt.x - d.gx - d.el.offsetLeft;
+    const y = d.pt.y - d.gy - d.el.offsetTop;
+    d.el.style.transform = `translate(${x}px, ${y}px) scale(1.04)`;
+  };
+  const startDrag = (e) => {
+    const el = e.target.closest && e.target.closest('[data-wid]');
+    if (!editing || !el || e.target.closest('.wd-minus')) return;
     e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setDragId(id);
+    el.setPointerCapture(e.pointerId);
+    const pt = gridPt(e);
+    drag.current = { id: el.dataset.wid, el, pt, gx: pt.x - el.offsetLeft, gy: pt.y - el.offsetTop, moved: false };
+    setDragId(el.dataset.wid);
+    place();
   };
   const onDrag = (e) => {
-    if (!dragId) return;
+    const d = drag.current;
+    if (!d) return;
     if (e.clientY < 110) window.scrollBy(0, -14);
     else if (e.clientY > window.innerHeight - 170) window.scrollBy(0, 14);
-    if (Date.now() - last.current < 180) return;
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const tgt = el && el.closest('[data-wid]');
-    if (!tgt || tgt.dataset.wid === dragId) return;
-    const next = ids.filter((x) => x !== dragId);
-    next.splice(next.indexOf(tgt.dataset.wid) + (ids.indexOf(tgt.dataset.wid) > ids.indexOf(dragId) ? 1 : 0), 0, dragId);
+    d.pt = gridPt(e);
+    place();
+    if (Date.now() - last.current < 120) return;
+    const cx = d.pt.x - d.gx + d.el.offsetWidth / 2;
+    const cy = d.pt.y - d.gy + d.el.offsetHeight / 2;
+    const tgt = items().find((o) => o !== d.el && cx >= o.offsetLeft && cx <= o.offsetLeft + o.offsetWidth && cy >= o.offsetTop && cy <= o.offsetTop + o.offsetHeight);
+    const others = items().filter((o) => o !== d.el);
+    const bottom = Math.max(0, ...others.map((o) => o.offsetTop + o.offsetHeight));
+    if (!tgt && !(others.length && cy > bottom)) return;
+    const next = ids.filter((x) => x !== d.id);
+    if (tgt) next.splice(ids.indexOf(tgt.dataset.wid), 0, d.id);
+    else next.push(d.id);
     last.current = Date.now();
     w.setOrder(next);
   };
-  const endDrag = () => setDragId(null);
+  const endDrag = () => {
+    const d = drag.current;
+    if (!d) return;
+    drag.current = null;
+    setDragId(null);
+    const cur = d.el.style.transform;
+    d.el.style.transform = '';
+    if (d.el.animate && cur) d.el.animate([{ transform: cur }, { transform: 'none' }], { duration: 200, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+  };
 
   const handle = (id) =>
     editing && (
-      <>
-        <button type="button" className="wd-minus glass" aria-label={t('wd.hide', { name: label(id) })} onClick={() => w.toggle(id)}>
-          <Icon name="minus" size={20} />
-        </button>
-        <span
-          role="button"
-          tabIndex={0}
-          className="wd-grip glass"
-          aria-label={t('wd.drag', { name: label(id) })}
-          onPointerDown={startDrag(id)}
-          onPointerMove={onDrag}
-          onPointerUp={endDrag}
-          onPointerCancel={endDrag}
-        >
-          <Icon name="grip" size={20} />
-        </span>
-      </>
+      <button type="button" className="wd-minus glass" aria-label={t('wd.hide', { name: label(id) })} onClick={() => w.toggle(id)}>
+        <Icon name="minus" size={20} />
+      </button>
     );
 
   const tile = (x) => {
@@ -118,7 +156,7 @@ export default function NextHome() {
           <Icon name="wifiOff" size={16} /> {t('common.offline')}
         </div>
       )}
-      <div className="tiles nh-grid" onPointerDown={down} onPointerUp={cancel} onPointerCancel={cancel} onPointerMove={moveCheck} onContextMenu={(e) => e.preventDefault()}>
+      <div ref={gridRef} className="tiles nh-grid" onPointerDown={(e) => (editing ? startDrag(e) : down(e))} onPointerMove={(e) => (editing ? onDrag(e) : moveCheck(e))} onPointerUp={() => (editing ? endDrag() : cancel())} onPointerCancel={() => (editing ? endDrag() : cancel())} onContextMenu={(e) => e.preventDefault()}>
         {shown.map((id) =>
           id === 'schedule' ? (
             <div key={id} data-wid={id} className={'nh-w span2' + (dragId === id ? ' drag' : '')}>

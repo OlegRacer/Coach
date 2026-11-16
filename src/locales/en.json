@@ -547,7 +547,7 @@
   "wd.open": "Add or hide widgets",
   "wd.hide": "Hide “{name}”",
   "wd.drag": "Drag “{name}”",
-  "wd.dragHint": "Drag the bars on the right to reorder",
+  "wd.dragHint": "Drag a widget to reorder",
   "wd.addOne": "Add widget",
   "wd.none": "All widgets are already on the home screen.",
   "wd.add": "Add",

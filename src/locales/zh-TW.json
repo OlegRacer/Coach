@@ -547,7 +547,7 @@
   "wd.open": "新增或隱藏小工具",
   "wd.hide": "隱藏「{name}」",
   "wd.drag": "拖曳「{name}」",
-  "wd.dragHint": "拖曳右側橫條以調整順序",
+  "wd.dragHint": "拖曳小工具以調整順序",
   "wd.addOne": "新增小工具",
   "wd.none": "所有小工具都已在首頁。",
   "wd.add": "新增",
