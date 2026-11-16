@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Route } from 'react-router-dom';
 import AppRoutes from '../AppRoutes.jsx';
 import TabBar from './TabBar.jsx';
+import NextHome from './NextHome.jsx';
 import ProfilePage from './ProfilePage.jsx';
 import PayWatcher from '../components/PayWatcher.jsx';
 import ScrollMemory from '../components/ScrollMemory.jsx';
@@ -32,7 +33,7 @@ export default function NextApp() {
       <ScrollMemory />
       <OnboardingGate />
       <PayWatcher />
-      <AppRoutes extra={<Route path="/profile" element={<ProfilePage />} />} />
+      <AppRoutes extra={<><Route path="/" element={<NextHome />} /><Route path="/profile" element={<ProfilePage />} /></>} />
       <TabBar />
     </>
   );

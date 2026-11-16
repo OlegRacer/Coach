@@ -96,6 +96,8 @@ const paths = {
   down: <path d="M5 9l7 7 7-7" />,
   plus: <path d="M12 5v14M5 12h14" />,
   edit: <path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" />,
+  minus: <path d="M5 12h14" />,
+  grip: <path d="M5 8h14M5 12h14M5 16h14" />,
   calendar: (
     <>
       <rect x="3.5" y="5" width="17" height="15.5" rx="3.5" />

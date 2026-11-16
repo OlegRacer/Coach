@@ -544,6 +544,13 @@
   "nav.plans": "Packages",
   "nav.profile": "Profile",
   "wd.title": "Widgets",
-  "wd.hint": "Choose what to show on the home screen.",
-  "wd.open": "Add or hide widgets"
+  "wd.open": "Add or hide widgets",
+  "wd.hide": "Hide “{name}”",
+  "wd.drag": "Drag “{name}”",
+  "wd.dragHint": "Drag the bars on the right to reorder",
+  "wd.addOne": "Add widget",
+  "wd.none": "All widgets are already on the home screen.",
+  "wd.add": "Add",
+  "wd.done": "Done",
+  "wd.edit": "Edit widgets"
 }
