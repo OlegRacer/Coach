@@ -28,6 +28,14 @@ export default function TabBar() {
   const [editing] = useEditing();
   // на кореневих вкладках кнопка «назад» не потрібна (правило навігації iOS)
   const root = pathname === '/schedule' || pathname === '/plans';
+  // сторінки вкладок (розклад, пакети, профіль, головна) без анімації появи: нічого не блимає
+  const tabPage = ['/', '/schedule', '/plans', '/profile'].includes(pathname);
+  useEffect(() => {
+    const el = document.documentElement;
+    if (tabPage) el.dataset.tabPage = '1';
+    else delete el.dataset.tabPage;
+    return () => delete el.dataset.tabPage;
+  }, [tabPage]);
   useEffect(() => {
     const el = document.documentElement;
     if (root) el.dataset.tabRoot = '1';

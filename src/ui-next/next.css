@@ -145,13 +145,13 @@ html[data-ui="next"] .tab.active { background: transparent; }
   /* карусель: стара сторінка їде в один бік, нова приходить з іншого; панель і «+» стоять на місці */
   html[data-ui="next"] .tabbar { view-transition-name: tabbar; }
   html[data-ui="next"] .tab-add { view-transition-name: tabadd; }
-  html[data-vt] .page > * { animation: none !important; }
+  html[data-vt] .page > *, html[data-tab-page] .page > *, html[data-tab-page] .list > *, html[data-tab-page] .sess-list > *, html[data-tab-page] .nh-w { animation: none !important; }
   ::view-transition-group(root) { animation-duration: 0.5s; animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.5s; animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1); animation-fill-mode: both; mix-blend-mode: normal; }
-  html[data-vt="fwd"]::view-transition-old(root) { animation-name: vt-out-left; }
-  html[data-vt="fwd"]::view-transition-new(root) { animation-name: vt-in-right; }
-  html[data-vt="back"]::view-transition-old(root) { animation-name: vt-out-right; }
-  html[data-vt="back"]::view-transition-new(root) { animation-name: vt-in-left; }
+  html[data-vt="fwd"]::view-transition-old(root) { animation-name: vt-out-right; }
+  html[data-vt="fwd"]::view-transition-new(root) { animation-name: vt-in-left; }
+  html[data-vt="back"]::view-transition-old(root) { animation-name: vt-out-left; }
+  html[data-vt="back"]::view-transition-new(root) { animation-name: vt-in-right; }
   @keyframes vt-out-left { to { transform: translateX(-100%); } }
   @keyframes vt-in-right { from { transform: translateX(100%); } }
   @keyframes vt-out-right { to { transform: translateX(100%); } }
