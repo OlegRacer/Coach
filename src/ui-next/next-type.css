@@ -57,3 +57,5 @@ html[data-ui="next"] .trash-btn.armed { font-weight: 600; }
 html[data-ui="next"] .badge-idle { font-size: 0.6471rem; font-weight: 600; }
 html[data-ui="next"] .btn-small { font-size: 0.8235rem; font-weight: 600; }
 html[data-ui="next"] .day-chip .day-time { font-size: 0.6471rem; }
+html[data-ui="next"] .mz-name { font-size: 0.9412rem; font-weight: 600; }
+html[data-ui="next"] .mz-sub .mz-name { font-size: 0.8824rem; }

@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import Icon from '../components/Icon.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
@@ -52,6 +54,15 @@ export default function Anatomy() {
     ids.forEach((x) => (all ? n.delete(x) : n.add(x)));
     save(n);
   };
+  // розкриті групи: за замовчуванням ті, де вже щось вибрано
+  const [open, setOpen] = useState(() => new Set(GROUPS.filter((g) => leavesOfGroup(g.id).some((x) => sel.has(x)) && (g.parts || []).length).map((g) => g.id)));
+  const toggleOpen = (id) =>
+    setOpen((o) => {
+      const n = new Set(o);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
   const names = LEAVES.filter((l) => sel.has(l.id)).map((l) => muscleName(t, l.id));
 
   if (!ready) return <main className="page" />;
@@ -94,32 +105,43 @@ export default function Anatomy() {
         </div>
         <div className="anat-ctrl">
         <p className="muted small">{t('anatomy.tapMulti')}</p>
-        <div className="muscle-groups">
+        <div className="mz-list">
           {GROUPS.map((g) => {
             const ids = leavesOfGroup(g.id);
-            const all = ids.every((x) => sel.has(x));
-            const some = ids.some((x) => sel.has(x));
+            const cnt = ids.filter((x) => sel.has(x)).length;
+            const all = cnt === ids.length;
+            const parts = g.parts || [];
+            const isOpen = open.has(g.id);
             return (
-              <div key={g.id} className={'muscle-group' + (all ? ' all' : some ? ' some' : '')}>
-                <button
-                  type="button"
-                  className={'chip' + (all ? ' active' : some ? ' partial' : '')}
-                  aria-pressed={all}
-                  onClick={() => toggleGroup(g)}
-                >
-                  {t(`muscle.${g.id}`)}
-                </button>
-                {(g.parts || []).map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    className={'chip chip-sub' + (sel.has(p.id) ? ' active' : '')}
-                    aria-pressed={sel.has(p.id)}
-                    onClick={() => toggleLeaf(p.id)}
-                  >
-                    {t(`muscle.${p.id}`)}
+              <div key={g.id} className={'mz-group' + (cnt ? ' has' : '')}>
+                <div className="mz-head">
+                  <button type="button" className="mz-main" aria-pressed={all} onClick={() => toggleGroup(g)}>
+                    <span className={'mz-box' + (all ? ' on' : cnt ? ' part' : '')} aria-hidden="true">
+                      {all ? <Icon name="check" size={16} /> : cnt ? <Icon name="minus" size={16} /> : null}
+                    </span>
+                    <span className="mz-name">{t(`muscle.${g.id}`)}</span>
+                    {cnt > 0 && parts.length > 0 && <span className="mz-count muted small">{cnt}/{ids.length}</span>}
                   </button>
-                ))}
+                  {parts.length > 0 && (
+                    <button type="button" className="mz-toggle" aria-expanded={isOpen} aria-label={t(`muscle.${g.id}`)} onClick={() => toggleOpen(g.id)}>
+                      <span className={'mz-chev' + (isOpen ? ' open' : '')}>
+                        <Icon name="down" size={20} />
+                      </span>
+                    </button>
+                  )}
+                </div>
+                {isOpen && parts.length > 0 && (
+                  <div className="mz-subs">
+                    {parts.map((p) => (
+                      <button key={p.id} type="button" className="mz-sub" aria-pressed={sel.has(p.id)} onClick={() => toggleLeaf(p.id)}>
+                        <span className={'mz-box' + (sel.has(p.id) ? ' on' : '')} aria-hidden="true">
+                          {sel.has(p.id) && <Icon name="check" size={16} />}
+                        </span>
+                        <span className="mz-name">{t(`muscle.${p.id}`)}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
