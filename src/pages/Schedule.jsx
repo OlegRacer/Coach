@@ -35,7 +35,7 @@ export default function Schedule() {
   const todayKey = iso(now);
 
   return (
-    <main className="page">
+    <main className="page wide sched-page">
       <TopBar title={t('schedule.title')} />
 
       <div className="chips">
@@ -85,6 +85,7 @@ export default function Schedule() {
         </div>
       </section>
 
+      <div className="sched-day">
       <h2 className="h2 section-title">{dayLabel}</h2>
       {who === 'mine' && !mine.length ? (
         <p className="muted">{t('sched.noMine')}</p>
@@ -96,6 +97,7 @@ export default function Schedule() {
           <Icon name="plus" size={16} /> {t('aw.add')}
         </button>
       )}
+      </div>
       {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}
     </main>
   );

@@ -196,3 +196,6 @@ html[data-ui="next"] .wd-row-text { flex: 1; min-width: 0; display: flex; flex-d
 html[data-ui="next"] .wd-row-text b { font-size: 1rem; font-weight: 700; }
 html[data-ui="next"] .wd-row-text .muted { font-size: 0.8824rem; }
 html[data-ui="next"] .wd-row-add { flex: none; width: 48px; height: 48px; border-radius: 50%; background: var(--text); color: var(--bg); display: flex; align-items: center; justify-content: center; }
+
+/* Широкий екран: панель вкладок лишається компактною по центру */
+@media (min-width: 720px) { html[data-ui="next"] .tabbar { width: min(calc(100% - 32px), 520px); } }

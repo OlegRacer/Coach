@@ -8,7 +8,7 @@ import { useI18n } from '../i18n/index.jsx';
 export default function ProfilePage() {
   const { t } = useI18n();
   return (
-    <main className="page">
+    <main className="page wide">
       <h1 className="title">{t('nav.profile')}</h1>
       <div className="profile-page sheet-body">
         <ProfileCard />

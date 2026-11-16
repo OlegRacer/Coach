@@ -591,3 +591,17 @@ input, textarea, select, [contenteditable], .student-details {
 .mz-rhead { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 0 8px 0 16px; background: var(--card-2); border: 0; border-radius: 18px; text-align: left; }
 .mz-rname { flex: 1; font-size: 17px; font-weight: 800; }
 .mz-rhead .mz-chev { width: 36px; justify-content: center; color: var(--muted); }
+
+/* Широкі екрани (ПК, планшет, телефон набік): вкладки на всю ширину в дві колонки */
+@media (min-width: 720px) {
+  .sched-page { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); column-gap: 24px; align-content: start; align-items: start; }
+  .sched-page > .topbar, .sched-page > .chips { grid-column: 1 / -1; }
+  .sched-page > .card { grid-column: 1; }
+  .sched-day { grid-column: 2; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .sched-day .section-title { margin-top: 0; }
+  .plans-page .stack:has(> .plan-card) { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+  .profile-page { display: block; column-count: 2; column-gap: 28px; max-width: none; }
+  .profile-page .profile-wrap { display: contents; }
+  .profile-page > *, .profile-page .profile-wrap > * { break-inside: avoid; margin-bottom: 12px; }
+}
+@media (min-width: 1100px) { .profile-page { column-count: 3; } }

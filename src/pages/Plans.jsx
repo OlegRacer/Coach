@@ -122,7 +122,7 @@ export default function Plans() {
   const hasPending = requests.some((r) => r.status === 'pending');
 
   return (
-    <main className="page">
+    <main className="page wide plans-page">
       <TopBar title={t('pay.title')} />
       {sent && (
         <div className="card pay-sent" role="status">

@@ -141,3 +141,24 @@ html[data-ui="classic"] .tab-add {
 }
 html[data-ui="classic"] .tab-add:active { transform: scale(0.95); }
 @media (prefers-reduced-motion: reduce) { html[data-ui="classic"] .tab-ic { transition: none; } }
+
+/* Широкий екран і телефон набік: панель стає плаваючою заокругленою «пігулкою» */
+@media (min-width: 600px) {
+  html[data-ui="classic"] .tabbar {
+    left: 50%; right: auto; transform: translateX(-50%); width: min(calc(100% - 32px), 600px);
+    bottom: max(12px, env(safe-area-inset-bottom)); height: 72px; padding: 8px 12px; border-radius: 28px;
+    background: var(--m-surface-high);
+  }
+  html[data-ui="classic"] .tab-add { right: max(16px, calc(50% - 300px)); bottom: calc(max(12px, env(safe-area-inset-bottom)) + 72px + 16px); }
+  html[data-ui="classic"] .page { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+}
+@media (orientation: landscape) and (max-height: 520px) {
+  html[data-ui="classic"] .tabbar { height: 64px; padding: 6px 12px; border-radius: 24px; }
+  html[data-ui="classic"] .tab { gap: 0; }
+  html[data-ui="classic"] .tab-ic { height: 28px; }
+  html[data-ui="classic"] .tab-label { line-height: 14px; font-size: 11px; }
+  html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 64px + 12px); width: 52px; height: 52px; }
+}
+
+/* «Додати тренування» вже є у FAB, тож у віджеті розкладу дубль не потрібен */
+html[data-ui="classic"] .widget-actions .btn-primary { display: none; }
