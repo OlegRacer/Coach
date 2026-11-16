@@ -11,6 +11,7 @@ import { EquipmentProvider } from './lib/equipment.jsx';
 import { UiProvider } from './lib/ui.jsx';
 import './styles.css';
 import './oneui.css';
+import './motion.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
