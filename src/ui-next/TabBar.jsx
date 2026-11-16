@@ -5,6 +5,7 @@ import AddWorkout from '../components/AddWorkout.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { NavLink, useLocation } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
+import { useUi } from '../lib/ui.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Нижня панель вкладок у стилі iOS 26/27: плаваюча «скляна» капсула.
@@ -19,6 +20,7 @@ export default function TabBar() {
   const { t } = useI18n();
   const { pathname } = useLocation();
   const { user } = useAuth();
+  const { ui } = useUi();
   const [adding, setAdding] = useState(false);
   const [sheet, setSheet] = useState(false);
   const [editing] = useEditing();
@@ -35,23 +37,25 @@ export default function TabBar() {
   const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
   return (
     <>
-    <nav className={'tabbar glass' + ''} aria-label={t('nav.tabs')}>
+    <nav className={'tabbar' + (ui === 'next' ? ' glass' : '') + ''} aria-label={t('nav.tabs')}>
       {TABS.map((x) => {
         const active = x.end ? pathname === '/' || (x.also || []).some((p) => pathname.startsWith(p)) : pathname.startsWith(x.to);
         return (
           <NavLink key={x.to} to={x.to} className={'tab' + (active ? ' active' : '')} aria-current={active ? 'page' : undefined}>
-            <Icon name={x.icon} size={26} />
-            <span>{t(x.key)}</span>
+            <span className="tab-ic">
+              <Icon name={x.icon} size={26} />
+            </span>
+            <span className="tab-label">{t(x.key)}</span>
           </NavLink>
         );
       })}
     </nav>
     {showAdd && (
-      <button type="button" className="tab-add glass" aria-label={t('aw.add')} aria-haspopup="dialog" onClick={() => setSheet(true)}>
+      <button type="button" className="tab-add glass" aria-label={t('aw.add')} aria-haspopup={ui === 'next' ? 'dialog' : undefined} onClick={() => (ui === 'next' ? setSheet(true) : setAdding(true))}>
         <Icon name="plus" size={24} />
       </button>
     )}
-    <WidgetSheet open={sheet} onClose={() => setSheet(false)} onAddWorkout={() => setAdding(true)} canEdit={pathname === '/'} />
+    <WidgetSheet open={sheet} onClose={() => setSheet(false)} onAddWorkout={() => setAdding(true)} canEdit={ui === 'next' && pathname === '/'} />
     {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={() => window.dispatchEvent(new Event('schedule:changed'))} />}
     </>
   );

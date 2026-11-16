@@ -5,6 +5,9 @@ import PayWatcher from './components/PayWatcher.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
 import ScrollMemory from './components/ScrollMemory.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
+import TabBar from './ui-next/TabBar.jsx';
+import ProfilePage from './ui-next/ProfilePage.jsx';
+import { Route } from 'react-router-dom';
 
 const NextApp = lazy(() => import('./ui-next/NextApp.jsx'));
 
@@ -26,7 +29,8 @@ export default function App() {
       <OnboardingGate />
       <UpdateBanner />
       <PayWatcher />
-      <AppRoutes />
+      <AppRoutes extra={<Route path="/profile" element={<ProfilePage />} />} />
+      <TabBar />
     </div>
   );
 }

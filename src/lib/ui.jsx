@@ -2,8 +2,8 @@ import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useSt
 
 // Версія інтерфейсу: 'classic' (поточний) або 'next' (новий, у розробці).
 // Перемикач у профілі; запасний шлях: відкрити додаток з ?ui=next або ?ui=classic.
-// Поки новий інтерфейс не готовий, перемикач бачить лише адмін. Щоб відкрити всім: SWITCH_FOR_ALL = true.
-export const SWITCH_FOR_ALL = false;
+// Перемикач бачать усі учні. Назви тем: classic = Material 3, next = Liquid Glass.
+export const SWITCH_FOR_ALL = true;
 const KEY = 'ui:version';
 const VALID = ['classic', 'next'];
 

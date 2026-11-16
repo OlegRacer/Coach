@@ -51,7 +51,7 @@ export default function Home() {
           <div className="muted small">{t('home.todayDate', { date: dateLabel })}</div>
           <h1 className="title">{t('home.title')}</h1>
         </div>
-        {ui !== 'next' && <button
+        {false && <button
           type="button"
           className="icon-btn"
           aria-label={t('settings.title')}
