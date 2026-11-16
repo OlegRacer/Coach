@@ -55,6 +55,7 @@ export default function Anatomy() {
     save(n);
   };
   // розкриті групи: за замовчуванням ті, де вже щось вибрано
+  const [rootOpen, setRootOpen] = useState(true);
   const [open, setOpen] = useState(() => new Set(GROUPS.filter((g) => leavesOfGroup(g.id).some((x) => sel.has(x)) && (g.parts || []).length).map((g) => g.id)));
   const toggleOpen = (id) =>
     setOpen((o) => {
@@ -105,6 +106,15 @@ export default function Anatomy() {
         </div>
         <div className="anat-ctrl">
         <p className="muted small">{t('anatomy.tapMulti')}</p>
+        <div className="mz-root">
+          <button type="button" className="mz-rhead" aria-expanded={rootOpen} onClick={() => setRootOpen((v) => !v)}>
+            <span className="mz-rname">{t('anatomy.groups')}</span>
+            {sel.size > 0 && <span className="mz-count muted small">{sel.size}</span>}
+            <span className={'mz-chev' + (rootOpen ? ' open' : '')}>
+              <Icon name="down" size={22} />
+            </span>
+          </button>
+        {rootOpen && (
         <div className="mz-list">
           {GROUPS.map((g) => {
             const ids = leavesOfGroup(g.id);
@@ -145,6 +155,8 @@ export default function Anatomy() {
               </div>
             );
           })}
+        </div>
+        )}
         </div>
         {sel.size > 0 && (
           <button type="button" className="link-btn" onClick={() => save(new Set())}>
