@@ -7,8 +7,25 @@ import { useI18n } from '../i18n/index.jsx';
 export default function LinkedLogins() {
   const { t } = useI18n();
   const { user, linkGoogle, signInLine, linkMsg } = useAuth();
-  const [google, setGoogle] = useState(null);
-  const [line, setLine] = useState(null);
+  // Стан запам'ятовується на пристрої, щоб рядки не з'являлись щоразу з затримкою
+  const ck = 'logins:' + (user ? user.id : '');
+  const cached = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(ck)) || {};
+    } catch {
+      return {};
+    }
+  })();
+  const [google, setGoogle] = useState(cached.google ?? null);
+  const [line, setLine] = useState(cached.line ?? null);
+  useEffect(() => {
+    if (google === null && line === null) return;
+    try {
+      localStorage.setItem(ck, JSON.stringify({ google, line }));
+    } catch {
+      /* ignore */
+    }
+  }, [ck, google, line]);
 
   const load = useCallback(async () => {
     if (!user) return;

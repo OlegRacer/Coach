@@ -7,7 +7,21 @@ import { currentSubscription, disablePush, enablePush, isIosBrowserTab, pushSupp
 export default function PushToggle() {
   const { t, lang } = useI18n();
   const { user } = useAuth();
-  const [on, setOn] = useState(false);
+  const [on, setOnRaw] = useState(() => {
+    try {
+      return localStorage.getItem('push:on') === '1';
+    } catch {
+      return false;
+    }
+  });
+  const setOn = (v) => {
+    setOnRaw(v);
+    try {
+      localStorage.setItem('push:on', v ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  };
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   useEffect(() => {

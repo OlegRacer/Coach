@@ -16,7 +16,21 @@ import { useI18n } from '../i18n/index.jsx';
 // Тренеру (адміну) додатково показується перехід до списку учнів.
 export default function ProfileCard() {
   const { t } = useI18n();
-  const [pendingPay, setPendingPay] = useState(0);
+  const [pendingPay, setPendingPayRaw] = useState(() => {
+    try {
+      return Number(localStorage.getItem('pay:pending')) || 0;
+    } catch {
+      return 0;
+    }
+  });
+  const setPendingPay = (n) => {
+    setPendingPayRaw(n);
+    try {
+      localStorage.setItem('pay:pending', String(n));
+    } catch {
+      /* ignore */
+    }
+  };
   const { user, isAdmin, details, signInGoogle, signInLine, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);

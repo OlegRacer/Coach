@@ -71,7 +71,14 @@ export function AuthProvider({ children }) {
       /* ignore */
     }
   }, []);
-  const [details, setDetails] = useState(null);
+  const [details, setDetails] = useState(() => {
+    try {
+      const s = storedSession();
+      return s ? JSON.parse(localStorage.getItem('details:' + s.user.id)) || null : null;
+    } catch {
+      return null;
+    }
+  });
   const [access, setAccess] = useState(() => cachedMap('access:'));
   const [exAccess, setExAccess] = useState(() => cachedMap('exaccess:'));
   const [accessLoaded, setAccessLoaded] = useState(false);
@@ -140,14 +147,23 @@ export function AuthProvider({ children }) {
       if (e) return;
       setDetails(data || null);
       setDetailsLoaded(true);
+      try {
+        localStorage.setItem('details:' + userId, JSON.stringify(data || null));
+      } catch {
+        /* ignore */
+      }
     } catch {
       /* офлайн */
     }
   }, [userId]);
 
   useEffect(() => {
-    setDetails(null);
     setDetailsLoaded(false);
+    try {
+      setDetails(userId ? JSON.parse(localStorage.getItem('details:' + userId)) || null : null);
+    } catch {
+      setDetails(null);
+    }
     if (userId) refreshDetails();
   }, [userId, refreshDetails]);
 
