@@ -6,14 +6,15 @@
   html[data-ui] .page > :nth-child(2) { animation-delay: 40ms; }
   html[data-ui] .page > :nth-child(3) { animation-delay: 80ms; }
   html[data-ui] .page > :nth-child(n + 4) { animation-delay: 120ms; }
-  html[data-ui] .nh-w, html[data-ui] .list > *, html[data-ui] .sess-list > * { animation: var(--mo-in) var(--mo-dur) var(--mo-ease) backwards; }
-  html[data-ui] .nh-w:nth-child(1), html[data-ui] .list > :nth-child(1) { animation-delay: 0ms; }
-  html[data-ui] .nh-w:nth-child(2), html[data-ui] .list > :nth-child(2) { animation-delay: 40ms; }
-  html[data-ui] .nh-w:nth-child(3), html[data-ui] .list > :nth-child(3) { animation-delay: 80ms; }
-  html[data-ui] .nh-w:nth-child(4), html[data-ui] .list > :nth-child(4) { animation-delay: 120ms; }
-  html[data-ui] .nh-w:nth-child(5), html[data-ui] .list > :nth-child(5) { animation-delay: 160ms; }
-  html[data-ui] .nh-w:nth-child(n + 6), html[data-ui] .list > :nth-child(n + 6) { animation-delay: 200ms; }
-  html[data-editing] .nh-w { animation: none; }
+  /* головна (віджети) і нижня панель без анімації появи: нічого не смикається при поверненні */
+  html[data-ui] .page.nh > * { animation: none !important; }
+  html[data-ui] .list > *, html[data-ui] .sess-list > * { animation: var(--mo-in) var(--mo-dur) var(--mo-ease) backwards; }
+  html[data-ui] .list > :nth-child(1) { animation-delay: 0ms; }
+  html[data-ui] .list > :nth-child(2) { animation-delay: 40ms; }
+  html[data-ui] .list > :nth-child(3) { animation-delay: 80ms; }
+  html[data-ui] .list > :nth-child(4) { animation-delay: 120ms; }
+  html[data-ui] .list > :nth-child(5) { animation-delay: 160ms; }
+  html[data-ui] .list > :nth-child(n + 6) { animation-delay: 200ms; }
 
   /* ---------- Liquid Glass ---------- */
   html[data-ui="next"] {
@@ -24,9 +25,6 @@
   html[data-ui="next"] :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab, .tab-add, .wd-row, .mz-head button, .mz-sub, .session):not(:disabled) { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease, color 0.25s ease, opacity 0.25s ease; }
   html[data-ui="next"]:not([data-editing]) :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab-add, .wd-row, .mz-sub):active { transform: scale(0.95); transition-duration: 0.12s; }
   html[data-ui="next"] .tab:active { transform: scale(0.9); transition-duration: 0.12s; }
-  /* вкладка: іконка підстрибує */
-  @keyframes lg-pop { 0% { transform: scale(0.8); } 55% { transform: scale(1.22); } 100% { transform: scale(1); } }
-  html[data-ui="next"] .tab.active .tab-ic { animation: lg-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
   /* шторка та меню: пружина знизу */
   html[data-ui="next"] .sheet { transition: transform 0.55s cubic-bezier(0.22, 1.1, 0.36, 1); }
   html[data-ui="next"] .sheet-backdrop { transition: opacity 0.4s ease; -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0); }
@@ -49,11 +47,6 @@
   html[data-ui="classic"] :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab, .tab-add, .wd-row, .mz-sub, .session):not(:disabled) { transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease, color 0.2s ease, filter 0.2s ease, opacity 0.2s ease; }
   html[data-ui="classic"]:not([data-editing]) :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab-add, .wd-row, .mz-sub):active { transform: scale(0.97); filter: brightness(0.88); transition-duration: 0.1s; }
   html[data-ui="classic"] .tab:active { filter: brightness(0.85); transition-duration: 0.1s; }
-  /* вкладка: капсула розростається з центру */
-  @keyframes ou-cap { from { opacity: 0; transform: scaleX(0.4); } to { opacity: 1; transform: none; } }
-  html[data-ui="classic"] .tab.active { animation: ou-cap 0.32s cubic-bezier(0.05, 0.7, 0.1, 1); }
-  @keyframes ou-ic { from { transform: translateY(5px); } to { transform: none; } }
-  html[data-ui="classic"] .tab.active .tab-ic { animation: ou-ic 0.32s cubic-bezier(0.05, 0.7, 0.1, 1); }
   /* шторка: рівне уповільнення */
   html[data-ui="classic"] .sheet { transition: transform 0.38s cubic-bezier(0.05, 0.7, 0.1, 1); }
   html[data-ui="classic"] .sheet-backdrop { transition: opacity 0.3s ease; }
