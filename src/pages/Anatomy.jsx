@@ -23,6 +23,8 @@ const build = (bodyImg, litImg, regions) => ({
   REGION: Object.fromEntries(regions.regions.map((r) => [r.id, r.d])),
   CLIP: Object.fromEntries(regions.regions.map((r) => [r.id, r.c || r.d]))
 });
+// У жіночій моделі області r31/r32 — клубово-поперекові м'язи й кравецький м'яз (верх стегна і низ пресу): до квадрицепса їх не підсвічуємо.
+const FEMALE_SKIP = { quads: ['r31', 'r32'] };
 const MALE = build(bodyImgM, litImgM, regionsM);
 const FEMALE = build(bodyImgF, litImgF, regionsF);
 
@@ -34,7 +36,8 @@ export default function Anatomy() {
   const { exercisesByMuscles, sectionOpen } = useContent();
   const L = useL();
   const { ready, details } = useAuth();
-  const { bodyImg, litImg, regions, REGION, CLIP } = details && details.gender === 'female' ? FEMALE : MALE;
+  const female = !!(details && details.gender === 'female');
+  const { bodyImg, litImg, regions, REGION, CLIP } = female ? FEMALE : MALE;
   const [params, setParams] = useSearchParams();
   // Вибрані «листки» (найдрібніші зони). ?m= може містити і групу, вона розгортається в півзони.
   const sel = expand((params.get('m') || '').split(',').filter(Boolean));
@@ -85,8 +88,9 @@ export default function Anatomy() {
             </defs>
             {LEAVES.map((leaf) => {
               const on = sel.has(leaf.id);
-              const glow = leaf.regions.map((r) => REGION[r]).filter(Boolean);
-              const clip = leaf.regions.map((r) => CLIP[r]).filter(Boolean);
+              const rs = female && FEMALE_SKIP[leaf.id] ? leaf.regions.filter((r) => !FEMALE_SKIP[leaf.id].includes(r)) : leaf.regions;
+              const glow = rs.map((r) => REGION[r]).filter(Boolean);
+              const clip = rs.map((r) => CLIP[r]).filter(Boolean);
               return (
                 <g key={leaf.id} className={'zone' + (on ? ' on' : '')} onClick={() => toggleLeaf(leaf.id)}>
                   <clipPath id={`clip-${leaf.id}`}>

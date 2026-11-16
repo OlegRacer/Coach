@@ -3,6 +3,7 @@ import { useLocation, useNavigationType } from 'react-router-dom';
 
 // Запам'ятовує позицію прокрутки сторінок: «Назад» повертає туди, де були, а новий перехід відкриває згори.
 const saved = new Map();
+let lastPath = '';
 
 export default function ScrollMemory() {
   const loc = useLocation();
@@ -13,6 +14,10 @@ export default function ScrollMemory() {
   }, []);
 
   useLayoutEffect(() => {
+    // зміна лише параметрів адреси на тій самій сторінці (вибір зон в анатомії) не повинна гортати вгору
+    const same = type === 'REPLACE' && lastPath === loc.pathname;
+    lastPath = loc.pathname;
+    if (same) return undefined;
     const key = loc.key;
     const y = type === 'POP' ? saved.get(key) || 0 : 0;
     window.scrollTo(0, y);
