@@ -12,24 +12,37 @@ export const LANGS = [
 const DICTS = { uk, en, 'zh-TW': zhTW };
 const STORAGE_KEY = 'lang';
 
-function detect() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && DICTS[saved]) return saved;
-  } catch {
-    /* localStorage недоступний, не критично */
-  }
-  const n = (navigator.language || '').toLowerCase();
+// Мова системи → мова додатка: українська й російська → uk, китайська → zh-TW (традиційна),
+// англійська й будь-яка інша, якої немає в списку → en. Ручний вибір у профілі має пріоритет.
+function fromSystem() {
+  const n = String((navigator.languages && navigator.languages[0]) || navigator.language || '').toLowerCase();
+  if (n.startsWith('uk') || n.startsWith('ru')) return 'uk';
   if (n.startsWith('zh')) return 'zh-TW';
-  if (n.startsWith('en')) return 'en';
-  return 'uk';
+  return 'en';
 }
+const saved = () => {
+  try {
+    const v = localStorage.getItem(STORAGE_KEY);
+    return v && DICTS[v] ? v : null;
+  } catch {
+    return null; /* localStorage недоступний, не критично */
+  }
+};
+const detect = () => saved() || fromSystem();
 
 const I18nContext = createContext(null);
 
 export function I18nProvider({ children }) {
   const [lang, setLangState] = useState(detect);
 
+  // Поки мову не вибрано вручну, додаток іде за мовою системи (і за її зміною)
+  useEffect(() => {
+    const on = () => {
+      if (!saved()) setLangState(fromSystem());
+    };
+    window.addEventListener('languagechange', on);
+    return () => window.removeEventListener('languagechange', on);
+  }, []);
   useEffect(() => {
     document.documentElement.lang = lang === 'zh-TW' ? 'zh-Hant-TW' : lang;
   }, [lang]);
