@@ -554,6 +554,8 @@
   "wd.done": "完成",
   "wd.edit": "編輯小工具",
   "wd.tapHint": "點選小工具即可放回首頁",
-  "wd.scheduleSub": "近期課程與教練課表",
-  "anatomy.groups": "肌群"
+  "wd.scheduleSub": "我的課表與教練課表（滑動切換）",
+  "anatomy.groups": "肌群",
+  "wd.schedMineSub": "只顯示我的課程，不含教練",
+  "wd.schedFull": "課表＋教練"
 }

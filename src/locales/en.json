@@ -554,6 +554,8 @@
   "wd.done": "Done",
   "wd.edit": "Edit widgets",
   "wd.tapHint": "Tap a widget to bring it back to the home screen",
-  "wd.scheduleSub": "Upcoming sessions and trainers' timetable",
-  "anatomy.groups": "Muscle groups"
+  "wd.scheduleSub": "My schedule and trainers' schedule (swipe)",
+  "anatomy.groups": "Muscle groups",
+  "wd.schedMineSub": "Only my sessions, no trainers",
+  "wd.schedFull": "Schedule + trainers"
 }

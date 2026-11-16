@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // Застереження для користувачів із російською мовою системи.
 // Відповідь зберігається лише на пристрої (localStorage), у базу нічого не пишемо:
-// «Да» — додаток працює далі; «Нет» — на цьому пристрої доступ закрито.
+// «Принимаю условия» — додаток працює далі; «Отклонить» — на цьому пристрої доступ закрито.
 // Після очищення даних сайту питання з'явиться знову.
 const KEY = 'ru:gate';
 const read = () => {
@@ -38,13 +38,11 @@ export default function RuGate({ children }) {
   if (answer !== 'yes' && isRussian()) {
     return (
       <main className="ru-gate" lang="ru">
-        <div className="ru-card" role="alertdialog" aria-labelledby="ru-t" aria-describedby="ru-d">
-          <h1 className="h2" id="ru-t">Обнаружен русский язык системы</h1>
-          <p className="body" id="ru-d">Чтобы дальше пользоваться приложением, вам необходимо не быть рАШЫСТОМ.</p>
-          <p className="body">Вы согласны, что Путин является военным преступником и вы не поддерживаете аннексию территорий независимых государств Украины и Грузии?</p>
+        <div className="ru-card" role="alertdialog" aria-describedby="ru-d">
+          <p className="body" id="ru-d">Используя это приложение, вы подтверждаете, что не поддерживаете вооруженную агрессию Российской Федерации против суверенных государств, в частности, Украины и Грузии, и не находитесь под действием международных санкций.</p>
           <div className="ru-actions">
-            <button type="button" className="btn-primary" onClick={() => save('yes')}>Да</button>
-            <button type="button" className="btn-ghost" onClick={() => save('no')}>Нет</button>
+            <button type="button" className="btn-primary" onClick={() => save('yes')}>Принимаю условия</button>
+            <button type="button" className="btn-ghost" onClick={() => save('no')}>Отклонить</button>
           </div>
         </div>
       </main>

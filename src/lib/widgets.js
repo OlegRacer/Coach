@@ -12,6 +12,8 @@ const readList = (k) => {
     return [];
   }
 };
+// Віджети, які за замовчуванням сховані (вмикаються через «Додати віджет»); у списку це запис '+id'
+const DEFAULT_OFF = ['schedule:mine'];
 const writeList = (k, v) => {
   try {
     localStorage.setItem(k, JSON.stringify(v));
@@ -40,10 +42,11 @@ export function useWidgets() {
   }, []);
   const toggle = useCallback((id) => {
     const cur = readList(HID);
-    writeList(HID, cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]);
+    const k = DEFAULT_OFF.includes(id) ? '+' + id : id;
+    writeList(HID, cur.includes(k) ? cur.filter((x) => x !== k) : [...cur, k]);
   }, []);
   const setOrder = useCallback((ids) => writeList(ORD, ids), []);
-  return { hidden, order, isHidden: (id) => hidden.includes(id), toggle, setOrder };
+  return { hidden, order, isHidden: (id) => (DEFAULT_OFF.includes(id) ? !hidden.includes('+' + id) : hidden.includes(id)), toggle, setOrder };
 }
 
 // Режим редагування віджетів (спільний для головної та нижньої панелі)

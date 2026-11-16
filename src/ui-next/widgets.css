@@ -80,3 +80,8 @@ html[data-ui] .wd-row-add { flex: none; width: 48px; height: 48px; border-radius
   html[data-ui] .nh-grid .span2 { grid-column: 1 / -1; }
 }
 
+
+/* Віджет «лише мій розклад»: одна колонка без тренерів */
+@media (min-width: 720px) {
+  html[data-ui] .widget.mine-only .widget-track { grid-template-columns: minmax(0, 1fr); }
+}

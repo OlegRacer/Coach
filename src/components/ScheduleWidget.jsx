@@ -10,7 +10,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/index.jsx';
 
 // «Віджет» розкладу: свайп вліво/вправо перемикає блоки. 1) Мій розклад, 2) Тренери.
-export default function ScheduleWidget() {
+export default function ScheduleWidget({ mineOnly = false }) {
   const { t, locale } = useI18n();
   const { user } = useAuth();
   const { trainers, slots, mine, reload } = useSchedule();
@@ -51,7 +51,7 @@ export default function ScheduleWidget() {
     : '';
 
   return (
-    <section className="card widget" aria-label={t('home.scheduleAria')}>
+    <section className={'card widget' + (mineOnly ? ' mine-only' : '')} aria-label={t('home.scheduleAria')}>
       <div className="widget-track" ref={track} onScroll={onScroll}>
         <div className="widget-page" aria-hidden={page !== 0}>
           <div className="row between">
@@ -69,7 +69,7 @@ export default function ScheduleWidget() {
           )}
         </div>
 
-        <div className="widget-page" aria-hidden={page !== 1}>
+        {!mineOnly && <div className="widget-page" aria-hidden={page !== 1}>
           <div className="row between">
             <h2 className="h2">{t('sched.trainers')}</h2>
             <span className="muted small">{range}</span>
@@ -94,10 +94,10 @@ export default function ScheduleWidget() {
               <SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} />
             </>
           )}
-        </div>
+        </div>}
       </div>
 
-      <div className="widget-dots" role="tablist">
+      {!mineOnly && <div className="widget-dots" role="tablist">
         {[0, 1].map((i) => (
           <button
             key={i}
@@ -109,7 +109,7 @@ export default function ScheduleWidget() {
             onClick={() => goTo(i)}
           />
         ))}
-      </div>
+      </div>}
 
       <div className="row widget-actions" style={{ gap: 8 }}>
         <Link to="/schedule" className="btn-ghost btn-small">

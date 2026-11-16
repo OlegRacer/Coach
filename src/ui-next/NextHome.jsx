@@ -23,11 +23,11 @@ export default function NextHome() {
   const [dragId, setDragId] = useState(null);
   const last = useRef(0);
 
-  const allIds = ['schedule', ...sections.map((x) => 'sec:' + x.id)];
+  const allIds = ['schedule', 'schedule:mine', ...sections.map((x) => 'sec:' + x.id)];
   const ids = orderIds(allIds, w.order);
   const shown = ids.filter((id) => !w.isHidden(id));
   const hiddenIds = ids.filter((id) => w.isHidden(id));
-  const label = (id) => (id === 'schedule' ? t('home.schedule') : L((sections.find((x) => 'sec:' + x.id === id) || {}).title));
+  const label = (id) => (id === 'schedule' ? t('wd.schedFull') : id === 'schedule:mine' ? t('home.schedule') : L((sections.find((x) => 'sec:' + x.id === id) || {}).title));
 
   useEffect(() => () => setEditing(false), [setEditing]);
 
@@ -158,9 +158,9 @@ export default function NextHome() {
       )}
       <div ref={gridRef} className="tiles nh-grid" onPointerDown={(e) => (editing ? startDrag(e) : down(e))} onPointerMove={(e) => (editing ? onDrag(e) : moveCheck(e))} onPointerUp={() => (editing ? endDrag() : cancel())} onPointerCancel={() => (editing ? endDrag() : cancel())} onContextMenu={(e) => e.preventDefault()}>
         {shown.map((id) =>
-          id === 'schedule' ? (
+          id === 'schedule' || id === 'schedule:mine' ? (
             <div key={id} data-wid={id} className={'nh-w span2' + (dragId === id ? ' drag' : '')}>
-              <ScheduleWidget />
+              <ScheduleWidget mineOnly={id === 'schedule:mine'} />
               {handle(id)}
             </div>
           ) : (
@@ -217,7 +217,7 @@ export default function NextHome() {
                       </span>
                       <span className="wd-row-text">
                         <b>{label(id)}</b>
-                        <span className="muted">{x ? L(x.hint) : t('wd.scheduleSub')}</span>
+                        <span className="muted">{x ? L(x.hint) : id === 'schedule:mine' ? t('wd.schedMineSub') : t('wd.scheduleSub')}</span>
                       </span>
                       <span className="wd-row-add" aria-hidden="true">
                         <Icon name="plus" size={22} />

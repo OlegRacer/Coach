@@ -24,8 +24,28 @@ async function fnError(e, data) {
   return (e && e.message) || 'LINE: помилка входу';
 }
 
+const AUTH_KEY = 'sb-qbgeogmupdigvmywgdoi-auth-token';
+function storedSession() {
+  try {
+    const v = JSON.parse(localStorage.getItem(AUTH_KEY));
+    if (v && v.user && v.user.id && v.access_token) return v;
+  } catch {
+    /* немає збереженої сесії */
+  }
+  return null;
+}
+function cachedMap(prefix) {
+  try {
+    const s = storedSession();
+    return s ? JSON.parse(localStorage.getItem(prefix + s.user.id) || '{}') || {} : {};
+  } catch {
+    return {};
+  }
+}
+
 export function AuthProvider({ children }) {
-  const [session, setSession] = useState(null);
+  // Сесію беремо з локального сховища одразу, щоб перший кадр уже був «свій» (порядок розділів, роль, доступи), без стрибка після підвантаження.
+  const [session, setSession] = useState(storedSession);
   const [profile, setProfile] = useState(null);
   const [linkMsg, setLinkMsg] = useState('');
   const [ready, setReady] = useState(false);
@@ -52,8 +72,8 @@ export function AuthProvider({ children }) {
     }
   }, []);
   const [details, setDetails] = useState(null);
-  const [access, setAccess] = useState({});
-  const [exAccess, setExAccess] = useState({});
+  const [access, setAccess] = useState(() => cachedMap('access:'));
+  const [exAccess, setExAccess] = useState(() => cachedMap('exaccess:'));
   const [accessLoaded, setAccessLoaded] = useState(false);
   const [detailsLoaded, setDetailsLoaded] = useState(false);
   const [dismissed, setDismissed] = useState(() => {
