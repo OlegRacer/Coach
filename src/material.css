@@ -160,5 +160,12 @@ html[data-ui="classic"] .tab-add:active { transform: scale(0.95); }
   html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 64px + 12px); width: 52px; height: 52px; }
 }
 
-/* «Додати тренування» вже є у FAB, тож у віджеті розкладу дубль не потрібен */
-html[data-ui="classic"] .widget-actions .btn-primary { display: none; }
+/* Керування редагуванням віджетів у стилі M3: tonal-поверхні замість скла */
+html[data-ui="classic"] .wd-minus, html[data-ui="classic"] .wd-add { background: var(--m-surface-highest); color: var(--m-on-surface); border: 0; }
+html[data-ui="classic"] .wd-hint { background: var(--m-surface-highest); color: var(--m-on-surface-variant); }
+html[data-ui="classic"] .wd-done { background: var(--m-primary); color: var(--m-on-primary); font-weight: 500; }
+html[data-ui="classic"] .wd-row-add { background: var(--m-primary); color: var(--m-on-primary); }
+html[data-ui="classic"] .wd-row { background: var(--m-surface-container); border-radius: 28px; }
+html[data-ui="classic"] .ios-switch { background: var(--m-surface-highest); }
+html[data-ui="classic"] .ios-switch.on { background: var(--m-primary); }
+html[data-ui="classic"] .nh-w .tile-icon { border-radius: 20px; }

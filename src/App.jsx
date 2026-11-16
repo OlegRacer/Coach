@@ -1,35 +1,24 @@
-import { lazy, Suspense } from 'react';
-import { useUi } from './lib/ui.jsx';
 import AppRoutes from './AppRoutes.jsx';
 import PayWatcher from './components/PayWatcher.jsx';
 import UpdateBanner from './components/UpdateBanner.jsx';
 import ScrollMemory from './components/ScrollMemory.jsx';
 import OnboardingGate from './components/OnboardingGate.jsx';
 import TabBar from './ui-next/TabBar.jsx';
+import NextHome from './ui-next/NextHome.jsx';
+import './ui-next/widgets.css';
+import './ui-next/next-type.css';
+import './ui-next/next.css';
 import ProfilePage from './ui-next/ProfilePage.jsx';
 import { Route } from 'react-router-dom';
 
-const NextApp = lazy(() => import('./ui-next/NextApp.jsx'));
-
 export default function App() {
-  const { ui } = useUi();
-  if (ui === 'next') {
-    return (
-      <div className="app">
-        <UpdateBanner />
-        <Suspense fallback={null}>
-          <NextApp />
-        </Suspense>
-      </div>
-    );
-  }
   return (
     <div className="app">
       <ScrollMemory />
       <OnboardingGate />
       <UpdateBanner />
       <PayWatcher />
-      <AppRoutes extra={<Route path="/profile" element={<ProfilePage />} />} />
+      <AppRoutes extra={<><Route path="/" element={<NextHome />} /><Route path="/profile" element={<ProfilePage />} /></>} />
       <TabBar />
     </div>
   );

@@ -51,11 +51,11 @@ export default function TabBar() {
       })}
     </nav>
     {showAdd && (
-      <button type="button" className="tab-add glass" aria-label={t('aw.add')} aria-haspopup={ui === 'next' ? 'dialog' : undefined} onClick={() => (ui === 'next' ? setSheet(true) : setAdding(true))}>
+      <button type="button" className="tab-add glass" aria-label={t('aw.add')} aria-haspopup="dialog" onClick={() => setSheet(true)}>
         <Icon name="plus" size={24} />
       </button>
     )}
-    <WidgetSheet open={sheet} onClose={() => setSheet(false)} onAddWorkout={() => setAdding(true)} canEdit={ui === 'next' && pathname === '/'} />
+    <WidgetSheet open={sheet} onClose={() => setSheet(false)} onAddWorkout={() => setAdding(true)} canEdit={pathname === '/'} />
     {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={() => window.dispatchEvent(new Event('schedule:changed'))} />}
     </>
   );
