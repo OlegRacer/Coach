@@ -1,4 +1,5 @@
-import { lazy } from 'react';
+import { lazy, useEffect } from 'react';
+import { useAuth } from './auth/index.jsx';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import Schedule from './pages/Schedule.jsx';
@@ -22,6 +23,23 @@ const EquipmentAdmin = lazy(() => import('./admin/EquipmentAdmin.jsx'));
 
 // Маршрути, спільні для класичного й нового інтерфейсу. extra: додаткові <Route> (наприклад, /profile у новому).
 export default function AppRoutes({ extra = null }) {
+  const { isAdmin } = useAuth();
+  // Тренеру заздалегідь підвантажуємо адмінські сторінки, щоб перехід не чекав на завантаження (раніше був порожній екран)
+  useEffect(() => {
+    if (!isAdmin) return undefined;
+    const warm = () => {
+      import('./admin/Students.jsx');
+      import('./admin/ScheduleAdmin.jsx');
+      import('./admin/PaymentsAdmin.jsx');
+      import('./admin/StorageAdmin.jsx');
+      import('./admin/ContentAdmin.jsx');
+      import('./admin/SectionEditor.jsx');
+      import('./admin/ExerciseEditor.jsx');
+      import('./admin/EquipmentAdmin.jsx');
+    };
+    const id = 'requestIdleCallback' in window ? window.requestIdleCallback(warm, { timeout: 4000 }) : setTimeout(warm, 1500);
+    return () => ('cancelIdleCallback' in window ? window.cancelIdleCallback(id) : clearTimeout(id));
+  }, [isAdmin]);
   return (
   <Routes>
     {extra}

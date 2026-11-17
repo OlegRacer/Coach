@@ -42,8 +42,6 @@ export default function TabBar() {
     else delete el.dataset.tabRoot;
     return () => delete el.dataset.tabRoot;
   }, [root]);
-  // у редакторах адмінки панель не потрібна: більше місця для форм
-  if (pathname.startsWith('/admin') || editing) return null;
   const isActive = (x) => (x.end ? pathname === '/' || (x.also || []).some((p) => pathname.startsWith(p)) : pathname.startsWith(x.to));
   const cur = TABS.findIndex(isActive);
   // Liquid Glass: сторінки міняються «каруселлю» (як екрани робочого столу) через View Transitions
@@ -110,6 +108,8 @@ export default function TabBar() {
     el.style.removeProperty('--drag');
     if (d.idx !== undefined && d.idx !== cur) goTo(d.idx);
   };
+  // у редакторах адмінки панель не потрібна: більше місця для форм (return після всіх хуків)
+  if (pathname.startsWith('/admin') || editing) return null;
   const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
   return (
     <>

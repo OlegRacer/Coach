@@ -1,5 +1,6 @@
 import { Component, Suspense } from 'react';
 import { Link } from 'react-router-dom';
+import TopBar from '../components/TopBar.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Захист: якщо адмінська сторінка впаде (помилка в коді чи не завантажився шматок коду),
@@ -34,6 +35,7 @@ function Loading() {
   const { t } = useI18n();
   return (
     <main className="page">
+      <TopBar title="" />
       <p className="muted">{t('admin.loading')}</p>
     </main>
   );
