@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useEditing } from '../lib/widgets.js';
 import WidgetSheet from './WidgetSheet.jsx';
 import AddWorkout from '../components/AddWorkout.jsx';
@@ -47,28 +47,78 @@ export default function TabBar() {
   const isActive = (x) => (x.end ? pathname === '/' || (x.also || []).some((p) => pathname.startsWith(p)) : pathname.startsWith(x.to));
   const cur = TABS.findIndex(isActive);
   // Liquid Glass: сторінки міняються «каруселлю» (як екрани робочого столу) через View Transitions
-  const go = (e, i) => {
-    if (ui !== 'next' || i === cur || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+  const goTo = (i) => {
     const vt = document.startViewTransition;
-    if (!vt || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    e.preventDefault();
+    if (!vt || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      navigate(TABS[i].to);
+      return;
+    }
     const el = document.documentElement;
     el.dataset.vt = i > cur ? 'fwd' : 'back';
-    const t = document.startViewTransition(() => {
+    const tr = document.startViewTransition(() => {
       flushSync(() => navigate(TABS[i].to));
     });
     const done = () => delete el.dataset.vt;
-    t.finished.then(done, done);
+    tr.finished.then(done, done);
+  };
+  const go = (e, i) => {
+    if (suppress.current) {
+      e.preventDefault();
+      suppress.current = false;
+      return;
+    }
+    if (ui !== 'next' || i === cur || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    e.preventDefault();
+    goTo(i);
+  };
+  // Перетягування бульбашки: беремо її пальцем (на активній вкладці), тягнемо, відпускаємо на потрібній вкладці
+  const nav = useRef(null);
+  const suppress = useRef(false);
+  const dr = useRef(null);
+  const step = () => {
+    const w = nav.current.getBoundingClientRect().width;
+    return (w - 24) / 4 + 4;
+  };
+  const onDown = (e) => {
+    if (ui !== 'next' || cur < 0 || e.button > 0) return;
+    const tab = e.target.closest && e.target.closest('.tab');
+    if (!tab || !tab.classList.contains('active')) return;
+    dr.current = { x: e.clientX, id: e.pointerId, moved: false };
+  };
+  const onMove = (e) => {
+    const d = dr.current;
+    if (!d) return;
+    if (!d.moved) {
+      if (Math.abs(e.clientX - d.x) < 6) return;
+      d.moved = true;
+      nav.current.setPointerCapture(d.id);
+      nav.current.dataset.drag = '1';
+    }
+    const st = step();
+    const pos = Math.min(3 * st, Math.max(0, cur * st + e.clientX - d.x));
+    nav.current.style.setProperty('--drag', pos + 'px');
+    d.idx = Math.round(pos / st);
+  };
+  const onUp = () => {
+    const d = dr.current;
+    dr.current = null;
+    if (!d || !d.moved) return;
+    suppress.current = true;
+    setTimeout(() => (suppress.current = false), 50);
+    const el = nav.current;
+    delete el.dataset.drag;
+    el.style.removeProperty('--drag');
+    if (d.idx !== undefined && d.idx !== cur) goTo(d.idx);
   };
   const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
   return (
     <>
-    <nav className={'tabbar' + (ui === 'next' ? ' glass' : '')} aria-label={t('nav.tabs')} style={{ '--i': Math.max(cur, 0) }} data-none={cur < 0 ? '1' : undefined}>
+    <nav ref={nav} onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} className={'tabbar' + (ui === 'next' ? ' glass' : '')} aria-label={t('nav.tabs')} style={{ '--i': Math.max(cur, 0) }} data-none={cur < 0 ? '1' : undefined}>
       {ui === 'next' && <span className="tab-bubble" aria-hidden="true" />}
       {TABS.map((x, i) => {
         const active = i === cur;
         return (
-          <NavLink key={x.to} to={x.to} onClick={(e) => go(e, i)} className={'tab' + (active ? ' active' : '')} aria-current={active ? 'page' : undefined}>
+          <NavLink key={x.to} to={x.to} draggable={false} onClick={(e) => go(e, i)} className={'tab' + (active ? ' active' : '')} aria-current={active ? 'page' : undefined}>
             <span className="tab-ic">
               <Icon name={x.icon} size={26} />
             </span>
