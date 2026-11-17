@@ -1,20 +1,7 @@
 /* Анімації тем. Liquid Glass — пружні, з легким «перельотом» і розмиттям; One UI — плавні, спокійні, з уповільненням наприкінці.
    Усе вимикається, якщо в системі ввімкнено «зменшити рух». Тільки opacity/transform, щоб не навантажувати телефон. */
 @media (prefers-reduced-motion: no-preference) {
-  /* ---------- Спільне: поява вмісту сторінки (діти .page, щоб не ламати fixed-елементи всередині) ---------- */
-  html[data-ui] .page > *:not(.wd-bar):not(.sheet-root):not(.edit-fab) { animation-duration: var(--mo-dur); animation-timing-function: var(--mo-ease); animation-fill-mode: backwards; animation-name: var(--mo-in); }
-  html[data-ui] .page > :nth-child(2) { animation-delay: 40ms; }
-  html[data-ui] .page > :nth-child(3) { animation-delay: 80ms; }
-  html[data-ui] .page > :nth-child(n + 4) { animation-delay: 120ms; }
-  /* головна (віджети) і нижня панель без анімації появи: нічого не смикається при поверненні */
-  html[data-ui] .page.nh > * { animation: none !important; }
-  html[data-ui] .list > *, html[data-ui] .sess-list > * { animation: var(--mo-in) var(--mo-dur) var(--mo-ease) backwards; }
-  html[data-ui] .list > :nth-child(1) { animation-delay: 0ms; }
-  html[data-ui] .list > :nth-child(2) { animation-delay: 40ms; }
-  html[data-ui] .list > :nth-child(3) { animation-delay: 80ms; }
-  html[data-ui] .list > :nth-child(4) { animation-delay: 120ms; }
-  html[data-ui] .list > :nth-child(5) { animation-delay: 160ms; }
-  html[data-ui] .list > :nth-child(n + 6) { animation-delay: 200ms; }
+  /* Анімацію появи вмісту сторінок прибрано: після переходів вона давала блимання. Переходи робить View Transitions. */
 
   /* ---------- Liquid Glass ---------- */
   html[data-ui="next"] {
