@@ -231,3 +231,6 @@ html[data-ui="classic"] .ios-switch.on span { transform: translateX(20px); }
   html[data-ui="classic"] .tab-add { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 58px + 12px); }
 }
 html[data-ui="classic"] .topbar h1 { text-wrap: balance; }
+@media (orientation: landscape) and (max-height: 520px) {
+  html[data-ui="classic"] .page { padding-top: 10px; }
+}
