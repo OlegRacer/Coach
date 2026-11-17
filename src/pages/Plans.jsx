@@ -134,6 +134,7 @@ export default function Plans() {
 
       {!chosen && (
         <>
+          {isAdmin && <Link to="/admin/payments?tab=plans&new=1" className="btn-primary">{t('pay.addPlan')}</Link>}
           <p className="muted small">{t('pay.intro')}</p>
           {plans && !plans.length && <p className="muted">{t('pay.noPlans')}</p>}
           <div className="stack">
@@ -148,7 +149,6 @@ export default function Plans() {
               </button>
             ))}
           </div>
-          {isAdmin && <Link to="/admin/payments?tab=plans&new=1" className="btn-primary">{t('pay.addPlan')}</Link>}
         </>
       )}
 
