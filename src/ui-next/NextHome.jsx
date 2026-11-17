@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { flushSync } from 'react-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon.jsx';
 import EditFab from '../components/EditFab.jsx';
 import ScheduleWidget from '../components/ScheduleWidget.jsx';
@@ -18,6 +19,27 @@ export default function NextHome() {
   const { sections, sectionOpen, openCount, isFreeSection } = useContent();
   const L = useL();
   const w = useWidgets();
+  const navigate = useNavigate();
+  // Перехід «з іконки»: сторінка розкривається з прямокутника плитки (View Transitions; без підтримки — звичайний перехід)
+  const zoomTo = (e, to) => {
+    if (editing || e.metaKey || e.ctrlKey || e.shiftKey || e.button) return;
+    if (!document.startViewTransition || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    e.preventDefault();
+    const r = e.currentTarget.getBoundingClientRect();
+    const el = document.documentElement;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    el.style.setProperty('--vt-t', Math.max(0, r.top) + 'px');
+    el.style.setProperty('--vt-l', Math.max(0, r.left) + 'px');
+    el.style.setProperty('--vt-r', Math.max(0, W - r.right) + 'px');
+    el.style.setProperty('--vt-b', Math.max(0, H - r.bottom) + 'px');
+    el.dataset.vt = 'zoom';
+    const t = document.startViewTransition(() => {
+      flushSync(() => navigate(to));
+    });
+    const done = () => delete el.dataset.vt;
+    t.finished.then(done, done);
+  };
   const [editing, setEditing] = useEditing();
   const [adding, setAdding] = useState(false);
   const [dragId, setDragId] = useState(null);
@@ -33,17 +55,17 @@ export default function NextHome() {
 
   // довгий тап по віджету вмикає редагування
   const press = useRef(null);
+  const pressPt = useRef({ x: 0, y: 0 });
   const down = (e) => {
     if (editing || e.target.closest('button, input')) return;
     const { clientX: x, clientY: y } = e;
     clearTimeout(press.current);
     press.current = setTimeout(() => setEditing(true), 550);
-    press.current.x = x;
-    press.current.y = y;
+    pressPt.current = { x, y };
   };
   const cancel = () => clearTimeout(press.current);
   const moveCheck = (e) => {
-    if (press.current && (Math.abs(e.clientX - press.current.x) > 8 || Math.abs(e.clientY - press.current.y) > 8)) cancel();
+    if (press.current && (Math.abs(e.clientX - pressPt.current.x) > 8 || Math.abs(e.clientY - pressPt.current.y) > 8)) cancel();
   };
 
   // Перетягування: плитка йде за пальцем, інші плавно розсуваються (FLIP)
@@ -134,7 +156,7 @@ export default function NextHome() {
     const sub = !x.published ? t('content.draft') : isFreeSection(x.id) ? t('content.free') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : L(x.hint)) : t('access.closed');
     return (
       <>
-        <Link to={to} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
+        <Link to={to} onClick={(e) => zoomTo(e, to)} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
           <span className="tile-icon" style={{ background: x.color }}>
             <Icon name={x.icon} size={32} />
           </span>

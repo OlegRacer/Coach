@@ -57,3 +57,19 @@
   html[data-ui="classic"] .mz-subs, html[data-ui="classic"] .mz-list { animation: ou-drop 0.3s cubic-bezier(0.05, 0.7, 0.1, 1); }
   html[data-ui="classic"] .widget-dots .wdot { transition: width 0.25s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s; }
 }
+
+/* Перехід «з іконки»: нова сторінка розкривається з плитки, стара легко відходить назад */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-vt="zoom"]::view-transition-old(root) { animation: vt-zoom-old 0.45s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  html[data-vt="zoom"]::view-transition-new(root) { animation: vt-zoom-new 0.45s cubic-bezier(0.32, 0.72, 0, 1) both; }
+  @keyframes vt-zoom-old { to { transform: scale(0.95); opacity: 0.5; } }
+  @keyframes vt-zoom-new {
+    from { clip-path: inset(var(--vt-t) var(--vt-r) var(--vt-b) var(--vt-l) round 26px); opacity: 0.4; }
+    to { clip-path: inset(0 0 0 0 round 0); opacity: 1; }
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-ui] .tabbar { view-transition-name: tabbar; }
+  html[data-ui] .tab-add { view-transition-name: tabadd; }
+  ::view-transition-group(tabbar), ::view-transition-group(tabadd) { animation-duration: 0.01s; }
+}
