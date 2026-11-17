@@ -59,7 +59,7 @@ export default function NextHome() {
       const id = el.dataset.wid;
       next[id] = { x: el.offsetLeft, y: el.offsetTop };
       const old = prevPos.current[id];
-      if (old && (!drag.current || drag.current.id !== id) && (old.x !== next[id].x || old.y !== next[id].y) && el.animate) {
+      if (editing && old && (!drag.current || drag.current.id !== id) && (old.x !== next[id].x || old.y !== next[id].y) && el.animate) {
         el.animate([{ transform: `translate(${old.x - next[id].x}px, ${old.y - next[id].y}px)` }, { transform: 'translate(0, 0)' }], { duration: 240, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
       }
     });

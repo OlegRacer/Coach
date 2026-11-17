@@ -20,7 +20,7 @@
   html[data-ui="next"] {
     --mo-dur: 0.5s; --mo-ease: cubic-bezier(0.22, 1.12, 0.36, 1); --mo-in: lg-in;
   }
-  @keyframes lg-in { from { opacity: 0; transform: translateY(14px) scale(0.97); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
+  @keyframes lg-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
   /* натискання: пружинне стискання */
   html[data-ui="next"] :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab, .tab-add, .wd-row, .mz-head button, .mz-sub, .session):not(:disabled) { transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.25s ease, color 0.25s ease, opacity 0.25s ease; }
   html[data-ui="next"]:not([data-editing]) :is(.tile, .list-item, .btn-primary, .btn-ghost, .btn-small, .chip, .tab-add, .wd-row, .mz-sub):active { transform: scale(0.95); transition-duration: 0.12s; }
