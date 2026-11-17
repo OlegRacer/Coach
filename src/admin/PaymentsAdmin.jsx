@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
@@ -14,7 +15,8 @@ const errText = (e) => (e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
 export default function PaymentsAdmin() {
   const { t } = useI18n();
   const { ready, isAdmin } = useAuth();
-  const [tab, setTab] = useState('requests');
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState(['requests', 'plans', 'settings'].includes(params.get('tab')) ? params.get('tab') : 'requests');
   if (!ready) return <main className="page" />;
   if (!isAdmin) return <main className="page"><TopBar title={t('pay.admin')} /><p className="muted">{t('students.noAccess')}</p></main>;
   return (
@@ -130,6 +132,7 @@ const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: 
 
 function Plans() {
   const { t, locale } = useI18n();
+  const [params] = useSearchParams();
   const L = useL();
   const { rawSections: flatSections, chainOf, exercises: allEx } = useContent();
   const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
@@ -138,7 +141,7 @@ function Plans() {
   const [info, setInfo] = useState('');
   const [audOpen, setAudOpen] = useState(null);
   const [plans, setPlans] = useState(null);
-  const [edit, setEdit] = useState(null); // {id|null, ...поля}
+  const [edit, setEdit] = useState(() => (params.get('new') ? emptyPlan() : null)); // {id|null, ...поля}
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
 

@@ -15,7 +15,7 @@ export default function Plans() {
   const { t, locale } = useI18n();
   const L = useL();
   const online = useOnline();
-  const { ready, user } = useAuth();
+  const { ready, user, isAdmin } = useAuth();
   const { section, exercise } = useContent();
   const [plans, setPlans] = useState(null);
   const [settings, setSettings] = useState(null);
@@ -148,6 +148,7 @@ export default function Plans() {
               </button>
             ))}
           </div>
+          {isAdmin && <Link to="/admin/payments?tab=plans&new=1" className="btn-primary">{t('pay.addPlan')}</Link>}
         </>
       )}
 
