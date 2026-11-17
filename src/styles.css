@@ -618,3 +618,6 @@ input, textarea, select, [contenteditable], .student-details {
 
 /* Без масштабування щипком і подвійним тапом: поводиться як застосунок */
 html { touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
+
+/* Іконки інвентаря */
+.equip-ic { display: inline-block; vertical-align: middle; border-radius: 22%; object-fit: cover; flex: none; }

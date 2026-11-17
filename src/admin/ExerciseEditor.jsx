@@ -13,6 +13,7 @@ import { ConfirmButton, LangField } from './ContentCommon.jsx';
 import TimeInput from './TimeInput.jsx';
 import { GROUPS, muscleName } from '../lib/muscles.js';
 import { youtubeId, videosOf } from '../lib/video.js';
+import EquipIcon from '../components/EquipIcon.jsx';
 
 export { youtubeId };
 
@@ -252,7 +253,7 @@ export default function ExerciseEditor() {
               {equipList.map((q) => (
                 <button type="button" key={q.id} className={'chip equip-chip' + (f.equipment.includes(q.id) ? ' active' : '')} aria-pressed={f.equipment.includes(q.id)}
                   onClick={() => set('equipment', f.equipment.includes(q.id) ? f.equipment.filter((x) => x !== q.id) : [...f.equipment, q.id])}>
-                  <span aria-hidden="true">{q.icon}</span> {L(q.name)}
+                  <EquipIcon item={q} size={24} /> {L(q.name)}
                 </button>
               ))}
             </div>

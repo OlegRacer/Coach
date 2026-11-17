@@ -6,6 +6,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useL } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 import { ConfirmButton, LangField, newId } from './ContentCommon.jsx';
+import EquipIcon from '../components/EquipIcon.jsx';
 
 // Довідник інвентарю: тренер додає, перейменовує (3 мови), міняє значок-емодзі й порядок, видаляє.
 export default function EquipmentAdmin() {
@@ -78,7 +79,7 @@ export default function EquipmentAdmin() {
         {list.map((e, i) => (
           <div key={e.id} className="card stack">
             <div className="row between">
-              <b>{e.icon} {L(e.name) || e.id}</b>
+              <b><EquipIcon item={e} size={28} /> {L(e.name) || e.id}</b>
               <span className="row">
                 <button type="button" className="icon-btn" disabled={busy || i === 0} onClick={() => move(i, -1)} aria-label="↑">↑</button>
                 <button type="button" className="icon-btn" disabled={busy || i === list.length - 1} onClick={() => move(i, 1)} aria-label="↓">↓</button>

@@ -11,6 +11,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
+import EquipIcon from '../components/EquipIcon.jsx';
 
 const hasText = (o) => !!o && Object.values(o).some((x) => String(x || '').trim());
 
@@ -68,7 +69,7 @@ export default function Exercise() {
           <div className="chips">
             {need.map((id) => (
               <span key={id} className={'chip equip-chip' + (!isAdmin && lack.includes(id) ? ' chip-missing' : '')}>
-                <span aria-hidden="true">{byId[id].icon}</span> {L(byId[id].name)}
+                <EquipIcon item={byId[id]} size={24} /> {L(byId[id].name)}
               </span>
             ))}
           </div>

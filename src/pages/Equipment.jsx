@@ -2,6 +2,7 @@ import TopBar from '../components/TopBar.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useL } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
+import EquipIcon from '../components/EquipIcon.jsx';
 
 // Мій інвентар: учень відмічає, що в нього є. Вправи з іншим інвентарем отримують позначку «Немає…».
 export default function Equipment() {
@@ -17,7 +18,7 @@ export default function Equipment() {
       <div className="chips equip-grid">
         {list.map((e) => (
           <button type="button" key={e.id} className={'chip equip-chip' + (mine.has(e.id) ? ' active' : '')} aria-pressed={mine.has(e.id)} onClick={() => toggle(e.id)}>
-            <span aria-hidden="true">{e.icon}</span> {L(e.name)}
+            <EquipIcon item={e} size={36} /> {L(e.name)}
           </button>
         ))}
       </div>
