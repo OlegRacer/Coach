@@ -34,3 +34,6 @@ createRoot(document.getElementById('root')).render(
     </RuGate>
   </React.StrictMode>
 );
+
+// iOS: заборона масштабування щипком (жести Safari)
+['gesturestart', 'gesturechange', 'gestureend'].forEach((n) => document.addEventListener(n, (e) => e.preventDefault()));

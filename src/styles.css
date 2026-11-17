@@ -615,3 +615,6 @@ input, textarea, select, [contenteditable], .student-details {
 /* День у розкладі: однаковий відступ усередині й мінімальна висота, щоб при швидкому перемиканні днів нічого не стрибало */
 .sched-day { display: flex; flex-direction: column; gap: 14px; min-width: 0; min-height: 240px; }
 .sched-day .section-title { margin: 0; line-height: 1.25; }
+
+/* Без масштабування щипком і подвійним тапом: поводиться як застосунок */
+html { touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
