@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Icon from '../components/Icon.jsx';
 
 // Блок форми, який можна згорнути: заголовок із стрілкою, усередині поля.
-export default function Fold({ title, summary, defaultOpen = true, children }) {
+export default function Fold({ title, summary, defaultOpen = false, children }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <section className={'fold card' + (open ? ' open' : '')}>
