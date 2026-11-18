@@ -557,5 +557,11 @@
   "wd.scheduleSub": "My schedule and trainers' schedule (swipe)",
   "anatomy.groups": "Muscle groups",
   "wd.schedMineSub": "Only my sessions, no trainers",
-  "wd.schedFull": "Schedule + trainers"
+  "wd.schedFull": "Schedule + trainers",
+  "content.converting": "Preparing video… {p}%",
+  "content.previewHint": "You can upload a video straight from your iPhone: the app shrinks it first (720 px, no sound, up to {sec} s) and only then uploads it. Keep this page open while it prepares.",
+  "content.convertDone": "Done: video reduced to {mb} MB.",
+  "content.convertTrimmed": "Done. The video is longer than {sec} s, so the first {sec} s were used.",
+  "content.convertFail": "Couldn't prepare the video. Try another file or open the page in Safari/Chrome.",
+  "content.convertUnsupported": "This browser can't prepare video. Open the page in Safari or Chrome."
 }

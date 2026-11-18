@@ -557,5 +557,11 @@
   "wd.scheduleSub": "我的課表與教練課表（滑動切換）",
   "anatomy.groups": "肌群",
   "wd.schedMineSub": "只顯示我的課程，不含教練",
-  "wd.schedFull": "課表＋教練"
+  "wd.schedFull": "課表＋教練",
+  "content.converting": "正在處理影片… {p}%",
+  "content.previewHint": "可直接上傳 iPhone 拍的影片：應用程式會先縮小（720 px、無聲、最多 {sec} 秒）再上傳。處理期間請保持此頁面開啟。",
+  "content.convertDone": "完成：影片已縮小至 {mb} MB。",
+  "content.convertTrimmed": "完成。影片超過 {sec} 秒，已取前 {sec} 秒。",
+  "content.convertFail": "無法處理影片。請換一個檔案，或用 Safari/Chrome 開啟。",
+  "content.convertUnsupported": "此瀏覽器無法處理影片。請用 Safari 或 Chrome 開啟。"
 }

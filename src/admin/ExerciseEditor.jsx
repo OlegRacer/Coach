@@ -1,4 +1,5 @@
 import { fixMp4 } from '../lib/mp4fix.js';
+import { canConvertVideo, convertVideo, MAX_SECONDS } from '../lib/videoConvert.js';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
@@ -83,6 +84,8 @@ export default function ExerciseEditor() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [prog, setProg] = useState(null);
+  const [note, setNote] = useState('');
   const [on, setOn] = useState({ description: true, muscles: true, preview: true });
 
   useEffect(() => {
@@ -120,39 +123,49 @@ export default function ExerciseEditor() {
 
   const upload = async (file) => {
     if (!file) return;
-    if (file.size > 30 * 1024 * 1024) return setErr(t('content.fileLimit'));
-    setBusy(true);
     setErr('');
-    const ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const path = `${eid}/${Date.now()}.${ext}`;
-    // mp4 з Flow/Veo: переносимо moov на початок і прибираємо звук (без перекодування), щоб iPhone не підвисав на циклі
+    setNote('');
     let body = file;
-    if (/^video\/(mp4|quicktime)$/.test(file.type) && file.size < 31 * 1024 * 1024) {
+    let ctype = file.type;
+    let ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (file.type.startsWith('video/') || /\.(mov|mp4|m4v|webm)$/i.test(file.name)) {
+      // Відео спершу перетворюємо на пристрої (зменшення, 30 к/с, без звуку, H.264), і лише потім вантажимо на сервер
+      if (!canConvertVideo()) return setErr(t('content.convertUnsupported'));
+      setBusy(true);
+      setProg(0);
       try {
-        const fixed = fixMp4(new Uint8Array(await file.arrayBuffer()));
-        if (fixed) body = new Blob([fixed], { type: file.type });
-      } catch (e) { body = file; }
+        const r = await convertVideo(file, { onProgress: setProg });
+        body = r.blob;
+        ctype = r.type;
+        ext = r.ext;
+        if (r.trimmed) setNote(t('content.convertTrimmed', { sec: MAX_SECONDS }));
+        else setNote(t('content.convertDone', { mb: (r.blob.size / 1048576).toFixed(1) }));
+      } catch (e) {
+        setBusy(false);
+        setProg(null);
+        return setErr(t('content.convertFail'));
+      }
+      setProg(null);
+      // faststart для mp4 (якщо потрібно)
+      if (ctype === 'video/mp4') {
+        try {
+          const fixed = fixMp4(new Uint8Array(await body.arrayBuffer()));
+          if (fixed) body = new Blob([fixed], { type: ctype });
+        } catch (e) {
+          /* лишаємо як є */
+        }
+      }
     }
-    const { error } = await supabase.storage.from('content').upload(path, body, { contentType: file.type, cacheControl: '31536000' });
+    if (body.size > 30 * 1024 * 1024) {
+      setBusy(false);
+      return setErr(t('content.fileLimit'));
+    }
+    setBusy(true);
+    const path = `${eid}/${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from('content').upload(path, body, { contentType: ctype, cacheControl: '31536000' });
     setBusy(false);
     if (error) return fail(error);
     set('preview', path);
-    // Важке відео (висока роздільність / великий файл) на телефонах гальмує і може завішувати вкладку: попереджаємо.
-    if (file.type.startsWith('video/')) {
-      const url = URL.createObjectURL(file);
-      const v = document.createElement('video');
-      v.preload = 'metadata';
-      v.onloadedmetadata = () => {
-        const w = v.videoWidth;
-        const dur = Math.round(v.duration || 0);
-        if (w > 1280 || file.size > 12 * 1024 * 1024 || dur > 20) {
-          setErr(t('content.heavyVideo', { res: `${w}×${v.videoHeight}`, mb: (file.size / 1048576).toFixed(1), sec: dur }));
-        }
-        URL.revokeObjectURL(url);
-      };
-      v.onerror = () => URL.revokeObjectURL(url);
-      v.src = url;
-    }
   };
 
   const setVideo = (i, patch) => {
@@ -265,10 +278,11 @@ export default function ExerciseEditor() {
           <>
             <Media src={mediaUrl(f.preview)} title="" />
             <label className="btn-ghost file-btn">
-              {busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
-              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
+              {prog !== null ? t('content.converting', { p: Math.round(prog * 100) }) : busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/*" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
             </label>
-            <span className="muted small">{t('content.fileLimit')}</span>
+            <span className="muted small">{t('content.previewHint', { sec: MAX_SECONDS })}</span>
+            {note && <span className="small" role="status">{note}</span>}
             {f.preview && <CropBox src={mediaUrl(f.preview)} crop={f.preview_crop} onChange={(c) => set('preview_crop', c)} />}
           </>
         )}
