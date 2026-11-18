@@ -1,98 +1,19 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
-import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { LANGS, useI18n } from '../i18n/index.jsx';
-import { useContent, useL } from '../lib/content.jsx';
-import { newId } from './ContentCommon.jsx';
-import EditFab from '../components/EditFab.jsx';
-import useSortable from '../lib/useSortable.js';
+import { useContent } from '../lib/content.jsx';
 
-// Адмінка контенту: список розділів, порядок, чернетки, а також експорт/імпорт перекладу.
+// Адмінка «Переклад»: експорт українських текстів, переклад ШІ та імпорт назад.
 export default function ContentAdmin() {
   const { t } = useI18n();
-  const L = useL();
-  const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { rawSections: allSections, exercises, reload, subtreeIds } = useContent();
-  const rawSections = allSections.filter((s) => !s.parent_id);
-  const [err, setErr] = useState('');
-  const [busy, setBusy] = useState(false);
-  const byId = Object.fromEntries(rawSections.map((x) => [x.id, x]));
-  const sort = useSortable(rawSections.map((x) => x.id), (ids) => reorder(ids), isAdmin);
-
   if (!ready) return <main className="page" />;
-  if (!isAdmin) {
-    return (
-      <main className="page">
-        <TopBar title={t('content.title')} />
-        <p className="muted">{t('students.noAccess')}</p>
-      </main>
-    );
-  }
-
-  const fail = (e) => setErr(e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
-
-  const reorder = async (ids) => {
-    setBusy(true);
-    const res = await Promise.all(ids.map((id, p) => supabase.from('content_sections').update({ position: p }).eq('id', id)));
-    setBusy(false);
-    fail(res.find((r) => r.error)?.error);
-    reload();
-  };
-
-  const add = async () => {
-    const id = newId('s');
-    setBusy(true);
-    const { error } = await supabase.from('content_sections').insert({
-      id,
-      kind: 'exercises',
-      title: { uk: t('content.newSection') },
-      position: rawSections.length,
-      published: false
-    });
-    setBusy(false);
-    if (error) return fail(error);
-    await reload();
-    nav(`/admin/content/${id}`);
-  };
-
   return (
     <main className="page">
-      <TopBar title={t('content.title')} />
-      {err && <p className="err" role="alert">{err}</p>}
-      <p className="muted small">{t('content.intro')}</p>
-
-      <div className="list">
-        {sort.order.map((id) => {
-          const x = byId[id];
-          if (!x) return null;
-          const rp = sort.rowProps(id);
-          return (
-            <div key={id} {...rp} className={'edit-wrap ' + (rp.className || '')}>
-              <Link to={x.kind === 'anatomy' ? `/admin/content/${x.id}` : `/section/${x.id}`} className="list-item" draggable={false}>
-                <span className="list-main">
-                  <span className="list-title">
-                    {L(x.title) || x.id}
-                    {!x.published && <span className="badge-draft">{t('content.draft')}</span>}
-                  </span>
-                  <span className="muted small">
-                    {x.kind === 'anatomy' ? t('content.anatomyKind') : t('content.exCount', { n: exercises.filter((e) => e.section_id === x.id).length })}
-                  </span>
-                </span>
-              </Link>
-              <EditFab to={`/admin/content/${x.id}`} />
-            </div>
-          );
-        })}
-      </div>
-      <button type="button" className="btn-primary" disabled={busy} onClick={add}>
-        {t('content.addSection')}
-      </button>
-
-      <Translate />
+      <TopBar title={t('content.link')} to="/" />
+      {isAdmin ? <Translate /> : <p className="muted">{t('students.noAccess')}</p>}
     </main>
   );
 }

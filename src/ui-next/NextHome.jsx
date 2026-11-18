@@ -10,6 +10,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import { orderIds, useEditing, useWidgets } from '../lib/widgets.js';
 import SectionTile from '../components/SectionIcon.jsx';
+import { supabase } from '../lib/supabase.js';
 
 // Головна нового інтерфейсу: віджети (розклад і розділи). Довгий тап або «+» → «Редагувати віджети»:
 // пунктирні рамки, «−» ховає віджет, смужка праворуч перетягує, «Готово» завершує, «+» над ним повертає сховані.
@@ -17,7 +18,7 @@ export default function NextHome() {
   const { t, locale } = useI18n();
   const online = useOnline();
   const { isAdmin, access } = useAuth();
-  const { sections, sectionOpen, openCount, isFreeSection } = useContent();
+  const { sections, sectionOpen, openCount, isFreeSection, reload } = useContent();
   const L = useL();
   const w = useWidgets();
   const navigate = useNavigate();
@@ -139,6 +140,11 @@ export default function NextHome() {
     const cur = d.el.style.transform;
     d.el.style.transform = '';
     if (d.el.animate && cur) d.el.animate([{ transform: cur }, { transform: 'none' }], { duration: 200, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+    // Адмін: порядок розділів на головній стає порядком для всіх учнів
+    if (isAdmin && d.moved) {
+      const secIds = ids.filter((x) => x.startsWith('sec:')).map((x) => x.slice(4)).filter((x) => sections.some((q) => q.id === x));
+      Promise.all(secIds.map((id, p) => supabase.from('content_sections').update({ position: p }).eq('id', id))).then(() => reload());
+    }
   };
 
   const handle = (id) =>

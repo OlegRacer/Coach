@@ -38,7 +38,7 @@ export default function SectionEditor() {
   const items = exercisesOf(sid);
   const subs = childrenOf(sid);
   const parent = chainOf(sid).slice(-2, -1)[0];
-  const back = '/admin/content';
+  const back = '/';
   const fail = (e) => setErr(e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
   const set = (k, v) => {
     setSaved(false);
@@ -60,7 +60,7 @@ export default function SectionEditor() {
     const { error } = await supabase.from('content_sections').delete().eq('id', sid);
     if (error) return fail(error);
     await reload();
-    nav(parent ? `/section/${parent.id}` : '/admin/content');
+    nav(parent ? `/section/${parent.id}` : '/');
   };
 
   return (
