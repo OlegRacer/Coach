@@ -466,9 +466,10 @@ input, textarea, select, [contenteditable], .student-details {
 
   /* Вправа: відео й фото ліворуч, підходи та опис праворуч. */
   .ex-page { max-width: 680px; margin: 0 auto; width: 100%; }
-  .ex-page:has(> .media, > section.stack) { max-width: none; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 24px; align-items: start; grid-auto-flow: row dense; }
+  .ex-page:has(> .media, > section.stack) { max-width: none; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); column-gap: 24px; row-gap: 0; align-items: start; align-content: start; grid-auto-flow: row dense; }
+  .ex-page:has(> .media, > section.stack) > * { margin-bottom: 16px; }
   .ex-page:has(> .media, > section.stack) > :first-child, .ex-page:has(> .media, > section.stack) > .pill { grid-column: 1 / -1; }
-  .ex-page:has(> .media, > section.stack) > .media, .ex-page:has(> .media, > section.stack) > section.stack { grid-column: 1; }
+  .ex-page:has(> .media, > section.stack) > .media, .ex-page:has(> .media, > section.stack) > section.stack { grid-column: 1; grid-row: span 8; }
   .ex-page:has(> .media, > section.stack) > section.card { grid-column: 2; }
 
   /* Анатомія: фігура ліворуч, кнопки м'язів праворуч, вправи нижче. */
