@@ -11,6 +11,9 @@ import { cropStyle } from '../lib/crop.js';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 import SectionTile from '../components/SectionIcon.jsx';
+import useSortable from '../lib/useSortable.js';
+import useAddContent from '../admin/useAddContent.js';
+import { supabase } from '../lib/supabase.js';
 
 // Розділ містить підрозділи і/або вправи (на будь-яку глибину). Закрите учень бачить із замком,
 // а відкрите окремо (пакет, «безкоштовно») лишається доступним.
@@ -56,9 +59,26 @@ export default function Section() {
   const subs = childrenOf(category);
   const all = [...exercisesOf(category), ...programExercisesOf(category)]; // закриті (locked) показуємо із замком
   const hasEquip = !isAdmin && all.some((e) => needed(e).length > 0);
-  const items = hasEquip && only ? all.filter((e) => missing(e).length === 0) : all;
+  const itemsRaw = hasEquip && only ? all.filter((e) => missing(e).length === 0) : all;
   const total = openCount(category);
+  const { reload } = useContent();
+  const add = useAddContent(category);
+  const [menu, setMenu] = useState(false);
+  const [sortErr, setSortErr] = useState('');
+  const persist = (table) => async (ids) => {
+    const res = await Promise.all(ids.map((id, p) => supabase.from(table).update({ position: p }).eq('id', id)));
+    const bad = res.find((r) => r.error);
+    setSortErr(bad ? `${bad.error.code || ''} ${bad.error.message}` : '');
+    reload();
+  };
+  const sortSubs = useSortable(subs.map((x) => x.id), persist('content_sections'), isAdmin);
+  const own = exercisesOf(category);
+  const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin);
 
+  const ownById = Object.fromEntries(own.map((x) => [x.id, x]));
+  const items = isAdmin ? [...sortEx.order.map((id) => ownById[id]).filter(Boolean), ...programExercisesOf(category)] : itemsRaw;
+  const subsById = Object.fromEntries(subs.map((x) => [x.id, x]));
+  const subsOrdered = isAdmin ? sortSubs.order.map((id) => subsById[id]).filter(Boolean) : subs;
   const title = sec ? L(sec.title) : t('section.exercises');
   if (!ready) return <main className="page" />;
   if (!sec) return (
@@ -71,7 +91,19 @@ export default function Section() {
   const parent = chainOf(category).slice(-2, -1)[0];
   return (
     <main className="page wide">
-      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} action={<EditFab inline to={`/admin/content/${category}`} />} />
+      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} action={isAdmin ? (
+        <div className="add-menu-wrap">
+          <button type="button" className="edit-inline" aria-label={t('content.add')} aria-expanded={menu} onClick={() => setMenu(!menu)}>
+            <Icon name="plus" size={22} />
+          </button>
+          {menu && (
+            <div className="add-menu" role="menu" onClick={() => setMenu(false)}>
+              {!sec.is_program && <button type="button" role="menuitem" disabled={add.busy} onClick={add.addEx}>{t('content.addExercise')}</button>}
+              <button type="button" role="menuitem" disabled={add.busy} onClick={add.addSub}>{t('content.addSubsectionShort')}</button>
+            </div>
+          )}
+        </div>
+      ) : null} />
       {!full && (
         <div className="card partial-note">
           <span className="muted small">{t('access.partialNote', { n: total })}</span>
@@ -84,14 +116,15 @@ export default function Section() {
           <span>{t('equip.only')}</span>
         </label>
       )}
+      {(add.err || sortErr) && <p className="err" role="alert">{add.err || sortErr}</p>}
       <div className="list">
-        {subs.map((s) => {
+        {subsOrdered.map((s) => {
           const open = sectionOpen(s.id);
           const n = open ? 0 : openCount(s.id);
           const locked = !open && !n;
           return (
-            <div key={s.id} className="edit-wrap">
-            <Link to={`/section/${s.id}`} className={'list-item' + (locked ? ' locked-tile' : '')}>
+            <div key={s.id} {...(sortSubs.rowProps(s.id))} className={'edit-wrap ' + (sortSubs.rowProps(s.id).className || '')}>
+            <Link to={`/section/${s.id}`} draggable={false} className={'list-item' + (locked ? ' locked-tile' : '')}>
               <SectionTile section={s} size={22} className="small-icon" />
               <span className="list-main">
                 <span className="list-title">
@@ -110,8 +143,8 @@ export default function Section() {
           );
         })}
         {items.map((e) => (
-          <div key={e.id} className="edit-wrap">
-          <Link to={`/exercise/${e.id}`} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
+          <div key={e.id} {...(ownById[e.id] ? sortEx.rowProps(e.id) : {})} className={'edit-wrap ' + (ownById[e.id] ? sortEx.rowProps(e.id).className || '' : '')}>
+          <Link to={`/exercise/${e.id}`} draggable={false} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
               {e.preview && <Thumb src={mediaUrl(e.preview)} crop={e.preview_crop} />}
             </span>
@@ -134,6 +167,12 @@ export default function Section() {
           </div>
         ))}
       </div>
+      {isAdmin && (
+        <div className="stack admin-add">
+          {!sec.is_program && <button type="button" className="btn-primary" disabled={add.busy} onClick={add.addEx}>{t('content.addExercise')}</button>}
+          <button type="button" className="btn-ghost" disabled={add.busy} onClick={add.addSub}>{t('content.addSubsectionShort')}</button>
+        </div>
+      )}
       {!items.length && !subs.length && <p className="muted">{only && all.length ? t('equip.noneAvail') : t('section.empty')}</p>}
     </main>
   );

@@ -7,6 +7,8 @@ import { useAuth } from '../auth/index.jsx';
 import { LANGS, useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import { newId } from './ContentCommon.jsx';
+import EditFab from '../components/EditFab.jsx';
+import useSortable from '../lib/useSortable.js';
 
 // Адмінка контенту: список розділів, порядок, чернетки, а також експорт/імпорт перекладу.
 export default function ContentAdmin() {
@@ -18,6 +20,8 @@ export default function ContentAdmin() {
   const rawSections = allSections.filter((s) => !s.parent_id);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
+  const byId = Object.fromEntries(rawSections.map((x) => [x.id, x]));
+  const sort = useSortable(rawSections.map((x) => x.id), (ids) => reorder(ids), isAdmin);
 
   if (!ready) return <main className="page" />;
   if (!isAdmin) {
@@ -31,11 +35,7 @@ export default function ContentAdmin() {
 
   const fail = (e) => setErr(e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
 
-  const move = async (i, d) => {
-    const j = i + d;
-    if (j < 0 || j >= rawSections.length) return;
-    const ids = rawSections.map((s) => s.id);
-    [ids[i], ids[j]] = [ids[j], ids[i]];
+  const reorder = async (ids) => {
     setBusy(true);
     const res = await Promise.all(ids.map((id, p) => supabase.from('content_sections').update({ position: p }).eq('id', id)));
     setBusy(false);
@@ -66,27 +66,27 @@ export default function ContentAdmin() {
       <p className="muted small">{t('content.intro')}</p>
 
       <div className="list">
-        {rawSections.map((s, i) => (
-          <div key={s.id} className="list-item">
-            <Link to={`/admin/content/${s.id}`} className="list-main">
-              <span className="list-title">
-                {L(s.title) || s.id}
-                {!s.published && <span className="badge-draft">{t('content.draft')}</span>}
-              </span>
-              <span className="muted small">
-                {s.kind === 'anatomy' ? t('content.anatomyKind') : t('content.exCount', { n: exercises.filter((e) => e.section_id === s.id).length })}
-              </span>
-            </Link>
-            <span className="sort-btns">
-              <button type="button" className="icon-btn" aria-label="↑" disabled={busy || i === 0} onClick={() => move(i, -1)}>
-                <Icon name="up" size={20} />
-              </button>
-              <button type="button" className="icon-btn" aria-label="↓" disabled={busy || i === rawSections.length - 1} onClick={() => move(i, 1)}>
-                <Icon name="down" size={20} />
-              </button>
-            </span>
-          </div>
-        ))}
+        {sort.order.map((id) => {
+          const x = byId[id];
+          if (!x) return null;
+          const rp = sort.rowProps(id);
+          return (
+            <div key={id} {...rp} className={'edit-wrap ' + (rp.className || '')}>
+              <Link to={x.kind === 'anatomy' ? `/admin/content/${x.id}` : `/section/${x.id}`} className="list-item" draggable={false}>
+                <span className="list-main">
+                  <span className="list-title">
+                    {L(x.title) || x.id}
+                    {!x.published && <span className="badge-draft">{t('content.draft')}</span>}
+                  </span>
+                  <span className="muted small">
+                    {x.kind === 'anatomy' ? t('content.anatomyKind') : t('content.exCount', { n: exercises.filter((e) => e.section_id === x.id).length })}
+                  </span>
+                </span>
+              </Link>
+              <EditFab to={`/admin/content/${x.id}`} />
+            </div>
+          );
+        })}
       </div>
       <button type="button" className="btn-primary" disabled={busy} onClick={add}>
         {t('content.addSection')}

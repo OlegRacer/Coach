@@ -576,5 +576,8 @@
   "theme.title": "主題",
   "theme.auto": "自動",
   "theme.light": "淺色",
-  "theme.dark": "深色"
+  "theme.dark": "深色",
+  "content.add": "新增",
+  "content.addSubsectionShort": "新增分區",
+  "content.previewVideo": "預覽與影片"
 }

@@ -576,5 +576,8 @@
   "theme.title": "Theme",
   "theme.auto": "Auto",
   "theme.light": "Light",
-  "theme.dark": "Dark"
+  "theme.dark": "Dark",
+  "content.add": "Add",
+  "content.addSubsectionShort": "Add section",
+  "content.previewVideo": "Preview and video"
 }

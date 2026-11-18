@@ -16,6 +16,7 @@ import { GROUPS, muscleName } from '../lib/muscles.js';
 import { youtubeId, videosOf } from '../lib/video.js';
 import MuscleDropdown from '../components/MuscleDropdown.jsx';
 import AudiencePicker from './AudiencePicker.jsx';
+import Fold from './Fold.jsx';
 import EquipIcon from '../components/EquipIcon.jsx';
 
 export { youtubeId };
@@ -107,7 +108,7 @@ export default function ExerciseEditor() {
     }
   }, [ex, f]);
 
-  const back = `/admin/content/${sid}`;
+  const back = `/section/${sid}`;
   if (!ready) return <main className="page" />;
   if (!isAdmin) return <main className="page"><TopBar title={t('content.title')} to={back} /><p className="muted">{t('students.noAccess')}</p></main>;
   if (!ex || !f) return <main className="page"><TopBar title={t('content.title')} to={back} /><p className="muted">{t('exercise.notFound')}</p></main>;
@@ -238,105 +239,111 @@ export default function ExerciseEditor() {
       {err && <p className="err" role="alert">{err}</p>}
       {sec && <p className="muted small">{L(sec.title)}</p>}
 
-      <section className="card stack">
-        <LangField label={t('content.fieldTitle')} value={f.title} onChange={(v) => set('title', v)} maxLength={100} />
+      <Fold title={t('content.fieldTitle')} summary={L(f.title)}>
+          <LangField label={t('content.fieldTitle')} value={f.title} onChange={(v) => set('title', v)} maxLength={100} />
 
-        <Toggle label={t('content.fieldDescription')} on={on.description} onChange={() => flip('description')} />
-        {on.description && <LangField value={f.description} onChange={(v) => set('description', v)} multiline />}
+          <Toggle label={t('content.fieldDescription')} on={on.description} onChange={() => flip('description')} />
+          {on.description && <LangField value={f.description} onChange={(v) => set('description', v)} multiline />}
 
-        <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
-        {on.muscles && (
-          <MuscleDropdown value={f.muscles} onToggle={toggleMuscle} />
-        )}
+      </Fold>
+      <Fold title={t('exercise.muscles')} summary={on.muscles ? String((f.muscles || []).length) : ''} defaultOpen={false}>
+          <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
+          {on.muscles && (
+            <MuscleDropdown value={f.muscles} onToggle={toggleMuscle} />
+          )}
 
-        {equipList.length > 0 && (
-          <>
-            <span className="muted small">{t('equip.needed')}</span>
-            <div className="chips">
-              {equipList.map((q) => (
-                <button type="button" key={q.id} className={'chip equip-chip' + (f.equipment.includes(q.id) ? ' active' : '')} aria-pressed={f.equipment.includes(q.id)}
-                  onClick={() => set('equipment', f.equipment.includes(q.id) ? f.equipment.filter((x) => x !== q.id) : [...f.equipment, q.id])}>
-                  <EquipIcon item={q} size={24} /> {L(q.name)}
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
-        <Toggle label={t('content.preview')} on={on.preview} onChange={() => flip('preview')} />
-        {on.preview && (
-          <>
-            <Media src={mediaUrl(f.preview)} title="" />
-            <label className="btn-ghost file-btn">
-              {prog !== null ? t('content.converting', { p: Math.round(prog * 100) }) : busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
-              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/*" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
-            </label>
-            <span className="muted small">{t('content.previewHint', { sec: MAX_SECONDS })}</span>
-            {note && <span className="small" role="status">{note}</span>}
-            {f.preview && <CropBox src={mediaUrl(f.preview)} crop={f.preview_crop} onChange={(c) => set('preview_crop', c)} />}
-          </>
-        )}
-
-        <span className="muted small">{t('content.videos')}</span>
-        {f.videos.map((v, i) => (
-          <div key={i} className="video-row">
-            <input className="field" value={v.id} placeholder="https://youtu.be/…" onChange={(e) => setVideo(i, { id: e.target.value })} />
-            <LangField label={t('content.videoLabel')} value={v.label} onChange={(l) => setVideo(i, { label: l })} maxLength={60} />
-            {v.blocks.map((b, j) => (
-              <div key={j} className="block-row">
-                <div className="row between">
-                  <b>{t('content.block', { n: j + 1 })}</b>
-                  {v.blocks.length > 1 && (
-                    <button type="button" className="link-btn danger-text" onClick={() => removeBlock(i, j)}>
-                      {t('content.removeBlock')}
-                    </button>
-                  )}
-                </div>
-                <div className="grid2">
-                  <label className="stack">
-                    <span className="muted small">{t('content.videoStart')}</span>
-                    <TimeInput value={b.start} placeholder="0:00" onChange={(sec) => setBlock(i, j, { start: sec })} />
-                  </label>
-                  <label className="stack">
-                    <span className="muted small">{t('content.videoEnd')}</span>
-                    <TimeInput value={b.end} placeholder={t('content.toEnd')} onChange={(sec) => setBlock(i, j, { end: sec })} />
-                  </label>
-                  <label className="stack">
-                    <span className="muted small">{t('content.videoLoops')}</span>
-                    <input className="field" inputMode="numeric" value={b.loops} onChange={(e) => setBlock(i, j, { loops: e.target.value.replace(/\D/g, '').slice(0, 3) })} />
-                  </label>
-                </div>
-              </div>
+      </Fold>
+      {equipList.length > 0 && (
+        <Fold title={t('equip.needed')} summary={String(f.equipment.length)} defaultOpen={false}>
+          <div className="chips">
+            {equipList.map((q) => (
+              <button type="button" key={q.id} className={'chip equip-chip' + (f.equipment.includes(q.id) ? ' active' : '')} aria-pressed={f.equipment.includes(q.id)}
+                onClick={() => set('equipment', f.equipment.includes(q.id) ? f.equipment.filter((x) => x !== q.id) : [...f.equipment, q.id])}>
+                <EquipIcon item={q} size={24} /> {L(q.name)}
+              </button>
             ))}
-            <button type="button" className="btn-ghost" onClick={() => addBlock(i)}>
-              {t('content.addBlock')}
-            </button>
-            <button type="button" className="btn-ghost danger" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: x.videos.filter((_, j) => j !== i) })); }}>
-              {t('content.removeVideo')}
-            </button>
           </div>
-        ))}
-        {f.videos.length < 8 && (
-          <button type="button" className="btn-ghost" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: [...x.videos, emptyVideo()] })); }}>
-            {t('content.addVideo')}
-          </button>
-        )}
+        </Fold>
+      )}
+      <Fold title={t('content.previewVideo')} defaultOpen={false}>
+          <Toggle label={t('content.preview')} on={on.preview} onChange={() => flip('preview')} />
+          {on.preview && (
+            <>
+              <Media src={mediaUrl(f.preview)} title="" />
+              <label className="btn-ghost file-btn">
+                {prog !== null ? t('content.converting', { p: Math.round(prog * 100) }) : busy ? t('content.uploading') : f.preview ? t('content.replaceFile') : t('content.uploadFile')}
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/*" hidden disabled={busy} onChange={(e) => upload(e.target.files[0])} />
+              </label>
+              <span className="muted small">{t('content.previewHint', { sec: MAX_SECONDS })}</span>
+              {note && <span className="small" role="status">{note}</span>}
+              {f.preview && <CropBox src={mediaUrl(f.preview)} crop={f.preview_crop} onChange={(c) => set('preview_crop', c)} />}
+            </>
+          )}
 
-        <label className="access-row">
-          <input type="checkbox" checked={f.published} onChange={(e) => set('published', e.target.checked)} />
-          <span>
-            {t('content.published')}
-            <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
-          </span>
-        </label>
-        {f.published && <AudiencePicker value={f.audience} onChange={(v) => set('audience', v)} />}
-        <label className="access-row">
-          <input type="checkbox" checked={!!f.free} onChange={(e) => set('free', e.target.checked)} />
-          <span>
-            {t('content.free')}
-            <small>{t('content.freeExHint')}</small>
-          </span>
-        </label>
+          <span className="muted small">{t('content.videos')}</span>
+          {f.videos.map((v, i) => (
+            <div key={i} className="video-row">
+              <input className="field" value={v.id} placeholder="https://youtu.be/…" onChange={(e) => setVideo(i, { id: e.target.value })} />
+              <LangField label={t('content.videoLabel')} value={v.label} onChange={(l) => setVideo(i, { label: l })} maxLength={60} />
+              {v.blocks.map((b, j) => (
+                <div key={j} className="block-row">
+                  <div className="row between">
+                    <b>{t('content.block', { n: j + 1 })}</b>
+                    {v.blocks.length > 1 && (
+                      <button type="button" className="link-btn danger-text" onClick={() => removeBlock(i, j)}>
+                        {t('content.removeBlock')}
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid2">
+                    <label className="stack">
+                      <span className="muted small">{t('content.videoStart')}</span>
+                      <TimeInput value={b.start} placeholder="0:00" onChange={(sec) => setBlock(i, j, { start: sec })} />
+                    </label>
+                    <label className="stack">
+                      <span className="muted small">{t('content.videoEnd')}</span>
+                      <TimeInput value={b.end} placeholder={t('content.toEnd')} onChange={(sec) => setBlock(i, j, { end: sec })} />
+                    </label>
+                    <label className="stack">
+                      <span className="muted small">{t('content.videoLoops')}</span>
+                      <input className="field" inputMode="numeric" value={b.loops} onChange={(e) => setBlock(i, j, { loops: e.target.value.replace(/\D/g, '').slice(0, 3) })} />
+                    </label>
+                  </div>
+                </div>
+              ))}
+              <button type="button" className="btn-ghost" onClick={() => addBlock(i)}>
+                {t('content.addBlock')}
+              </button>
+              <button type="button" className="btn-ghost danger" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: x.videos.filter((_, j) => j !== i) })); }}>
+                {t('content.removeVideo')}
+              </button>
+            </div>
+          ))}
+          {f.videos.length < 8 && (
+            <button type="button" className="btn-ghost" onClick={() => { setSaved(false); setF((x) => ({ ...x, videos: [...x.videos, emptyVideo()] })); }}>
+              {t('content.addVideo')}
+            </button>
+          )}
+
+      </Fold>
+      <Fold title={t('content.published')} summary={f.published ? t('content.publishedOn') : t('content.publishedOff')} defaultOpen={false}>
+          <label className="access-row">
+            <input type="checkbox" checked={f.published} onChange={(e) => set('published', e.target.checked)} />
+            <span>
+              {t('content.published')}
+              <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
+            </span>
+          </label>
+          {f.published && <AudiencePicker value={f.audience} onChange={(v) => set('audience', v)} />}
+          <label className="access-row">
+            <input type="checkbox" checked={!!f.free} onChange={(e) => set('free', e.target.checked)} />
+            <span>
+              {t('content.free')}
+              <small>{t('content.freeExHint')}</small>
+            </span>
+          </label>
+      </Fold>
+      <section className="card stack">
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>
           {saved ? t('content.saved') : t('content.save')}
         </button>

@@ -572,5 +572,8 @@
   "theme.title": "Тема",
   "theme.auto": "Авто",
   "theme.light": "Світла",
-  "theme.dark": "Темна"
+  "theme.dark": "Темна",
+  "content.add": "Додати",
+  "content.addSubsectionShort": "Додати розділ",
+  "content.previewVideo": "Прев'ю і відео"
 }

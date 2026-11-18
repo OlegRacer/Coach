@@ -657,3 +657,26 @@ input[type="checkbox"]:disabled { opacity: 0.5; }
 .sw.on i { transform: translateX(20px); width: 24px; height: 24px; top: 4px; left: 4px; background: var(--on-accent); }
 .push-row:disabled { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .sw, .sw i { transition: none; } }
+
+/* Перетягування рядків (адмін) */
+.sortable { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; transition: transform 0.22s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s; }
+.sortable a { -webkit-user-drag: none; }
+.sortable.dragging { transition: box-shadow 0.2s; position: relative; z-index: 6; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35); }
+
+/* Згортні блоки форм редагування */
+.fold { padding: 0; }
+.fold-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 16px; background: none; border: 0; color: var(--text); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+.fold-title { flex: none; }
+.fold-sum { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; }
+.fold-chev { margin-left: auto; display: inline-flex; color: var(--muted); transform: rotate(90deg); transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1); }
+.fold.open .fold-chev { transform: rotate(-90deg); }
+.fold-body { padding: 0 16px 16px; }
+.fold + .fold, .fold + .btn-primary { margin-top: 0; }
+
+/* Меню «+» у верхній панелі розділу */
+.add-menu-wrap { position: relative; margin-left: auto; flex: none; }
+.add-menu-wrap .edit-inline { margin-left: 0; border: 0; cursor: pointer; }
+.add-menu { position: absolute; top: calc(100% + 8px); right: 0; z-index: 30; min-width: 220px; display: flex; flex-direction: column; padding: 6px; border-radius: 18px; background: var(--card); box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--hair, rgba(255,255,255,.08)); }
+.add-menu button { padding: 14px 16px; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; border-radius: 12px; cursor: pointer; }
+.add-menu button:active { background: var(--card-2); }
+.add-menu button:disabled { opacity: 0.5; }
