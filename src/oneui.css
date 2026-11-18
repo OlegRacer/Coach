@@ -16,8 +16,8 @@ html[data-ui="classic"] {
   color-scheme: dark;
 }
   html[data-theme="light"][data-ui="classic"] {
-    --m-primary: #4c6200; --m-on-primary: #ffffff;
-    --m-primary-container: #e3f3a2; --m-on-primary-container: #141f00;
+    --m-primary: #4f8200; --m-on-primary: #ffffff;
+    --m-primary-container: #dcefc0; --m-on-primary-container: #142a00;
     --m-secondary-container: #e8e8ea; --m-on-secondary-container: #000000;
     --m-surface: #f2f2f4; --m-surface-low: #f7f7f8; --m-surface-container: #ffffff; --m-surface-high: #ececee; --m-surface-highest: #e2e2e5;
     --m-on-surface: #000000; --m-on-surface-variant: #6a6a70; --m-outline: #a2a2a8; --m-outline-variant: #dcdce0;
