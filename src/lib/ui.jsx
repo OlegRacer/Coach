@@ -7,6 +7,18 @@ export const SWITCH_FOR_ALL = true;
 const KEY = 'ui:version';
 const VALID = ['classic', 'next'];
 
+// Тема за замовчуванням залежить від системи: Apple (iPhone, iPad, Mac) — Liquid Glass, Android та інші — One UI.
+// Діє, поки учень сам не вибрав тему (вибір зберігається і має перевагу).
+const defaultUi = () => {
+  try {
+    const ua = navigator.userAgent || '';
+    const apple = /iPhone|iPad|iPod|Macintosh|Mac OS X/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return apple && !/Android/i.test(ua) ? 'next' : 'classic';
+  } catch {
+    return 'classic';
+  }
+};
+
 const read = () => {
   try {
     const q = new URLSearchParams(window.location.search).get('ui');
@@ -19,9 +31,9 @@ const read = () => {
       return q;
     }
     const v = localStorage.getItem(KEY);
-    return VALID.includes(v) ? v : 'classic';
+    return VALID.includes(v) ? v : defaultUi();
   } catch {
-    return 'classic';
+    return defaultUi();
   }
 };
 
