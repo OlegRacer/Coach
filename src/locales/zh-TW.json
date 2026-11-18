@@ -332,7 +332,7 @@
   "muscle.adductors.full": "內收肌",
   "muscle.glutes_small.full": "臀中小肌",
   "auth.signInLine": "使用 LINE 登入",
-  "pay.title": "權限與付款",
+  "pay.title": "權限",
   "pay.admin": "付款",
   "pay.toHome": "回首頁",
   "pay.howToOpen": "如何開通",
@@ -569,5 +569,6 @@
   "aud.some": "指定學員",
   "aud.search": "搜尋學員",
   "aud.none": "找不到學員",
-  "aud.empty": "尚未選擇，目前所有人都看得到。勾選學員即可只對他們顯示。"
+  "aud.empty": "尚未選擇，目前所有人都看得到。勾選學員即可只對他們顯示。",
+  "push.retry": "已允許，但訂閱尚未完成。請再點一次。"
 }

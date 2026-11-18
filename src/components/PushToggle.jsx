@@ -25,7 +25,11 @@ export default function PushToggle() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   useEffect(() => {
-    currentSubscription().then((s) => setOn(!!s && Notification.permission === 'granted'));
+    const sync = () => currentSubscription().then((s) => setOn(!!s && Notification.permission === 'granted'));
+    sync();
+    // повернулися в додаток (після системного діалогу чи налаштувань) — оновлюємо стан
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
   }, [user]);
   if (!user) return null;
   if (!pushSupported() || isIosBrowserTab()) {
@@ -41,10 +45,10 @@ export default function PushToggle() {
       } else {
         const r = await enablePush(user.id, lang);
         setOn(r.ok);
-        if (!r.ok) setMsg(r.reason === 'denied' ? t('push.denied') : t('push.error'));
+        if (!r.ok) setMsg(r.reason === 'denied' ? t('push.denied') : r.reason === 'sub' ? t('push.retry') + (r.detail ? ` (${r.detail})` : '') : t('push.error') + (r.detail ? ` (${r.detail})` : ''));
       }
-    } catch {
-      setMsg(t('push.error'));
+    } catch (e) {
+      setMsg(t('push.error') + (e && e.name ? ` (${e.name})` : ''));
     }
     setBusy(false);
   };

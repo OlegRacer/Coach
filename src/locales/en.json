@@ -332,7 +332,7 @@
   "muscle.adductors.full": "Adductors",
   "muscle.glutes_small.full": "Small glutes",
   "auth.signInLine": "Sign in with LINE",
-  "pay.title": "Access & payment",
+  "pay.title": "Access",
   "pay.admin": "Payments",
   "pay.toHome": "Back to home",
   "pay.howToOpen": "How to get access",
@@ -569,5 +569,6 @@
   "aud.some": "Selected students",
   "aud.search": "Search students",
   "aud.none": "No one found",
-  "aud.empty": "No one selected yet, so everyone can see it. Tick students to show it only to them."
+  "aud.empty": "No one selected yet, so everyone can see it. Tick students to show it only to them.",
+  "push.retry": "Permission granted, but the subscription didn't finish. Tap again."
 }

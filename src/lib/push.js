@@ -30,17 +30,31 @@ export async function currentSubscription() {
   }
 }
 
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
 export async function enablePush(userId, lang) {
-  const perm = await Notification.requestPermission();
-  if (perm !== 'granted') return { ok: false, reason: 'denied' };
+  // Реєстрацію сервіс-воркера чекаємо ДО запиту дозволу: iOS швидко «гасить» жест після діалогу дозволу
   const r = await reg();
-  const sub = (await r.pushManager.getSubscription()) || (await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID_PUBLIC) }));
+  const had = await r.pushManager.getSubscription();
+  const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+  if (perm !== 'granted') return { ok: false, reason: 'denied' };
+  let sub = had;
+  let last = null;
+  for (let i = 0; i < 4 && !sub; i++) {
+    try {
+      sub = await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(VAPID_PUBLIC) });
+    } catch (e) {
+      last = e;
+      await wait(500);
+    }
+  }
+  if (!sub) return { ok: false, reason: 'sub', detail: last ? `${last.name || ''} ${last.message || ''}`.trim() : '' };
   const j = sub.toJSON();
   const { error } = await supabase.from('push_subscriptions').upsert(
     { user_id: userId, endpoint: j.endpoint, p256dh: j.keys.p256dh, auth: j.keys.auth, lang, user_agent: navigator.userAgent.slice(0, 200) },
     { onConflict: 'endpoint' }
   );
-  if (error) return { ok: false, reason: 'db', error };
+  if (error) return { ok: false, reason: 'db', detail: `${error.code || ''} ${error.message || ''}`.trim() };
   return { ok: true };
 }
 
