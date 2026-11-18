@@ -641,3 +641,10 @@ input[type="checkbox"]:disabled { opacity: 0.5; }
 .tile-icon.has-img img { width: 100%; height: 100%; display: block; border-radius: inherit; object-fit: cover; }
 .icon-chip { padding: 4px; }
 .sec-ic { border-radius: 22%; display: block; }
+
+/* Перемикач теми: три положення (авто / світла / темна) */
+.theme-switch { position: relative; display: inline-grid; grid-template-columns: repeat(3, 44px); height: 40px; padding: 3px; border-radius: 999px; background: var(--card-2); flex: none; }
+.theme-knob { position: absolute; top: 3px; left: 3px; width: 44px; height: 34px; border-radius: 999px; background: var(--accent); transform: translateX(calc(var(--i, 0) * 44px)); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+.theme-opt { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 34px; padding: 0; border: 0; background: none; color: var(--muted); border-radius: 999px; cursor: pointer; }
+.theme-opt.on { color: var(--on-accent); }
+@media (prefers-reduced-motion: reduce) { .theme-knob { transition: none; } }

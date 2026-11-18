@@ -81,7 +81,7 @@
   "settings.language": "Language",
   "profile.title": "Profile",
   "profile.guest": "Guest",
-  "share.title": "Send link",
+  "share.title": "Share",
   "share.text": "My workouts. Open the link:",
   "share.copy": "Copy",
   "share.copied": "Link copied",
@@ -572,5 +572,9 @@
   "aud.empty": "No one selected yet, so everyone can see it. Tick students to show it only to them.",
   "push.retry": "Permission granted, but the subscription didn't finish. Tap again.",
   "push.preparing": "Preparing…",
-  "push.slow": "The app is still getting ready for notifications. Wait a minute, or close and reopen it."
+  "push.slow": "The app is still getting ready for notifications. Wait a minute, or close and reopen it.",
+  "theme.title": "Theme",
+  "theme.auto": "Auto",
+  "theme.light": "Light",
+  "theme.dark": "Dark"
 }

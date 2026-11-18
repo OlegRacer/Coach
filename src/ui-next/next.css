@@ -10,8 +10,7 @@ html[data-ui="next"] {
   --shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  html[data-ui="next"] {
+  html[data-theme="light"][data-ui="next"] {
     --bg: #f2f2f7; --card: #ffffff; --card-2: #e9e9ef; --text: #111114; --muted: #6a6a73;
     --accent: #4f8200; --on-accent: #ffffff;
     --hair: rgba(0, 0, 0, 0.1);
@@ -20,7 +19,7 @@ html[data-ui="next"] {
     --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
     color-scheme: light;
   }
-}
+
 
 html[data-ui="next"] { font: -apple-system-body; }
 html[data-ui="next"] body { font-size: 1rem; background: var(--bg); color: var(--text); -webkit-text-size-adjust: 100%; }
@@ -91,11 +90,10 @@ html[data-ui="next"] .sheet {
 html[data-ui="next"] .sheet-grab { background: var(--hair); }
 html[data-ui="next"] .sheet-backdrop { background: rgba(0, 0, 0, 0.35); }
 
-@media (prefers-color-scheme: light) {
-  html[data-ui="next"] .day.today .day-name { color: rgba(255, 255, 255, 0.85); }
-  html[data-ui="next"] .muscle { fill: #cfd0d8; }
-  html[data-ui="next"] .body-fig { background: var(--card-2); }
-}
+  html[data-theme="light"][data-ui="next"] .day.today .day-name { color: rgba(255, 255, 255, 0.85); }
+  html[data-theme="light"][data-ui="next"] .muscle { fill: #cfd0d8; }
+  html[data-theme="light"][data-ui="next"] .body-fig { background: var(--card-2); }
+
 
 /* Доступність: «Зменшити прозорість» / «Підвищена контрастність» / браузер без blur → суцільні панелі */
 @media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {

@@ -15,8 +15,7 @@ html[data-ui="classic"] {
   --text: var(--m-on-surface); --muted: var(--m-on-surface-variant); --accent: var(--m-primary); --on-accent: var(--m-on-primary);
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  html[data-ui="classic"] {
+  html[data-theme="light"][data-ui="classic"] {
     --m-primary: #4c6200; --m-on-primary: #ffffff;
     --m-primary-container: #e3f3a2; --m-on-primary-container: #141f00;
     --m-secondary-container: #e8e8ea; --m-on-secondary-container: #000000;
@@ -25,7 +24,7 @@ html[data-ui="classic"] {
     --m-error: #c62828; --m-error-container: #fde0dd;
     color-scheme: light;
   }
-}
+
 
 html[data-ui="classic"] body { font-family: 'One UI Font', Roboto, 'Google Sans', system-ui, sans-serif; background: var(--m-surface); color: var(--m-on-surface); letter-spacing: 0.01em; }
 html[data-ui="classic"] button, html[data-ui="classic"] input, html[data-ui="classic"] textarea, html[data-ui="classic"] select { font-family: inherit; }

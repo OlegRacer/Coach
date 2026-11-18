@@ -37,10 +37,31 @@ const read = () => {
   }
 };
 
-const Ctx = createContext({ ui: 'classic', setUi: () => {} });
+const TKEY = 'ui:theme';
+const THEMES = ['auto', 'light', 'dark'];
+const readTheme = () => {
+  try {
+    const v = localStorage.getItem(TKEY);
+    return THEMES.includes(v) ? v : 'auto';
+  } catch {
+    return 'auto';
+  }
+};
+
+const Ctx = createContext({ ui: 'classic', setUi: () => {}, theme: 'auto', setTheme: () => {} });
 
 export function UiProvider({ children }) {
   const [ui, setState] = useState(read);
+  const [theme, setThemeState] = useState(readTheme);
+  const setTheme = useCallback((v) => {
+    if (!THEMES.includes(v)) return;
+    try {
+      localStorage.setItem(TKEY, v);
+    } catch {
+      /* ignore */
+    }
+    setThemeState(v);
+  }, []);
   const setUi = useCallback((v) => {
     if (!VALID.includes(v)) return;
     try {
@@ -51,18 +72,22 @@ export function UiProvider({ children }) {
     setState(v);
     window.scrollTo(0, 0);
   }, []);
-  // Тема оформлення на <html>: classic = One UI (Samsung), next = iOS Liquid Glass
+  // Скін (One UI / Liquid Glass) і світла/темна тема на <html>; «авто» стежить за системою
   useLayoutEffect(() => {
     const el = document.documentElement;
     el.dataset.ui = ui;
     const meta = document.querySelector('meta[name="theme-color"]');
     const mq = window.matchMedia('(prefers-color-scheme: light)');
-    const sync = () => meta && meta.setAttribute('content', ui === 'next' ? (mq.matches ? '#f2f2f7' : '#0d0e11') : mq.matches ? '#f2f2f4' : '#000000');
+    const sync = () => {
+      const light = theme === 'light' || (theme === 'auto' && mq.matches);
+      el.dataset.theme = light ? 'light' : 'dark';
+      if (meta) meta.setAttribute('content', ui === 'next' ? (light ? '#f2f2f7' : '#0d0e11') : light ? '#f2f2f4' : '#000000');
+    };
     sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
-  }, [ui]);
-  const value = useMemo(() => ({ ui, setUi }), [ui, setUi]);
+  }, [ui, theme]);
+  const value = useMemo(() => ({ ui, setUi, theme, setTheme }), [ui, setUi, theme, setTheme]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

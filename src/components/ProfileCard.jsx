@@ -5,6 +5,7 @@ import ProfileDetails from './ProfileDetails.jsx';
 import PushToggle from './PushToggle.jsx';
 import LinkedLogins from './LinkedLogins.jsx';
 import UiSwitch from './UiSwitch.jsx';
+import ThemeSwitch from './ThemeSwitch.jsx';
 import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
@@ -122,6 +123,7 @@ export default function ProfileCard() {
       </Link>
 
       <UiSwitch />
+      <ThemeSwitch />
 
       <LinkedLogins />
 
