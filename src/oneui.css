@@ -5,8 +5,8 @@
 @font-face { font-family: 'One UI Font'; font-weight: 100 900; font-display: swap; src: url('./assets/fonts/roboto-cyrillic-wght-normal.woff2') format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
 
 html[data-ui="classic"] {
-  --m-primary: #c6deae; --m-on-primary: #141f0c;
-  --m-primary-container: #2b3624; --m-on-primary-container: #d9ecc4;
+  --m-primary: #bcdd8f; --m-on-primary: #142000;
+  --m-primary-container: #2c3a14; --m-on-primary-container: #d6efae;
   --m-secondary-container: #2a2a2c; --m-on-secondary-container: #ffffff;
   --m-surface: #000000; --m-surface-low: #121212; --m-surface-container: #1c1c1e; --m-surface-high: #272729; --m-surface-highest: #323235;
   --m-on-surface: #ffffff; --m-on-surface-variant: #a9a9ae; --m-outline: #5c5c61; --m-outline-variant: #2e2e31;

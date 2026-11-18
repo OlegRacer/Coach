@@ -3,7 +3,7 @@
    сам вміст (картки, списки) лишається плоским. Усе під html[data-ui="next"]. */
 html[data-ui="next"] {
   --bg: #0b0b0e; --card: #1a1b20; --card-2: #26272d; --text: #f5f5f7; --muted: #a0a0a9;
-  --accent: #c6deae; --on-accent: #0b0b0e;
+  --accent: #bcdd8f; --on-accent: #0b0b0e;
   --hair: rgba(255, 255, 255, 0.1);
   --glass: rgba(40, 41, 48, 0.55); --glass-strong: rgba(30, 31, 37, 0.82);
   --glass-border: rgba(255, 255, 255, 0.14); --glass-hi: rgba(255, 255, 255, 0.2);

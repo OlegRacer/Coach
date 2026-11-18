@@ -4,7 +4,7 @@
   --card-2: #22242a;
   --text: #f3f4f6;
   --muted: #a3a9b3;
-  --accent: #c6deae;
+  --accent: #bcdd8f;
   --on-accent: #0d0e11;
   color-scheme: dark;
 }
@@ -400,8 +400,8 @@ input, textarea, select, [contenteditable], .student-details {
   box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 14px rgba(0,0,0,.35);
   transition: border-color .2s, box-shadow .2s;
 }
-.muscle-group.some { border-color: rgba(198,222,174,.45); }
-.muscle-group.all { border-color: var(--accent); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 16px rgba(198,222,174,.35); }
+.muscle-group.some { border-color: rgba(188,221,143,.45); }
+.muscle-group.all { border-color: var(--accent); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 0 16px rgba(188,221,143,.35); }
 .muscle-group > .chip:first-child { font-weight: 800; }
 .chip-sub { font-size: 14px; padding-block: 8px; background: rgba(255,255,255,.06); }
 .chip-sub.active { background: var(--accent); color: var(--on-accent); }
