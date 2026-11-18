@@ -48,11 +48,12 @@ const readTheme = () => {
   }
 };
 
-const Ctx = createContext({ ui: 'classic', setUi: () => {}, theme: 'auto', setTheme: () => {} });
+const Ctx = createContext({ ui: 'classic', setUi: () => {}, theme: 'auto', setTheme: () => {}, light: false });
 
 export function UiProvider({ children }) {
   const [ui, setState] = useState(read);
   const [theme, setThemeState] = useState(readTheme);
+  const [light, setLight] = useState(() => document.documentElement.dataset.theme === 'light');
   const setTheme = useCallback((v) => {
     if (!THEMES.includes(v)) return;
     try {
@@ -81,13 +82,14 @@ export function UiProvider({ children }) {
     const sync = () => {
       const light = theme === 'light' || (theme === 'auto' && mq.matches);
       el.dataset.theme = light ? 'light' : 'dark';
+      setLight(light);
       if (meta) meta.setAttribute('content', ui === 'next' ? (light ? '#f2f2f7' : '#0d0e11') : light ? '#f2f2f4' : '#000000');
     };
     sync();
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, [ui, theme]);
-  const value = useMemo(() => ({ ui, setUi, theme, setTheme }), [ui, setUi, theme, setTheme]);
+  const value = useMemo(() => ({ ui, setUi, theme, setTheme, light }), [ui, setUi, theme, setTheme, light]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

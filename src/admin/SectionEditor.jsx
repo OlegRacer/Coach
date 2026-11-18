@@ -8,10 +8,12 @@ import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import AudiencePicker from './AudiencePicker.jsx';
 import { ConfirmButton, COLORS, LangField, newId } from './ContentCommon.jsx';
+import { useUi } from '../lib/ui.jsx';
 import { SECTION_ICONS, iconKey, iconUrl } from '../components/SectionIcon.jsx';
 
 // Редактор розділу: назва, підпис, іконка, колір, публікація, а також вправи розділу.
 export default function SectionEditor() {
+  const { light } = useUi();
   const { sid } = useParams();
   const { t } = useI18n();
   const L = useL();
@@ -139,7 +141,7 @@ export default function SectionEditor() {
         <div className="chips">
           {SECTION_ICONS.map((n) => (
             <button type="button" key={n} className={'chip icon-chip' + (iconKey(f.icon) === n ? ' active' : '')} aria-label={n} aria-pressed={iconKey(f.icon) === n} onClick={() => set('icon', n)}>
-              <img className="sec-ic" src={iconUrl(n)} alt="" width="44" height="44" draggable={false} />
+              <img className="sec-ic" src={iconUrl(n, light)} alt="" width="44" height="44" draggable={false} />
             </button>
           ))}
         </div>
