@@ -76,9 +76,9 @@ export default function PushToggle() {
   };
   return (
     <div className="stack">
-      <button type="button" className="set-row link-row" onClick={toggle} disabled={busy || !ready} aria-pressed={on}>
+      <button type="button" className="set-row link-row push-row" role="switch" aria-checked={on} onClick={toggle} disabled={busy || !ready}>
         <span className="set-label">{t('push.title')}</span>
-        <span className={'badge-status ' + (on ? 'approved' : 'pending')}>{!ready ? t('push.preparing') : on ? t('push.on') : t('push.off')}</span>
+        {!ready ? <span className="muted small">{t('push.preparing')}</span> : <span className={'sw' + (on ? ' on' : '')} aria-hidden="true"><i /></span>}
       </button>
       {on && <button type="button" className="btn-ghost" onClick={test} disabled={busy}>{t('push.test')}</button>}
       {!ready && slow && <p className="muted small">{t('push.slow')}</p>}
