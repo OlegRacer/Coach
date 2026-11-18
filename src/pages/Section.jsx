@@ -98,7 +98,7 @@ export default function Section() {
           </button>
           {menu && (
             <div className="add-menu" role="menu" onClick={() => setMenu(false)}>
-              {!sec.is_program && <button type="button" role="menuitem" disabled={add.busy} onClick={add.addEx}>{t('content.addExercise')}</button>}
+              <button type="button" role="menuitem" disabled={add.busy} onClick={add.addEx}>{t('content.addExercise')}</button>
               <button type="button" role="menuitem" disabled={add.busy} onClick={add.addSub}>{t('content.addSubsectionShort')}</button>
             </div>
           )}
@@ -167,12 +167,6 @@ export default function Section() {
           </div>
         ))}
       </div>
-      {isAdmin && (
-        <div className="stack admin-add">
-          {!sec.is_program && <button type="button" className="btn-primary" disabled={add.busy} onClick={add.addEx}>{t('content.addExercise')}</button>}
-          <button type="button" className="btn-ghost" disabled={add.busy} onClick={add.addSub}>{t('content.addSubsectionShort')}</button>
-        </div>
-      )}
       {!items.length && !subs.length && <p className="muted">{only && all.length ? t('equip.noneAvail') : t('section.empty')}</p>}
     </main>
   );
