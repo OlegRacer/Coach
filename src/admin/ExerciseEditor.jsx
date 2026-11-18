@@ -14,6 +14,8 @@ import { ConfirmButton, LangField } from './ContentCommon.jsx';
 import TimeInput from './TimeInput.jsx';
 import { GROUPS, muscleName } from '../lib/muscles.js';
 import { youtubeId, videosOf } from '../lib/video.js';
+import MuscleDropdown from '../components/MuscleDropdown.jsx';
+import AudiencePicker from './AudiencePicker.jsx';
 import EquipIcon from '../components/EquipIcon.jsx';
 
 export { youtubeId };
@@ -96,6 +98,7 @@ export default function ExerciseEditor() {
         preview_crop: cropOf(ex.preview_crop),
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
         published: ex.published,
+        audience: ex.audience || [],
         free: !!ex.free
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
@@ -243,20 +246,7 @@ export default function ExerciseEditor() {
 
         <Toggle label={t('exercise.muscles')} on={on.muscles} onChange={() => flip('muscles')} />
         {on.muscles && (
-          <div className="muscle-groups">
-            {GROUPS.map((g) => (
-              <div key={g.id} className={'muscle-group' + (f.muscles.includes(g.id) ? ' all' : [g.id, ...(g.parts || []).map((x) => x.id)].some((x) => f.muscles.includes(x)) ? ' some' : '')}>
-                <button type="button" className={'chip' + (f.muscles.includes(g.id) ? ' active' : '')} aria-pressed={f.muscles.includes(g.id)} onClick={() => toggleMuscle(g.id)}>
-                  {g.parts ? t('anatomy.all') + ': ' : ''}{t(`muscle.${g.id}`)}
-                </button>
-                {(g.parts || []).map((p) => (
-                  <button type="button" key={p.id} className={'chip chip-sub' + (f.muscles.includes(p.id) ? ' active' : '')} aria-pressed={f.muscles.includes(p.id)} onClick={() => toggleMuscle(p.id)}>
-                    {muscleName(t, p.id)}
-                  </button>
-                ))}
-              </div>
-            ))}
-          </div>
+          <MuscleDropdown value={f.muscles} onToggle={toggleMuscle} />
         )}
 
         {equipList.length > 0 && (
@@ -339,6 +329,7 @@ export default function ExerciseEditor() {
             <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
           </span>
         </label>
+        {f.published && <AudiencePicker value={f.audience} onChange={(v) => set('audience', v)} />}
         <label className="access-row">
           <input type="checkbox" checked={!!f.free} onChange={(e) => set('free', e.target.checked)} />
           <span>

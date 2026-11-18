@@ -563,5 +563,11 @@
   "content.convertDone": "Done: video reduced to {mb} MB.",
   "content.convertTrimmed": "Done. The video is longer than {sec} s, so the first {sec} s were used.",
   "content.convertFail": "Couldn't prepare the video. Try another file or open the page in Safari/Chrome.",
-  "content.convertUnsupported": "This browser can't prepare video. Open the page in Safari or Chrome."
+  "content.convertUnsupported": "This browser can't prepare video. Open the page in Safari or Chrome.",
+  "aud.title": "Visible to",
+  "aud.all": "All students",
+  "aud.some": "Selected students",
+  "aud.search": "Search students",
+  "aud.none": "No one found",
+  "aud.empty": "No one selected yet, so everyone can see it. Tick students to show it only to them."
 }

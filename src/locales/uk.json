@@ -559,5 +559,11 @@
   "content.convertDone": "Готово: відео зменшено до {mb} МБ.",
   "content.convertTrimmed": "Готово. Відео довше за {sec} с — взято перші {sec} с.",
   "content.convertFail": "Не вдалося підготувати відео. Спробуйте інший файл або відкрийте сторінку в Safari/Chrome.",
-  "content.convertUnsupported": "Цей браузер не вміє готувати відео. Відкрийте сторінку в Safari або Chrome."
+  "content.convertUnsupported": "Цей браузер не вміє готувати відео. Відкрийте сторінку в Safari або Chrome.",
+  "aud.title": "Для кого",
+  "aud.all": "Усі учні",
+  "aud.some": "Окремі учні",
+  "aud.search": "Пошук учня",
+  "aud.none": "Нікого не знайдено",
+  "aud.empty": "Нікого не вибрано: поки що це бачать усі. Позначте учнів, щоб показати лише їм."
 }

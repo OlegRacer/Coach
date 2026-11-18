@@ -621,3 +621,17 @@ html { touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
 
 /* Іконки інвентаря */
 .equip-ic { display: inline-block; vertical-align: middle; border-radius: 22%; object-fit: cover; flex: none; }
+
+/* Галочки: фон — акцентний, сама «пташка» — того ж кольору, що й текст на кнопці «Зберегти» */
+input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none; flex: none; width: 22px; height: 22px; margin: 0;
+  border: 2px solid var(--muted); border-radius: 7px; background: transparent; display: inline-grid; place-content: center; cursor: pointer;
+}
+input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+input[type="checkbox"]:checked::after {
+  content: ""; width: 11px; height: 6px; border-left: 3px solid var(--on-accent); border-bottom: 3px solid var(--on-accent);
+  transform: rotate(-45deg) translate(1px, -1px); border-radius: 1px;
+}
+input[type="checkbox"]:disabled { opacity: 0.5; }
+.aud-picker { display: flex; flex-direction: column; gap: 10px; }
+.aud-list { display: flex; flex-direction: column; max-height: 300px; overflow-y: auto; }

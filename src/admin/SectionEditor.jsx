@@ -6,6 +6,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
+import AudiencePicker from './AudiencePicker.jsx';
 import { ConfirmButton, ICONS, COLORS, LangField, newId } from './ContentCommon.jsx';
 
 // Редактор розділу: назва, підпис, іконка, колір, публікація, а також вправи розділу.
@@ -23,7 +24,7 @@ export default function SectionEditor() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, free: !!sec.free, is_program: !!sec.is_program, program_exercises: sec.program_exercises || [], program_sets: sec.program_sets || {}, days_per_week: sec.days_per_week || '' });
+    if (sec && !f) setF({ title: sec.title, hint: sec.hint, icon: sec.icon, color: sec.color, published: sec.published, audience: sec.audience || [], free: !!sec.free, is_program: !!sec.is_program, program_exercises: sec.program_exercises || [], program_sets: sec.program_sets || {}, days_per_week: sec.days_per_week || '' });
   }, [sec, f]);
 
   if (!ready) return <main className="page" />;
@@ -155,6 +156,7 @@ export default function SectionEditor() {
             <small>{f.published ? t('content.publishedOn') : t('content.publishedOff')}</small>
           </span>
         </label>
+        {f.published && <AudiencePicker value={f.audience} onChange={(v) => set('audience', v)} />}
         <label className="access-row">
           <input type="checkbox" checked={f.free} onChange={(e) => set('free', e.target.checked)} />
           <span>

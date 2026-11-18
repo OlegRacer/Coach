@@ -563,5 +563,11 @@
   "content.convertDone": "完成：影片已縮小至 {mb} MB。",
   "content.convertTrimmed": "完成。影片超過 {sec} 秒，已取前 {sec} 秒。",
   "content.convertFail": "無法處理影片。請換一個檔案，或用 Safari/Chrome 開啟。",
-  "content.convertUnsupported": "此瀏覽器無法處理影片。請用 Safari 或 Chrome 開啟。"
+  "content.convertUnsupported": "此瀏覽器無法處理影片。請用 Safari 或 Chrome 開啟。",
+  "aud.title": "可見對象",
+  "aud.all": "所有學員",
+  "aud.some": "指定學員",
+  "aud.search": "搜尋學員",
+  "aud.none": "找不到學員",
+  "aud.empty": "尚未選擇，目前所有人都看得到。勾選學員即可只對他們顯示。"
 }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import AudiencePicker from './AudiencePicker.jsx';
 import { useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -128,7 +129,7 @@ function Requests() {
   );
 }
 
-const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: [], studios: [], classes: [], days: '30', price: '', currency: 'TWD', active: false });
+const emptyPlan = () => ({ title: {}, description: {}, sections: [], exercises: [], studios: [], classes: [], days: '30', price: '', currency: 'TWD', active: false, audience: [] });
 
 function Plans() {
   const { t, locale } = useI18n();
@@ -160,7 +161,7 @@ function Plans() {
     if ((!edit.sections.length && !(edit.exercises || []).length) || !(days > 0) || !(price >= 0)) return setErr(t('pay.planInvalid'));
     setBusy(true);
     setErr('');
-    const row = { title: edit.title, description: edit.description, sections: edit.sections, exercises: edit.exercises || [], studios: edit.studios || [], classes: edit.classes || [], days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active };
+    const row = { title: edit.title, description: edit.description, sections: edit.sections, exercises: edit.exercises || [], studios: edit.studios || [], classes: edit.classes || [], days, price, currency: (edit.currency || 'TWD').toUpperCase().slice(0, 3), active: edit.active, audience: edit.active ? edit.audience || [] : [] };
     const q = edit.id ? supabase.from('access_plans').update(row).eq('id', edit.id) : supabase.from('access_plans').insert({ ...row, position: (plans || []).length });
     const { error } = await q;
     setBusy(false);
@@ -264,6 +265,7 @@ function Plans() {
           <input type="checkbox" checked={edit.active} onChange={(e) => setEdit({ ...edit, active: e.target.checked })} />
           <span>{t('pay.planActive')}<small>{edit.active ? t('pay.planActiveOn') : t('pay.planActiveOff')}</small></span>
         </label>
+        {edit.active && <AudiencePicker value={edit.audience} onChange={(v) => setEdit({ ...edit, audience: v })} />}
         <button type="button" className="btn-primary" disabled={busy} onClick={save}>{t('content.save')}</button>
         <button type="button" className="btn-ghost" onClick={() => { setEdit(null); setErr(''); }}>{t('signin.cancel')}</button>
         {info && <p className="small" role="status">{info}</p>}
