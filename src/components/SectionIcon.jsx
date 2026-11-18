@@ -7,7 +7,7 @@ Object.keys(files).forEach((p) => {
   byName[p.split('/').pop().replace('.webp', '')] = files[p];
 });
 
-export const SECTION_ICONS = ['stretch', 'lunge', 'core', 'kettlebell', 'roller', 'reach', 'coach', 'clipboard', 'program', 'waist', 'scale'];
+export const SECTION_ICONS = ['stretch', 'stretch-m', 'lunge', 'lunge-m', 'core', 'core-m', 'kettlebell', 'kettlebell-m', 'roller', 'roller-m', 'reach', 'coach', 'coach-m', 'clipboard', 'program', 'waist', 'scale'];
 const LEGACY = { barbell: 'lunge', roller: 'roller', mobility: 'stretch', anatomy: 'waist', heart: 'coach', target: 'program', chat: 'clipboard' };
 export const iconKey = (name) => (byName[name] ? name : LEGACY[name] || '');
 export const iconUrl = (name) => byName[iconKey(name)] || '';
