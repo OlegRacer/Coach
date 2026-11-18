@@ -10,6 +10,7 @@ import { setsText } from '../lib/setsText.js';
 import { cropStyle } from '../lib/crop.js';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
+import SectionTile from '../components/SectionIcon.jsx';
 
 // Розділ містить підрозділи і/або вправи (на будь-яку глибину). Закрите учень бачить із замком,
 // а відкрите окремо (пакет, «безкоштовно») лишається доступним.
@@ -91,9 +92,7 @@ export default function Section() {
           return (
             <div key={s.id} className="edit-wrap">
             <Link to={`/section/${s.id}`} className={'list-item' + (locked ? ' locked-tile' : '')}>
-              <span className="tile-icon small-icon" style={{ background: s.color }}>
-                <Icon name={s.icon} size={22} />
-              </span>
+              <SectionTile section={s} size={22} className="small-icon" />
               <span className="list-main">
                 <span className="list-title">
                   {L(s.title)}

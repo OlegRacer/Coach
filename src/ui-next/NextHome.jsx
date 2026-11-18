@@ -9,6 +9,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import { orderIds, useEditing, useWidgets } from '../lib/widgets.js';
+import SectionTile from '../components/SectionIcon.jsx';
 
 // Головна нового інтерфейсу: віджети (розклад і розділи). Довгий тап або «+» → «Редагувати віджети»:
 // пунктирні рамки, «−» ховає віджет, смужка праворуч перетягує, «Готово» завершує, «+» над ним повертає сховані.
@@ -157,9 +158,7 @@ export default function NextHome() {
     return (
       <>
         <Link to={to} onClick={(e) => zoomTo(e, to)} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
-          <span className="tile-icon" style={{ background: x.color }}>
-            <Icon name={x.icon} size={32} />
-          </span>
+          <SectionTile section={x} size={32} />
           <span className="tile-text">
             <span className="tile-title">{L(x.title)}</span>
             <span className={'muted small' + (x.published ? '' : ' draft')}>{sub}</span>

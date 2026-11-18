@@ -10,6 +10,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import ScheduleWidget from '../components/ScheduleWidget.jsx';
 import { useContent, useL } from '../lib/content.jsx';
+import SectionTile from '../components/SectionIcon.jsx';
 
 export default function Home() {
   const { t, locale } = useI18n();
@@ -96,9 +97,7 @@ export default function Home() {
           const sub = !x.published ? t('content.draft') : isFreeSection(x.id) ? t('content.free') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
           const body = (
             <>
-              <span className="tile-icon" style={{ background: x.color }}>
-                <Icon name={x.icon} size={32} />
-              </span>
+              <SectionTile section={x} size={32} />
               <span className="tile-text">
                 <span className="tile-title">{L(x.title)}</span>
                 <span className={'muted small' + (x.published ? '' : ' draft')}>{sub}</span>

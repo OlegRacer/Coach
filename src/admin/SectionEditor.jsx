@@ -7,7 +7,8 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
 import AudiencePicker from './AudiencePicker.jsx';
-import { ConfirmButton, ICONS, COLORS, LangField, newId } from './ContentCommon.jsx';
+import { ConfirmButton, COLORS, LangField, newId } from './ContentCommon.jsx';
+import { SECTION_ICONS, iconKey, iconUrl } from '../components/SectionIcon.jsx';
 
 // Редактор розділу: назва, підпис, іконка, колір, публікація, а також вправи розділу.
 export default function SectionEditor() {
@@ -136,18 +137,18 @@ export default function SectionEditor() {
 
         <span className="muted small">{t('content.icon')}</span>
         <div className="chips">
-          {ICONS.map((n) => (
-            <button type="button" key={n} className={'chip icon-chip' + (f.icon === n ? ' active' : '')} aria-label={n} aria-pressed={f.icon === n} onClick={() => set('icon', n)}>
-              <Icon name={n} size={22} />
+          {SECTION_ICONS.map((n) => (
+            <button type="button" key={n} className={'chip icon-chip' + (iconKey(f.icon) === n ? ' active' : '')} aria-label={n} aria-pressed={iconKey(f.icon) === n} onClick={() => set('icon', n)}>
+              <img className="sec-ic" src={iconUrl(n)} alt="" width="44" height="44" draggable={false} />
             </button>
           ))}
         </div>
-        <span className="muted small">{t('content.color')}</span>
-        <div className="chips">
+        {!iconKey(f.icon) && <span className="muted small">{t('content.color')}</span>}
+        {!iconKey(f.icon) && <div className="chips">
           {COLORS.map((c) => (
             <button type="button" key={c} className={'swatch' + (f.color === c ? ' on' : '')} style={{ background: c }} aria-label={c} aria-pressed={f.color === c} onClick={() => set('color', c)} />
           ))}
-        </div>
+        </div>}
 
         <label className="access-row">
           <input type="checkbox" checked={f.published} onChange={(e) => set('published', e.target.checked)} />

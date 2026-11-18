@@ -52,5 +52,4 @@ export function ConfirmButton({ label, confirmLabel, onConfirm, className = 'btn
   );
 }
 
-export const ICONS = ['barbell', 'roller', 'mobility', 'anatomy', 'heart', 'target', 'chat'];
 export const COLORS = ['#C6F432', '#FF8A5B', '#8FD3FF', '#C9B8FF', '#FFD166', '#7EE0B5', '#FF8FB1', '#B8C0CC'];

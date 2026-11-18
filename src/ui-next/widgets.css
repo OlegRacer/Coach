@@ -85,3 +85,4 @@ html[data-ui] .wd-row-add { flex: none; width: 48px; height: 48px; border-radius
 @media (min-width: 720px) {
   html[data-ui] .widget.mine-only .widget-track { grid-template-columns: minmax(0, 1fr); }
 }
+html[data-ui] .tiles .tile-icon.has-img { width: 64px; height: 64px; border-radius: 18px; }
