@@ -7,8 +7,8 @@ import { useI18n } from '../i18n/index.jsx';
 export default function MuscleDropdown({ value, onToggle }) {
   const { t } = useI18n();
   const sel = new Set(value || []);
-  const [rootOpen, setRootOpen] = useState(true);
-  const [open, setOpen] = useState(() => new Set(GROUPS.filter((g) => (g.parts || []).some((p) => sel.has(p.id))).map((g) => g.id)));
+  const [rootOpen, setRootOpen] = useState(false);
+  const [open, setOpen] = useState(() => new Set());
   const flip = (id) =>
     setOpen((o) => {
       const n = new Set(o);
