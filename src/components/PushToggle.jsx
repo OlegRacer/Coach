@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { currentSubscription, disablePush, enablePush, isIosBrowserTab, pushSupported, testPush } from '../lib/push.js';
+import { currentSubscription, disablePush, enablePush, isIosBrowserTab, pushSupported, swReady, testPush } from '../lib/push.js';
 
 // Перемикач пуш-сповіщень у профілі: дозвіл, підписка, тест.
 export default function PushToggle() {
@@ -23,6 +23,8 @@ export default function PushToggle() {
     }
   };
   const [busy, setBusy] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [slow, setSlow] = useState(false);
   const [msg, setMsg] = useState('');
   useEffect(() => {
     const sync = () => currentSubscription().then((s) => setOn(!!s && Notification.permission === 'granted'));
@@ -31,6 +33,20 @@ export default function PushToggle() {
     document.addEventListener('visibilitychange', sync);
     return () => document.removeEventListener('visibilitychange', sync);
   }, [user]);
+  // Кнопка активна, коли сервіс-воркер готовий: одразу після додавання на екран «Додому» це займає кілька секунд
+  useEffect(() => {
+    let alive = true;
+    const slowT = setTimeout(() => alive && setSlow(true), 6000);
+    swReady().then((ok) => {
+      if (!alive) return;
+      setReady(ok);
+      setSlow(!ok);
+    });
+    return () => {
+      alive = false;
+      clearTimeout(slowT);
+    };
+  }, []);
   if (!user) return null;
   if (!pushSupported() || isIosBrowserTab()) {
     return <p className="muted small">{isIosBrowserTab() ? t('push.ios') : t('push.unsupported')}</p>;
@@ -60,11 +76,12 @@ export default function PushToggle() {
   };
   return (
     <div className="stack">
-      <button type="button" className="set-row link-row" onClick={toggle} disabled={busy} aria-pressed={on}>
+      <button type="button" className="set-row link-row" onClick={toggle} disabled={busy || !ready} aria-pressed={on}>
         <span className="set-label">{t('push.title')}</span>
-        <span className={'badge-status ' + (on ? 'approved' : 'pending')}>{on ? t('push.on') : t('push.off')}</span>
+        <span className={'badge-status ' + (on ? 'approved' : 'pending')}>{!ready ? t('push.preparing') : on ? t('push.on') : t('push.off')}</span>
       </button>
       {on && <button type="button" className="btn-ghost" onClick={test} disabled={busy}>{t('push.test')}</button>}
+      {!ready && slow && <p className="muted small">{t('push.slow')}</p>}
       {msg && <p className="muted small" role="status">{msg}</p>}
     </div>
   );

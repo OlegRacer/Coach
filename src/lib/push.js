@@ -21,6 +21,17 @@ export const isIosBrowserTab = () => {
 
 const reg = () => navigator.serviceWorker.ready;
 
+// Чекаємо, поки сервіс-воркер стане активним (одразу після встановлення на екран це триває кілька секунд). false = не дочекались.
+export async function swReady(timeoutMs = 20000) {
+  if (!('serviceWorker' in navigator)) return false;
+  try {
+    const r = await Promise.race([navigator.serviceWorker.ready, new Promise((res) => setTimeout(() => res(null), timeoutMs))]);
+    return !!r;
+  } catch {
+    return false;
+  }
+}
+
 export async function currentSubscription() {
   if (!pushSupported()) return null;
   try {
@@ -33,11 +44,11 @@ export async function currentSubscription() {
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function enablePush(userId, lang) {
-  // Реєстрацію сервіс-воркера чекаємо ДО запиту дозволу: iOS швидко «гасить» жест після діалогу дозволу
-  const r = await reg();
-  const had = await r.pushManager.getSubscription();
+  // Запит дозволу — першою дією (iOS вимагає живого жесту); воркер на цей момент уже готовий (кнопка активна лише тоді)
   const perm = Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
   if (perm !== 'granted') return { ok: false, reason: 'denied' };
+  const r = await reg();
+  const had = await r.pushManager.getSubscription();
   let sub = had;
   let last = null;
   for (let i = 0; i < 4 && !sub; i++) {

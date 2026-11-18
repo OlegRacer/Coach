@@ -570,5 +570,7 @@
   "aud.search": "Search students",
   "aud.none": "No one found",
   "aud.empty": "No one selected yet, so everyone can see it. Tick students to show it only to them.",
-  "push.retry": "Permission granted, but the subscription didn't finish. Tap again."
+  "push.retry": "Permission granted, but the subscription didn't finish. Tap again.",
+  "push.preparing": "Preparing…",
+  "push.slow": "The app is still getting ready for notifications. Wait a minute, or close and reopen it."
 }
