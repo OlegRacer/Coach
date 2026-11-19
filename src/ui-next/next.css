@@ -169,3 +169,4 @@ html[data-ui="next"] .tabbar, html[data-ui="next"] .tabbar .tab { -webkit-user-d
   html[data-ui="next"] .topbar { top: 0; margin-top: -10px; padding-top: 10px; padding-bottom: 8px; }
 }
 html[data-ui="next"] .share-btn:focus-visible { outline: none; }
+html[data-ui="next"] .update-banner, html[data-ui="next"] .update-btn { outline: none; }
