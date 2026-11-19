@@ -58,8 +58,8 @@ export default function Anatomy() {
     save(n);
   };
   // розкриті групи: за замовчуванням ті, де вже щось вибрано
-  const [rootOpen, setRootOpen] = useState(true);
-  const [open, setOpen] = useState(() => new Set(GROUPS.filter((g) => leavesOfGroup(g.id).some((x) => sel.has(x)) && (g.parts || []).length).map((g) => g.id)));
+  const [rootOpen, setRootOpen] = useState(false);
+  const [open, setOpen] = useState(() => new Set());
   const toggleOpen = (id) =>
     setOpen((o) => {
       const n = new Set(o);
