@@ -7,6 +7,7 @@ import { useL } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 import { ConfirmButton, LangField, newId } from './ContentCommon.jsx';
 import EquipIcon from '../components/EquipIcon.jsx';
+import useSortable from '../lib/useSortable.js';
 
 // Довідник інвентарю: тренер додає, перейменовує (3 мови), міняє значок-емодзі й порядок, видаляє.
 export default function EquipmentAdmin() {
@@ -18,6 +19,15 @@ export default function EquipmentAdmin() {
   const [f, setF] = useState(null);
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
+  const reorder = async (ids) => {
+    setBusy(true);
+    const res = await Promise.all(ids.map((id, p) => supabase.from('equipment').update({ position: p + 1 }).eq('id', id)));
+    setBusy(false);
+    setErr((res.find((r) => r.error)?.error || {}).message || '');
+    reloadList();
+  };
+  const sort = useSortable(list.map((e) => e.id), reorder, isAdmin);
+  const byId = Object.fromEntries(list.map((e) => [e.id, e]));
   if (!isAdmin) return <main className="page"><TopBar title={t('equip.admin')} to="/" /><p className="muted">{t('students.noAccess')}</p></main>;
 
   const fail = (e) => setErr(e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
@@ -58,31 +68,19 @@ export default function EquipmentAdmin() {
       reloadList();
     }
   };
-  const move = async (i, d) => {
-    const j = i + d;
-    if (j < 0 || j >= list.length) return;
-    const ids = list.map((e) => e.id);
-    [ids[i], ids[j]] = [ids[j], ids[i]];
-    setBusy(true);
-    const res = await Promise.all(ids.map((id, p) => supabase.from('equipment').update({ position: p + 1 }).eq('id', id)));
-    setBusy(false);
-    fail(res.find((r) => r.error)?.error);
-    reloadList();
-  };
-
   return (
     <main className="page">
       <TopBar title={t('equip.admin')} to="/" />
       <p className="muted small">{t('equip.adminHint')}</p>
       {err && <p className="small err" role="alert">{err}</p>}
       <div className="list">
-        {list.map((e, i) => (
-          <div key={e.id} className="card stack">
+        {sort.order.map((id) => byId[id]).filter(Boolean).map((e) => {
+          const rp = sort.rowProps(e.id);
+          return (
+          <div key={e.id} {...rp} className={'card stack ' + (rp.className || '')}>
             <div className="row between">
               <b><EquipIcon item={e} size={28} /> {L(e.name) || e.id}</b>
               <span className="row">
-                <button type="button" className="icon-btn" disabled={busy || i === 0} onClick={() => move(i, -1)} aria-label="↑">↑</button>
-                <button type="button" className="icon-btn" disabled={busy || i === list.length - 1} onClick={() => move(i, 1)} aria-label="↓">↓</button>
                 <button type="button" className="link-btn" onClick={() => (open === e.id ? setOpen('') : edit(e))}>{open === e.id ? t('common.back') : t('equip.edit')}</button>
               </span>
             </div>
@@ -98,7 +96,8 @@ export default function EquipmentAdmin() {
               </>
             )}
           </div>
-        ))}
+          );
+        })}
       </div>
       <button type="button" className="btn-ghost" disabled={busy} onClick={add}>{t('equip.add')}</button>
     </main>
