@@ -33,3 +33,4 @@ html[data-vt] .tab-add { opacity: 0; transition: none; visibility: hidden; }
 html[data-ui] .btn-light, html[data-theme][data-ui] .btn-light { background: #dcdde2; color: #111114; }
 html[data-ui] .btn-line { background: #3e8f61; color: #fff; }
 html[data-theme="light"][data-ui] .btn-line { background: #43a96d; }
+html[data-theme="light"][data-ui] .ob-icon, html[data-theme="light"][data-ui] .avatar, html[data-theme="light"][data-ui] .yt-play { background-color: var(--fill); }
