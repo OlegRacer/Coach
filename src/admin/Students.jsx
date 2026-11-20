@@ -10,7 +10,7 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { ConfirmButton } from './ContentCommon.jsx';
 
-const NEW_DAYS = 7;
+const NEW_DAYS = 3;
 const IDLE_DAYS = 60; // не заходив стільки днів і не має чинного доступу → «неактивний'
 const DAY = 864e5;
 
