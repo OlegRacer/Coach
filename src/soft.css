@@ -23,6 +23,5 @@ html[data-theme="light"][data-ui] .mz-box.on,
 html[data-theme="light"][data-ui] .mz-box.part,
 html[data-theme="light"][data-ui] input[type="checkbox"]:checked,
 html[data-theme="light"][data-ui] .wd-done,
-html[data-theme="light"][data-ui] .wd-row-add,
-html[data-theme="light"][data-ui] .tab-add { background-color: var(--fill); }
+html[data-theme="light"][data-ui] .wd-row-add { background-color: var(--fill); }
 html[data-theme="light"][data-ui] .mz-box.on, html[data-theme="light"][data-ui] .mz-box.part, html[data-theme="light"][data-ui] input[type="checkbox"]:checked { border-color: var(--fill); }
