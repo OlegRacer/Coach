@@ -12,6 +12,7 @@ import { UiProvider } from './lib/ui.jsx';
 import './styles.css';
 import './oneui.css';
 import './motion.css';
+import './soft.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

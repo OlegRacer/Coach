@@ -1,0 +1,28 @@
+/* Світла тема: усі заливки акцентом — м'якший зелений, як у кнопки «Зберегти» */
+html[data-theme="light"] { --fill: color-mix(in srgb, var(--accent) 78%, #fff); }
+html[data-theme="light"][data-ui="classic"] { --fill: color-mix(in srgb, var(--m-primary) 78%, #fff); }
+html[data-theme="light"][data-ui] .dot.on,
+html[data-theme="light"][data-ui] .day.today,
+html[data-theme="light"][data-ui] .btn-primary,
+html[data-theme="light"][data-ui] .btn-light,
+html[data-theme="light"][data-ui] .chip.active,
+html[data-theme="light"][data-ui] .chip-sub.active,
+html[data-theme="light"][data-ui] .lang-btn.active,
+html[data-theme="light"][data-ui] .gender-btn.active,
+html[data-theme="light"][data-ui] .mday.today,
+html[data-theme="light"][data-ui] .admin-btn.armed,
+html[data-theme="light"][data-ui] .badge-new,
+html[data-theme="light"][data-ui] .badge-count,
+html[data-theme="light"][data-ui] .ob-dot.on,
+html[data-theme="light"][data-ui] .wdot.on,
+html[data-theme="light"][data-ui] .update-btn,
+html[data-theme="light"][data-ui] .sw.on,
+html[data-theme="light"][data-ui] .theme-knob,
+html[data-theme="light"][data-ui] .ios-switch.on,
+html[data-theme="light"][data-ui] .mz-box.on,
+html[data-theme="light"][data-ui] .mz-box.part,
+html[data-theme="light"][data-ui] input[type="checkbox"]:checked,
+html[data-theme="light"][data-ui] .wd-done,
+html[data-theme="light"][data-ui] .wd-row-add,
+html[data-theme="light"][data-ui] .tab-add { background-color: var(--fill); }
+html[data-theme="light"][data-ui] .mz-box.on, html[data-theme="light"][data-ui] .mz-box.part, html[data-theme="light"][data-ui] input[type="checkbox"]:checked { border-color: var(--fill); }
