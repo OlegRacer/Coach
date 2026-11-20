@@ -9,6 +9,7 @@ import Anatomy from './pages/Anatomy.jsx';
 import Plans from './pages/Plans.jsx';
 import MyProgram from './pages/MyProgram.jsx';
 import Equipment from './pages/Equipment.jsx';
+import Feedback from './pages/Feedback.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 
 
@@ -20,6 +21,7 @@ const ContentAdmin = lazy(() => import('./admin/ContentAdmin.jsx'));
 const SectionEditor = lazy(() => import('./admin/SectionEditor.jsx'));
 const ExerciseEditor = lazy(() => import('./admin/ExerciseEditor.jsx'));
 const EquipmentAdmin = lazy(() => import('./admin/EquipmentAdmin.jsx'));
+const FeedbackAdmin = lazy(() => import('./admin/FeedbackAdmin.jsx'));
 
 // Маршрути, спільні для класичного й нового інтерфейсу. extra: додаткові <Route> (наприклад, /profile у новому).
 export default function AppRoutes({ extra = null }) {
@@ -103,6 +105,15 @@ export default function AppRoutes({ extra = null }) {
       element={
         <AdminBoundary>
           <StorageAdmin />
+        </AdminBoundary>
+      }
+    />
+    <Route path="/feedback" element={<Feedback />} />
+    <Route
+      path="/admin/feedback"
+      element={
+        <AdminBoundary>
+          <FeedbackAdmin />
         </AdminBoundary>
       }
     />

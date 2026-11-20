@@ -690,3 +690,16 @@ html[data-theme="light"] .btn-primary, html[data-theme="light"] .update-btn { ba
 html[data-theme="light"][data-ui="next"] .btn-primary { box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 14%, transparent); }
 html[data-theme="light"][data-ui="classic"] .btn-primary { background: color-mix(in srgb, var(--m-primary) 78%, #fff); }
 html[data-theme="light"][data-ui="classic"] .btn-danger { background: rgba(214, 69, 74, 0.1); color: #c43a3f; }
+
+/* Зворотний зв'язок, відгуки, перемикач моделі анатомії */
+.fb-preview { display: block; max-width: 100%; max-height: 320px; border-radius: 14px; object-fit: contain; align-self: flex-start; }
+.fb-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.fb-actions > * { flex: 0 0 auto; }
+.fb-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.fb-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.fb-kind.idea { background: rgba(120, 170, 255, 0.16); color: #7fb0ff; }
+html[data-theme="light"] .fb-kind.idea { color: #2f62b8; background: rgba(60, 120, 220, 0.12); }
+.anat-model { margin-bottom: 12px; }
+textarea.field { min-height: 140px; }
+.fb-kinds, .anat-model { display: flex; flex-wrap: nowrap; gap: 8px; }
+.fb-kinds .chip, .anat-model .chip { flex: 1 1 0; min-width: 0; text-align: center; white-space: normal; }

@@ -36,7 +36,24 @@ export default function Anatomy() {
   const { exercisesByMuscles, sectionOpen } = useContent();
   const L = useL();
   const { ready, details } = useAuth();
-  const female = !!(details && details.gender === 'female');
+  // Модель тіла: за замовчуванням за статтю з анкети, можна перемкнути (вибір запам'ятовується)
+  const [model, setModel] = useState(() => {
+    try {
+      const v = localStorage.getItem('anatomy:model');
+      return v === 'female' || v === 'male' ? v : '';
+    } catch {
+      return '';
+    }
+  });
+  const pickModel = (v) => {
+    setModel(v);
+    try {
+      localStorage.setItem('anatomy:model', v);
+    } catch {
+      /* ignore */
+    }
+  };
+  const female = (model || (details && details.gender === 'female' ? 'female' : 'male')) === 'female';
   const { bodyImg, litImg, regions, REGION, CLIP } = female ? FEMALE : MALE;
   const [params, setParams] = useSearchParams();
   // Вибрані «листки» (найдрібніші зони). ?m= може містити і групу, вона розгортається в півзони.
@@ -75,6 +92,14 @@ export default function Anatomy() {
   return (
     <main className="page wide anatomy-page">
       <TopBar title={t('anatomy.title')} />
+
+      <div className="chips anat-model" role="radiogroup" aria-label={t('anatomy.model')}>
+        {['male', 'female'].map((m) => (
+          <button key={m} type="button" role="radio" aria-checked={(m === 'female') === female} className={'chip' + ((m === 'female') === female ? ' active' : '')} onClick={() => pickModel(m)}>
+            {t(`anatomy.${m}`)}
+          </button>
+        ))}
+      </div>
 
       <div className="card anat-card" style={{ '--ar': regions.width / regions.height }}>
         <div className="anat-fig">

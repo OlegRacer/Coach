@@ -45,6 +45,15 @@ export default function ProfileCard() {
       .eq('status', 'pending')
       .then(({ count }) => setPendingPay(count || 0));
   }, [isAdmin, online]);
+  const [newFb, setNewFb] = useState(0);
+  useEffect(() => {
+    if (!isAdmin || !online) return;
+    supabase
+      .from('feedback')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'new')
+      .then(({ count }) => setNewFb(count || 0));
+  }, [isAdmin, online]);
   const canOpen = !!user && !isAdmin && online;
 
   const Tag = canOpen ? 'button' : 'div';
@@ -129,6 +138,15 @@ export default function ProfileCard() {
 
       <PushToggle />
 
+      {user && (
+        <Link to="/feedback" className="set-row link-row">
+          <span className="set-label">{t('fb.title')}</span>
+          <span className="muted">
+            <Icon name="chevron" size={20} />
+          </span>
+        </Link>
+      )}
+
       {isAdmin && (
         <>
           <Link to="/admin/students" className="set-row link-row">
@@ -160,6 +178,15 @@ export default function ProfileCard() {
           </Link>
           <Link to="/admin/storage" className="set-row link-row">
             <span className="set-label">{t('mem.title')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/feedback" className="set-row link-row">
+            <span className="set-label">
+              {t('fb.admin')}
+              {newFb > 0 && <span className="badge-count">{newFb}</span>}
+            </span>
             <span className="muted">
               <Icon name="chevron" size={20} />
             </span>
