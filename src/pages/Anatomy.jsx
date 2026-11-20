@@ -25,6 +25,8 @@ const build = (bodyImg, litImg, regions) => ({
 });
 // У жіночій моделі області r31/r32 — клубово-поперекові м'язи й кравецький м'яз (верх стегна і низ пресу): до квадрицепса їх не підсвічуємо.
 const FEMALE_SKIP = { quads: ['r31', 'r32'] };
+// ...а їх підсвічуємо разом із косими м'язами живота (нижня частина преса)
+const FEMALE_ADD = { obliques: ['r31', 'r32'] };
 const MALE = build(bodyImgM, litImgM, regionsM);
 const FEMALE = build(bodyImgF, litImgF, regionsF);
 
@@ -113,7 +115,7 @@ export default function Anatomy() {
             </defs>
             {LEAVES.map((leaf) => {
               const on = sel.has(leaf.id);
-              const rs = female && FEMALE_SKIP[leaf.id] ? leaf.regions.filter((r) => !FEMALE_SKIP[leaf.id].includes(r)) : leaf.regions;
+              const rs = female ? [...(FEMALE_SKIP[leaf.id] ? leaf.regions.filter((r) => !FEMALE_SKIP[leaf.id].includes(r)) : leaf.regions), ...(FEMALE_ADD[leaf.id] || [])] : leaf.regions;
               const glow = rs.map((r) => REGION[r]).filter(Boolean);
               const clip = rs.map((r) => CLIP[r]).filter(Boolean);
               return (
