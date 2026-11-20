@@ -4,7 +4,6 @@ html[data-theme="light"][data-ui="classic"] { --fill: color-mix(in srgb, var(--m
 html[data-theme="light"][data-ui] .dot.on,
 html[data-theme="light"][data-ui] .day.today,
 html[data-theme="light"][data-ui] .btn-primary,
-html[data-theme="light"][data-ui] .btn-light,
 html[data-theme="light"][data-ui] .chip.active,
 html[data-theme="light"][data-ui] .chip-sub.active,
 html[data-theme="light"][data-ui] .lang-btn.active,
@@ -29,3 +28,8 @@ html[data-theme="light"][data-ui] .mz-box.on, html[data-theme="light"][data-ui] 
 /* Під час переходу між сторінками кнопку «+» ховаємо (без «привида»), після нього вона плавно повертається */
 .tab-add { transition: opacity 0.25s ease, transform 0.2s ease; }
 html[data-vt] .tab-add { opacity: 0; transition: none; visibility: hidden; }
+
+/* Вхід: Google — світло-сіра кнопка, LINE — той самий зелений, але приглушений під стиль додатка */
+html[data-ui] .btn-light, html[data-theme][data-ui] .btn-light { background: #dcdde2; color: #111114; }
+html[data-ui] .btn-line { background: #3e8f61; color: #fff; }
+html[data-theme="light"][data-ui] .btn-line { background: #43a96d; }
