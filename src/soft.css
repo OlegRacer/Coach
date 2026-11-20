@@ -25,3 +25,7 @@ html[data-theme="light"][data-ui] input[type="checkbox"]:checked,
 html[data-theme="light"][data-ui] .wd-done,
 html[data-theme="light"][data-ui] .wd-row-add { background-color: var(--fill); }
 html[data-theme="light"][data-ui] .mz-box.on, html[data-theme="light"][data-ui] .mz-box.part, html[data-theme="light"][data-ui] input[type="checkbox"]:checked { border-color: var(--fill); }
+
+/* Під час переходу між сторінками кнопку «+» ховаємо (без «привида»), після нього вона плавно повертається */
+.tab-add { transition: opacity 0.25s ease, transform 0.2s ease; }
+html[data-vt] .tab-add { opacity: 0; transition: none; visibility: hidden; }

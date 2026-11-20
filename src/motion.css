@@ -57,11 +57,6 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   html[data-ui] .tabbar { view-transition-name: tabbar; }
-  html[data-ui] .tab-add { view-transition-name: tabadd; }
-  ::view-transition-group(tabbar), ::view-transition-group(tabadd) { animation-duration: 0.01s; }
-  ::view-transition-group(tabadd) { border-radius: 50%; overflow: clip; }
+  ::view-transition-group(tabbar) { animation-duration: 0.01s; }
   ::view-transition-group(tabbar) { border-radius: 36px; overflow: clip; }
-  ::view-transition-image-pair(tabadd), ::view-transition-old(tabadd), ::view-transition-new(tabadd) { border-radius: 50%; overflow: clip; }
-  ::view-transition-old(tabadd) { animation: none; opacity: 0; }
-  ::view-transition-new(tabadd) { animation: none; opacity: 1; }
 }
