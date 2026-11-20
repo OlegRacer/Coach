@@ -138,7 +138,7 @@ export default function ProfileCard() {
 
       <PushToggle />
 
-      {user && (
+      {user && !isAdmin && (
         <Link to="/feedback" className="set-row link-row">
           <span className="set-label">{t('fb.title')}</span>
           <span className="muted">
