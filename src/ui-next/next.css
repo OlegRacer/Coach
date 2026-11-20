@@ -155,6 +155,9 @@ html[data-ui="next"] .tab.active { background: transparent; }
   @keyframes vt-out-right { to { transform: translateX(100%); } }
   @keyframes vt-in-left { from { transform: translateX(-100%); } }
   ::view-transition-group(tabbar), ::view-transition-group(tabadd) { animation-duration: 0.01s; }
+  ::view-transition-group(tabadd) { border-radius: 50%; overflow: clip; }
+  ::view-transition-group(tabbar) { border-radius: 36px; overflow: clip; }
+  ::view-transition-image-pair(tabadd), ::view-transition-old(tabadd), ::view-transition-new(tabadd) { border-radius: 50%; overflow: clip; }
 }
 
 /* перетягування бульбашки */
