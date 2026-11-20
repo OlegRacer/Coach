@@ -158,6 +158,8 @@ html[data-ui="next"] .tab.active { background: transparent; }
   ::view-transition-group(tabadd) { border-radius: 50%; overflow: clip; }
   ::view-transition-group(tabbar) { border-radius: 36px; overflow: clip; }
   ::view-transition-image-pair(tabadd), ::view-transition-old(tabadd), ::view-transition-new(tabadd) { border-radius: 50%; overflow: clip; }
+  ::view-transition-old(tabadd) { animation: none; opacity: 0; }
+  ::view-transition-new(tabadd) { animation: none; opacity: 1; }
 }
 
 /* перетягування бульбашки */
