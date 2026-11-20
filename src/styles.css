@@ -291,7 +291,7 @@ button.profile { border: 0; width: 100%; text-align: left; color: inherit; }
 .access-row { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 15px; font-weight: 700; }
 .access-row input { width: 22px; height: 22px; accent-color: var(--accent); flex: none; }
 .access-row small { display: block; font-weight: 500; color: var(--muted); }
-.btn-danger { border: 0; border-radius: 16px; min-height: 48px; font-size: 16px; font-weight: 800; width: 100%; background: #3a1d1f; color: #ff9a9a; }
+.btn-danger { border: 0; border-radius: 16px; min-height: 48px; font-size: 16px; font-weight: 800; width: 100%; background: rgba(255, 120, 120, 0.13); color: #ffa3a3; }
 .btn-danger:disabled, .btn-primary:disabled { opacity: 0.5; }
 button.btn-primary { border: 0; width: 100%; }
 
@@ -320,9 +320,9 @@ button.day { border: 0; color: inherit; font: inherit; padding: 0; }
 select.field { appearance: none; }
 
 /* Контент з бази */
-.badge-draft { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: #3a2f12; color: #ffd166; font-size: 12px; font-weight: 700; vertical-align: middle; }
-.draft { color: #ffd166; }
-.draft-pill { color: #ffd166; }
+.badge-draft { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(255, 209, 102, 0.14); color: #f0cc7e; font-size: 12px; font-weight: 700; vertical-align: middle; }
+.draft { color: #f0cc7e; }
+.draft-pill { color: #f0cc7e; }
 .pre { white-space: pre-line; }
 .link-btn { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 700; padding: 8px 0 8px 12px; cursor: pointer; }
 .sort-btns { display: flex; gap: 4px; flex: none; }
@@ -340,7 +340,7 @@ select.field { appearance: none; }
 .student { position: relative; }
 .admin-btn { position: absolute; left: 18px; top: 74px; width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--card-2); color: var(--muted); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .admin-btn.armed { background: var(--accent); color: var(--on-accent); }
-.warn { color: #ffd166; }
+.warn { color: #f0cc7e; }
 .filter-row { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
 .filter-row .chip { flex: none; white-space: nowrap; }
 .field-toggle { padding: 4px 0; font-weight: 700; }
@@ -421,7 +421,7 @@ input, textarea, select, [contenteditable], .student-details {
 .pay-proof { max-height: 420px; object-fit: contain; }
 .pay-sent { display: flex; gap: 10px; align-items: center; color: var(--accent); }
 .back-link { align-self: flex-start; padding-left: 0; }
-.badge-status { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: #3a2f12; color: #ffd166; }
+.badge-status { flex: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; background: rgba(255, 209, 102, 0.14); color: #f0cc7e; }
 .badge-status.approved { background: #1f3a12; color: #9be564; }
 .badge-status.rejected { background: #3a1616; color: #ff8a8a; }
 .badge-count { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--accent); color: var(--on-accent); font-size: 12px; font-weight: 800; }
@@ -680,3 +680,13 @@ input[type="checkbox"]:disabled { opacity: 0.5; }
 .add-menu button { padding: 14px 16px; border: 0; background: none; color: var(--text); font: inherit; font-weight: 600; text-align: left; border-radius: 12px; cursor: pointer; }
 .add-menu button:active { background: var(--card-2); }
 .add-menu button:disabled { opacity: 0.5; }
+
+/* Світла тема: м'які кольори кнопок і позначок (без темних плашок і сильних відтінків) */
+html[data-theme="light"] .btn-danger { background: rgba(214, 69, 74, 0.1); color: #c43a3f; }
+html[data-theme="light"] .badge-draft, html[data-theme="light"] .badge-status { background: rgba(214, 150, 20, 0.14); color: #8f6200; }
+html[data-theme="light"] .draft, html[data-theme="light"] .draft-pill, html[data-theme="light"] .warn { color: #8f6200; }
+html[data-theme="light"] .err { color: #c43a3f; }
+html[data-theme="light"] .btn-primary, html[data-theme="light"] .update-btn { background: color-mix(in srgb, var(--accent) 78%, #fff); box-shadow: none; }
+html[data-theme="light"][data-ui="next"] .btn-primary { box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 14%, transparent); }
+html[data-theme="light"][data-ui="classic"] .btn-primary { background: color-mix(in srgb, var(--m-primary) 78%, #fff); }
+html[data-theme="light"][data-ui="classic"] .btn-danger { background: rgba(214, 69, 74, 0.1); color: #c43a3f; }
