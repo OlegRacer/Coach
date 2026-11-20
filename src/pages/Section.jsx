@@ -124,15 +124,15 @@ export default function Section() {
           const locked = !open && !n;
           return (
             <div key={s.id} {...(sortSubs.rowProps(s.id))} className={'edit-wrap ' + (sortSubs.rowProps(s.id).className || '')}>
-            <Link to={`/section/${s.id}`} draggable={false} className={'list-item' + (locked ? ' locked-tile' : '')}>
+            <Link to={`/section/${s.id}`} draggable={false} onClick={(e) => { if (s.draft && !isAdmin) e.preventDefault(); }} className={'list-item' + (locked ? ' locked-tile' : '')}>
               <SectionTile section={s} size={22} className="small-icon" />
               <span className="list-main">
                 <span className="list-title">
                   {L(s.title)}
-                  {!s.published && <span className="badge-draft">{t('content.draft')}</span>}
+                  {!s.published && isAdmin && <span className="badge-draft">{t('content.draft')}</span>}
                   {isFreeSection(s.id) && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
                 </span>
-                <span className="muted small">{n > 0 ? t('access.partial', { n }) : L(s.hint)}</span>
+                <span className={'muted small' + (s.draft ? ' draft' : '')}>{s.draft ? t('content.draft') : n > 0 ? t('access.partial', { n }) : L(s.hint)}</span>
               </span>
               <span className="muted">
                 <Icon name={locked ? 'lock' : 'chevron'} size={20} />
@@ -144,17 +144,17 @@ export default function Section() {
         })}
         {items.map((e) => (
           <div key={e.id} {...(ownById[e.id] ? sortEx.rowProps(e.id) : {})} className={'edit-wrap ' + (ownById[e.id] ? sortEx.rowProps(e.id).className || '' : '')}>
-          <Link to={`/exercise/${e.id}`} draggable={false} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
+          <Link to={`/exercise/${e.id}`} draggable={false} onClick={(ev) => { if (e.draft && !isAdmin) ev.preventDefault(); }} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
               {e.preview && <Thumb src={mediaUrl(e.preview)} crop={e.preview_crop} />}
             </span>
             <span className="list-main">
               <span className="list-title">
                 {L(e.title)}
-                {!e.published && <span className="badge-draft">{t('content.draft')}</span>}
+                {!e.published && isAdmin && <span className="badge-draft">{t('content.draft')}</span>}
                 {e.free && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
               </span>
-              <span className="muted small">{exerciseOpen(e) ? progText(e.id) : t('access.closed')}</span>
+              <span className={'muted small' + (e.draft ? ' draft' : '')}>{e.draft ? t('content.draft') : exerciseOpen(e) ? progText(e.id) : t('access.closed')}</span>
               {!isAdmin && exerciseOpen(e) && missing(e).length > 0 && (
                 <span className="small equip-warn">{t('equip.missing', { list: missing(e).map((id) => L(byId[id].name)).join(', ') })}</span>
               )}

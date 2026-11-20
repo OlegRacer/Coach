@@ -121,7 +121,7 @@ export default function Home() {
           }
           return (
             <div key={x.id} className="edit-wrap">
-              <Link to={to} className={'tile' + (open ? '' : ' locked-tile')}>
+              <Link to={to} onClick={(e) => { if (x.draft && !isAdmin) e.preventDefault(); }} className={'tile' + (open ? '' : ' locked-tile')}>
                 {body}
                 <span className="muted">
                   <Icon name={open ? 'chevron' : 'lock'} size={22} />

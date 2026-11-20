@@ -163,7 +163,7 @@ export function ContentProvider({ children }) {
   const value = useMemo(() => {
     const { kids, chainOf, subtreeIds } = tree;
     // Розділ відкрито повністю: доступ (чи «безкоштовно») на ньому або на будь-якому предку.
-    const sectionOpen = (id) => isAdmin || chainOf(id).some((a) => a.free || hasAccess(a.id));
+    const sectionOpen = (id) => isAdmin || (!chainOf(id).some((a) => a.draft) && chainOf(id).some((a) => a.free || hasAccess(a.id)));
     const inOpenProgram = (id) => data.sections.some((p) => p.is_program && (p.program_exercises || []).includes(id) && sectionOpen(p.id));
     const exerciseOpen = (e) => !!e && !e.locked && (isAdmin || e.free || hasExercise(e.id) || sectionOpen(e.section_id) || inOpenProgram(e.id));
     const exercisesIn = (id) => {

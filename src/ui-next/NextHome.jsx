@@ -163,7 +163,7 @@ export default function NextHome() {
     const sub = !x.published ? t('content.draft') : isFreeSection(x.id) ? t('content.free') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : L(x.hint)) : t('access.closed');
     return (
       <>
-        <Link to={to} onClick={(e) => zoomTo(e, to)} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
+        <Link to={to} onClick={(e) => (x.draft && !isAdmin ? e.preventDefault() : zoomTo(e, to))} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
           <SectionTile section={x} size={32} />
           <span className="tile-text">
             <span className="tile-title">{L(x.title)}</span>
