@@ -42,3 +42,13 @@ html[data-theme="light"][data-ui] .badge-free, html[data-theme="light"][data-ui]
 
 .badge-moved { margin-left: 8px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--card); color: var(--muted); vertical-align: middle; }
 .access-panel .row .field { min-width: 0; flex: 1; }
+
+/* Студії в адмінці розкладу: компактний рядок з випадаючим списком класів */
+.studio { padding: 0; }
+.studio-head { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; background: none; border: 0; color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.studio-name { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.studio.open .fold-chev { transform: rotate(-90deg); }
+.studio-body { padding: 0 14px 12px; display: grid; gap: 4px; }
+.studio-row { display: flex; align-items: center; gap: 8px; padding: 2px 0 2px 10px; border-left: 2px solid var(--card-2); }
+.studio-cls { flex: 1; min-width: 0; font-size: 14px; }
+.studio-del { margin-top: 6px; min-height: 38px; font-size: 14px; }

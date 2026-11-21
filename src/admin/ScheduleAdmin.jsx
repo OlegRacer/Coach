@@ -265,43 +265,43 @@ export default function ScheduleAdmin() {
 
       <h2 className="h2 section-title">{t('sa.studios')}</h2>
       {!studios.length && <p className="muted small">{t('sa.studiosEmpty')}</p>}
-      {studios.map((x) => (
-        <section key={x.id} className="card">
-          <div className="session">
-            <button
-              type="button"
-              className="h2"
-              style={{ flex: 1, minWidth: 0, textAlign: 'left', background: 'none', border: 0, padding: 0, color: 'inherit', font: 'inherit', cursor: 'pointer' }}
-              aria-expanded={openStudio === x.id}
-              onClick={() => setOpenStudio(openStudio === x.id ? null : x.id)}
-            >
-              {x.name}
-              <span className="muted small"> · {classes.filter((c) => c.studio_id === x.id).length} {openStudio === x.id ? '▴' : '▾'}</span>
+      {studios.map((x) => {
+        const cls = classes.filter((c) => c.studio_id === x.id);
+        const open = openStudio === x.id;
+        return (
+          <section key={x.id} className={'card studio' + (open ? ' open' : '')}>
+            <button type="button" className="studio-head" aria-expanded={open} onClick={() => setOpenStudio(open ? null : x.id)}>
+              <span className="studio-name">{x.name}</span>
+              <span className="muted small">{cls.length}</span>
+              <span className="fold-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span>
             </button>
-            <button
-              type="button"
-              className={'icon-btn trash-btn' + (armed === 'g' + x.id ? ' armed' : '')}
-              aria-label={t('sa.delete')}
-              onClick={() => confirm('g' + x.id, () => run(supabase.from('studios').delete().eq('id', x.id)))}
-            >
-              {armed === 'g' + x.id ? <span className="small">{t('sa.deleteConfirm')}</span> : <Icon name="trash" size={22} />}
-            </button>
-          </div>
-          {openStudio === x.id && classes.filter((c) => c.studio_id === x.id).map((c) => (
-            <div key={c.id} className="session">
-              <div className="session-title" style={{ flex: 1, minWidth: 0 }}>{c.name}</div>
-              <button
-                type="button"
-                className={'icon-btn trash-btn' + (armed === 'c' + c.id ? ' armed' : '')}
-                aria-label={t('sa.delete')}
-                onClick={() => confirm('c' + c.id, () => run(supabase.from('studio_classes').delete().eq('id', c.id)))}
-              >
-                {armed === 'c' + c.id ? <span className="small">{t('sa.deleteConfirm')}</span> : <Icon name="trash" size={22} />}
-              </button>
-            </div>
-          ))}
-        </section>
-      ))}
+            {open && (
+              <div className="studio-body">
+                {cls.map((c) => (
+                  <div key={c.id} className="studio-row">
+                    <span className="studio-cls">{c.name}</span>
+                    <button
+                      type="button"
+                      className={'icon-btn trash-btn' + (armed === 'c' + c.id ? ' armed' : '')}
+                      aria-label={t('sa.delete')}
+                      onClick={() => confirm('c' + c.id, () => run(supabase.from('studio_classes').delete().eq('id', c.id)))}
+                    >
+                      {armed === 'c' + c.id ? <span className="small">{t('sa.deleteConfirm')}</span> : <Icon name="trash" size={20} />}
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  className={'btn-danger studio-del' + (armed === 'g' + x.id ? ' armed' : '')}
+                  onClick={() => confirm('g' + x.id, () => run(supabase.from('studios').delete().eq('id', x.id)))}
+                >
+                  {armed === 'g' + x.id ? t('sa.deleteConfirm') : t('sa.delete')}
+                </button>
+              </div>
+            )}
+          </section>
+        );
+      })}
 
       <h2 className="h2 section-title">{t('sa.slots')}</h2>
       {!trainers.length && <p className="muted small">{t('sa.needTrainer')}</p>}
