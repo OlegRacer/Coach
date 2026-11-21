@@ -56,6 +56,17 @@ export function nextOccurrence(slots, now = new Date()) {
   return null;
 }
 
+// Найближче заняття одного класу (до ~400 днів уперед); null, якщо більше не буде
+export function nextOf(slot, now = new Date(), days = 400) {
+  const nowHM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  for (let i = 0; i < days; i += 1) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+    const list = slotsOn([slot], d).filter((x) => i > 0 || x.start_time >= nowHM);
+    if (list.length) return { slot: list[0], date: d, delta: i };
+  }
+  return null;
+}
+
 // Клітинки місяця з понеділка: null для порожніх на початку
 export function monthGrid(year, month) {
   const first = new Date(year, month, 1);

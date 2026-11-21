@@ -52,3 +52,15 @@ html[data-theme="light"][data-ui] .badge-free, html[data-theme="light"][data-ui]
 .studio-row { display: flex; align-items: center; gap: 8px; padding: 2px 0 2px 10px; border-left: 2px solid var(--card-2); }
 .studio-cls { flex: 1; min-width: 0; font-size: 14px; }
 .studio-del { margin-top: 6px; min-height: 38px; font-size: 14px; }
+
+/* Статуси занять: перенесено — м'яко-жовтий, клас закінчився — м'яко-червоний */
+:root { --st-moved-bg: #fbf0cf; --st-moved-fg: #8a6300; --st-end-bg: #fbe3e4; --st-end-fg: #b23a40; }
+html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg: #f0cf7a; --st-end-bg: rgba(235, 90, 96, 0.16); --st-end-fg: #f09a9e; }
+.session.is-moved { background: var(--st-moved-bg); }
+.session.is-ended { background: var(--st-end-bg); }
+.session.is-moved .session-time b, .session.is-moved .session-status { color: var(--st-moved-fg); }
+.session.is-ended .session-time b, .session.is-ended .session-status { color: var(--st-end-fg); }
+.session-status { color: var(--muted); margin-top: 2px; }
+.session.is-moved .session-status, .session.is-ended .session-status { font-weight: 600; }
+.session.is-ended .session-title { opacity: 0.8; }
+.badge-moved { background: var(--st-moved-bg); color: var(--st-moved-fg); }

@@ -4,7 +4,7 @@ import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { iso } from '../lib/schedule.js';
+import { iso, nextOf } from '../lib/schedule.js';
 import { weekdayOf } from '../lib/dates.js';
 
 const NEW = '__new';
@@ -224,7 +224,7 @@ export default function ScheduleAdmin() {
     );
   }
 
-  const when = (s) => (s.weekday != null ? t(`day.short.${s.weekday}`) : s.on_date);
+  const when = (s) => (s.weekday != null ? t(`day.short.${s.weekday}`) : fmt(s.on_date));
 
   return (
     <main className="page">
@@ -373,16 +373,25 @@ export default function ScheduleAdmin() {
         return (
           <section key={tr.id} className="card">
             <h2 className="h2">{tr.name}</h2>
-            {mine.map((s) => (
+            {mine.map((s) => {
+              const withEx = { ...s, ex: Object.fromEntries(exs.filter((e) => e.slot_id === s.id).map((e) => [e.orig_date, { kind: e.kind, new_date: e.new_date, new_time: e.new_time ? String(e.new_time).slice(0, 5) : null }])) };
+              const nx = nextOf(withEx);
+              const todayIso = iso(new Date());
+              const moved = !!nx && (nx.slot.moved || Object.values(withEx.ex).some((e) => e.kind === 'move' && e.new_date >= todayIso));
+              const ended = !nx;
+              const nxDate = nx ? iso(nx.date) : '';
+              const nxText = nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)} ${nx.slot.start_time}` : '';
+              return (
               <div key={s.id}>
-                <div className="session">
+                <div className={'session' + (moved ? ' is-moved' : '') + (ended ? ' is-ended' : '')}>
                   <div className="session-time">
-                    <b>{s.start_time}</b>
-                    <span>{when(s)}</span>
+                    <b>{nx ? nx.slot.start_time : s.start_time}</b>
+                    <span>{nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)}` : when(s)}</span>
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="session-title">{s.title}</div>
                     <div className="muted small">{[t('common.minutes', { n: s.duration_min }), (studios.find((g) => g.id === s.studio_id) || {}).name, (classes.find((c) => c.id === s.class_id) || {}).name, s.pause_from && s.pause_to ? t('sa.pausedRange', { a: fmt(s.pause_from), b: fmt(s.pause_to) }) : null].filter(Boolean).join(' · ')}</div>
+                    <div className="small session-status">{ended ? t('sa.ended') : `${moved ? t('sa.moved') + ' · ' : ''}${t('sa.next', { d: nxText })}`}</div>
                   </div>
                   <button type="button" className="icon-btn" aria-label={t('sa.edit')} aria-expanded={editId === s.id} onClick={() => setEditId(editId === s.id ? null : s.id)}>
                     <Icon name="edit" size={22} />
@@ -398,7 +407,8 @@ export default function ScheduleAdmin() {
                 </div>
                 {editId === s.id && <SlotEditor key={s.id + (s.pause_from || '') + s.start_time + s.weekday} slot={s} exs={exs} run={run} t={t} />}
               </div>
-            ))}
+              );
+            })}
           </section>
         );
       })}

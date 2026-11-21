@@ -41,7 +41,7 @@ export function SessionList({ items, trainers, empty, onDelete }) {
   return (
     <div className="stack" style={{ gap: 10 }}>
       {items.map((s) => (
-        <div key={s.id} className="session">
+        <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '')}>
           <div className="session-time">
             {s.personal ? (
               <b>{s.start_time === '00:00' ? t('aw.anyTime') : s.start_time}</b>

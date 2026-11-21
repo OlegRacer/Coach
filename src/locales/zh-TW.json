@@ -626,5 +626,7 @@
   "sa.pauseSave": "暫停",
   "sa.pauseClear": "取消暫停",
   "sa.pausedRange": "暫停 {a}–{b}",
-  "sa.editAll": "更改整個系列的課程"
+  "sa.editAll": "更改整個系列的課程",
+  "sa.ended": "課程已結束",
+  "sa.next": "下一堂：{d}"
 }

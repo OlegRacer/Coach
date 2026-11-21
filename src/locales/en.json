@@ -626,5 +626,7 @@
   "sa.pauseSave": "Pause",
   "sa.pauseClear": "Remove pause",
   "sa.pausedRange": "paused {a}–{b}",
-  "sa.editAll": "Change every class in the series"
+  "sa.editAll": "Change every class in the series",
+  "sa.ended": "class has ended",
+  "sa.next": "Next: {d}"
 }
