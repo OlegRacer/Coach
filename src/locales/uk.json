@@ -606,5 +606,21 @@
   "fb.f.all": "Усі",
   "anatomy.model": "Модель",
   "anatomy.male": "Чоловік",
-  "anatomy.female": "Жінка"
+  "anatomy.female": "Жінка",
+  "sa.edit": "Редагувати",
+  "sa.moved": "перенесено",
+  "sa.pickDate": "Яке заняття змінити?",
+  "sa.cancelOne": "Скасувати заняття {d}",
+  "sa.moveTo": "або перенести на:",
+  "sa.moveOne": "Перенести заняття {d}",
+  "sa.changes": "Зміни окремих занять",
+  "sa.cancelled": "скасовано",
+  "sa.restore": "Повернути",
+  "sa.pause": "Призупинити клас на період",
+  "sa.from": "З",
+  "sa.to": "По",
+  "sa.pauseSave": "Призупинити",
+  "sa.pauseClear": "Зняти паузу",
+  "sa.pausedRange": "пауза {a}–{b}",
+  "sa.editAll": "Змінити для всіх занять серії"
 }

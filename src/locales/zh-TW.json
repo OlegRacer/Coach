@@ -610,5 +610,21 @@
   "fb.f.all": "全部",
   "anatomy.model": "模型",
   "anatomy.male": "男",
-  "anatomy.female": "女"
+  "anatomy.female": "女",
+  "sa.edit": "編輯",
+  "sa.moved": "已改期",
+  "sa.pickDate": "要更改哪一堂課？",
+  "sa.cancelOne": "取消 {d} 的課程",
+  "sa.moveTo": "或改期到：",
+  "sa.moveOne": "改期 {d} 的課程",
+  "sa.changes": "單堂課的變更",
+  "sa.cancelled": "已取消",
+  "sa.restore": "還原",
+  "sa.pause": "暫停此課程一段期間",
+  "sa.from": "從",
+  "sa.to": "至",
+  "sa.pauseSave": "暫停",
+  "sa.pauseClear": "取消暫停",
+  "sa.pausedRange": "暫停 {a}–{b}",
+  "sa.editAll": "更改整個系列的課程"
 }

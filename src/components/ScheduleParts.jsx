@@ -53,7 +53,7 @@ export function SessionList({ items, trainers, empty, onDelete }) {
             )}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}</div>
+            <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}{s.moved && <span className="badge-moved">{t('sa.moved')}</span>}</div>
             <div className="muted small">{[name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
           </div>
           {s.personal && onDelete && (

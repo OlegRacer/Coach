@@ -610,5 +610,21 @@
   "fb.f.all": "All",
   "anatomy.model": "Model",
   "anatomy.male": "Male",
-  "anatomy.female": "Female"
+  "anatomy.female": "Female",
+  "sa.edit": "Edit",
+  "sa.moved": "moved",
+  "sa.pickDate": "Which class to change?",
+  "sa.cancelOne": "Cancel the class on {d}",
+  "sa.moveTo": "or move it to:",
+  "sa.moveOne": "Move the class of {d}",
+  "sa.changes": "Changes to single classes",
+  "sa.cancelled": "cancelled",
+  "sa.restore": "Restore",
+  "sa.pause": "Pause this class for a period",
+  "sa.from": "From",
+  "sa.to": "To",
+  "sa.pauseSave": "Pause",
+  "sa.pauseClear": "Remove pause",
+  "sa.pausedRange": "paused {a}–{b}",
+  "sa.editAll": "Change every class in the series"
 }

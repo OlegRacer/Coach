@@ -24,13 +24,25 @@ const write = (k, v) => {
 export const iso = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
-// Заняття на конкретну дату: щотижневі за днем тижня + одноразові за датою
+// Заняття на конкретну дату: щотижневі за днем тижня + одноразові за датою.
+// Враховує паузу серії (pause_from..pause_to) та винятки: скасовані й перенесені дати.
 export function slotsOn(slots, date) {
   const wd = weekdayOf(date);
   const key = iso(date);
-  return slots
-    .filter((s) => (s.weekday != null ? s.weekday === wd : s.on_date === key))
-    .sort((a, b) => a.start_time.localeCompare(b.start_time));
+  const out = [];
+  slots.forEach((s) => {
+    const ex = s.ex || {};
+    const base = s.weekday != null ? s.weekday === wd : s.on_date === key;
+    const paused = s.pause_from && s.pause_to && key >= s.pause_from && key <= s.pause_to;
+    if (base && !paused && !ex[key]) out.push(s);
+    Object.keys(ex).forEach((orig) => {
+      const e = ex[orig];
+      if (e.kind === 'move' && e.new_date === key) {
+        out.push({ ...s, id: `${s.id}@${orig}`, moved: true, orig_date: orig, start_time: e.new_time || s.start_time });
+      }
+    });
+  });
+  return out.sort((a, b) => a.start_time.localeCompare(b.start_time));
 }
 
 // Найближче заняття від зараз (до 60 днів уперед)
@@ -71,7 +83,7 @@ const normPersonal = (r) => ({
   trainer_id: null
 });
 
-const norm = (s) => ({ ...s, start_time: String(s.start_time).slice(0, 5) });
+const norm = (s, ex = {}) => ({ ...s, start_time: String(s.start_time).slice(0, 5), ex });
 
 // Розклад із бази. Остання копія лежить у телефоні, тому працює й без інтернету.
 export function useSchedule() {
@@ -87,12 +99,17 @@ export function useSchedule() {
 
   const load = useCallback(async () => {
     try {
-      const [tr, sl] = await Promise.all([
+      const [tr, sl, xs] = await Promise.all([
         supabase.from('trainers').select('*').order('sort').order('created_at'),
-        supabase.from('schedule_slots').select('*')
+        supabase.from('schedule_slots').select('*'),
+        supabase.from('slot_exceptions').select('*')
       ]);
       if (tr.error || sl.error) throw tr.error || sl.error;
-      const s = (sl.data || []).map(norm);
+      const byId = {};
+      (xs.error ? [] : xs.data || []).forEach((e) => {
+        (byId[e.slot_id] = byId[e.slot_id] || {})[e.orig_date] = { kind: e.kind, new_date: e.new_date, new_time: e.new_time ? String(e.new_time).slice(0, 5) : null };
+      });
+      const s = (sl.data || []).map((x) => norm(x, byId[x.id]));
       setTrainers(tr.data || []);
       setSlots(s);
       write(KEY + ':t', tr.data || []);
