@@ -3,6 +3,7 @@ import Icon from './Icon.jsx';
 import { currentWeek, weekdayOf } from '../lib/dates.js';
 import { iso, slotsOn } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
+import { useAuth } from '../auth/index.jsx';
 
 // Смужка тижня: тап по дню вибирає його.
 export function WeekStrip({ slots, selected, onSelect }) {
@@ -36,6 +37,7 @@ export function WeekStrip({ slots, selected, onSelect }) {
 // Перелік занять на день
 export function SessionList({ items, trainers, studios = [], showStudio, empty, onDelete }) {
   const { t } = useI18n();
+  const { isAdmin } = useAuth();
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
   return (
@@ -56,6 +58,11 @@ export function SessionList({ items, trainers, studios = [], showStudio, empty, 
             <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}{s.moved && <span className="badge-moved">{t('sa.moved')}</span>}</div>
             <div className="muted small">{[showStudio ? (studios.find((g) => g.id === s.studio_id) || {}).name || name(s.trainer_id) : name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
           </div>
+          {isAdmin && !s.personal && (
+            <Link className="icon-btn" to={`/admin/schedule?edit=${String(s.id).split('@')[0]}`} aria-label={t('sa.edit')}>
+              <Icon name="edit" size={22} />
+            </Link>
+          )}
           {s.personal && onDelete && (
             <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => onDelete(s)}>
               <Icon name="trash" size={22} />

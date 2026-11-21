@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -125,7 +126,13 @@ export default function ScheduleAdmin() {
   const [trainers, setTrainers] = useState([]);
   const [slots, setSlots] = useState([]);
   const [exs, setExs] = useState([]);
-  const [editId, setEditId] = useState(null);
+  const [params] = useSearchParams();
+  const [editId, setEditId] = useState(params.get('edit'));
+  useEffect(() => {
+    if (!editId || !slots.length) return;
+    const el = document.getElementById('slot-' + editId);
+    if (el) el.scrollIntoView({ block: 'center' });
+  }, [slots.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const [studios, setStudios] = useState([]);
   const [classes, setClasses] = useState([]);
   const [newTrainer, setNewTrainer] = useState('');
@@ -382,7 +389,7 @@ export default function ScheduleAdmin() {
               const nxDate = nx ? iso(nx.date) : '';
               const nxText = nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)} ${nx.slot.start_time}` : '';
               return (
-              <div key={s.id}>
+              <div key={s.id} id={'slot-' + s.id}>
                 <div className={'session' + (moved ? ' is-moved' : '') + (ended ? ' is-ended' : '')}>
                   <div className="session-time">
                     <b>{nx ? nx.slot.start_time : s.start_time}</b>
