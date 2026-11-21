@@ -13,7 +13,7 @@ import { useAuth } from '../auth/index.jsx';
 export default function ScheduleWidget({ mineOnly = false }) {
   const { t, locale } = useI18n();
   const { user } = useAuth();
-  const { trainers, slots, mine, reload } = useSchedule();
+  const { trainers, studios, slots, mine, reload } = useSchedule();
   const [adding, setAdding] = useState(false);
   const removeItem = async (s) => {
     await supabase.from('student_plan_items').delete().eq('id', s.pid);
@@ -91,7 +91,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
                 ))}
               </div>
               <WeekStrip slots={trainerSlots} selected={dayTr} onSelect={setDayTr} />
-              <SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} />
+              <SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} studios={studios} showStudio />
             </>
           )}
         </div>}

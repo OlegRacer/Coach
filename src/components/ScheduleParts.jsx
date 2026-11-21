@@ -34,7 +34,7 @@ export function WeekStrip({ slots, selected, onSelect }) {
 }
 
 // Перелік занять на день
-export function SessionList({ items, trainers, empty, onDelete }) {
+export function SessionList({ items, trainers, studios = [], showStudio, empty, onDelete }) {
   const { t } = useI18n();
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
@@ -54,7 +54,7 @@ export function SessionList({ items, trainers, empty, onDelete }) {
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}{s.moved && <span className="badge-moved">{t('sa.moved')}</span>}</div>
-            <div className="muted small">{[name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
+            <div className="muted small">{[showStudio ? (studios.find((g) => g.id === s.studio_id) || {}).name || name(s.trainer_id) : name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
           </div>
           {s.personal && onDelete && (
             <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => onDelete(s)}>

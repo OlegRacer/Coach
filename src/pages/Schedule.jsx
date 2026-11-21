@@ -12,7 +12,7 @@ import { useI18n } from '../i18n/index.jsx';
 export default function Schedule() {
   const { t, locale } = useI18n();
   const { user } = useAuth();
-  const { trainers, slots, mine, reload } = useSchedule();
+  const { trainers, studios, slots, mine, reload } = useSchedule();
   const [adding, setAdding] = useState(false);
   const removeItem = async (s) => {
     await supabase.from('student_plan_items').delete().eq('id', s.pid);
@@ -90,7 +90,7 @@ export default function Schedule() {
       {who === 'mine' && !mine.length ? (
         <p className="muted">{t('sched.noMine')}</p>
       ) : (
-        <SessionList items={slotsOn(list, day)} trainers={trainers} onDelete={removeItem} />
+        <SessionList items={slotsOn(list, day)} trainers={trainers} studios={studios} showStudio={who !== 'mine'} onDelete={removeItem} />
       )}
       </div>
       {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}

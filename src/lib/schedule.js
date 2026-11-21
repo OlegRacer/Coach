@@ -102,6 +102,7 @@ export function useSchedule() {
   const uid = user ? user.id : null;
   const [trainers, setTrainers] = useState(() => read(KEY + ':t', []));
   const [slots, setSlots] = useState(() => read(KEY + ':s', []));
+  const [studios, setStudios] = useState(() => read(KEY + ':g', []));
   const [mineIds, setMineIds] = useState(() => (uid ? read(`${KEY}:m:${uid}`, []) : []));
   const [myStudios, setMyStudios] = useState([]);
   const [myClasses, setMyClasses] = useState([]);
@@ -123,6 +124,11 @@ export function useSchedule() {
       const s = (sl.data || []).map((x) => norm(x, byId[x.id]));
       setTrainers(tr.data || []);
       setSlots(s);
+      const st = await supabase.from('studios').select('id,name');
+      if (!st.error) {
+        setStudios(st.data || []);
+        write(KEY + ':g', st.data || []);
+      }
       write(KEY + ':t', tr.data || []);
       write(KEY + ':s', s);
       if (uid) {
@@ -171,5 +177,5 @@ export function useSchedule() {
     (s) => mineIds.includes(s.id) || (s.class_id ? myClasses.includes(s.class_id) : s.studio_id && myStudios.includes(s.studio_id))
   );
   const mine = [...assigned, ...personal];
-  return { trainers, slots, mine, loaded, reload: load };
+  return { trainers, studios, slots, mine, loaded, reload: load };
 }
