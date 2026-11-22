@@ -108,6 +108,41 @@ export default function TabBar() {
     el.style.removeProperty('--drag');
     if (d.idx !== undefined && d.idx !== cur) goTo(d.idx);
   };
+  // Телефон набік: панель вкладок схована, поки сторінка нерухома. З'являється під час прокрутки
+  // або по натисканню на смужку внизу, і знову ховається за кілька секунд.
+  const hideTimer = useRef(null);
+  useEffect(() => {
+    const mq = window.matchMedia('(orientation: landscape) and (max-height: 520px)');
+    const root = document.documentElement;
+    const apply = (show) => {
+      if (mq.matches) root.dataset.bar = show ? 'show' : 'hide';
+      else delete root.dataset.bar;
+    };
+    const reveal = (ms) => {
+      apply(true);
+      clearTimeout(hideTimer.current);
+      hideTimer.current = setTimeout(() => apply(false), ms);
+    };
+    let last = window.scrollY;
+    const onScroll = () => {
+      if (!mq.matches || Math.abs(window.scrollY - last) < 3) return;
+      last = window.scrollY;
+      reveal(1800);
+    };
+    const onPeek = () => reveal(4500);
+    const onMq = () => apply(false);
+    apply(false);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('tabbar-peek', onPeek);
+    mq.addEventListener('change', onMq);
+    return () => {
+      clearTimeout(hideTimer.current);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('tabbar-peek', onPeek);
+      mq.removeEventListener('change', onMq);
+      delete root.dataset.bar;
+    };
+  }, [pathname]);
   // у редакторах адмінки панель не потрібна: більше місця для форм (return після всіх хуків)
   if (pathname.startsWith('/admin') || editing) return null;
   const showAdd = !!user && (pathname === '/' || pathname === '/schedule');
@@ -127,6 +162,7 @@ export default function TabBar() {
         );
       })}
     </nav>
+    <button type="button" className="tabbar-peek" aria-label={t('nav.tabs')} onClick={() => window.dispatchEvent(new Event('tabbar-peek'))} />
     {showAdd && (
       <button type="button" className="tab-add glass" aria-label={t('aw.add')} aria-haspopup="dialog" onClick={() => setSheet(true)}>
         <Icon name="plus" size={24} />

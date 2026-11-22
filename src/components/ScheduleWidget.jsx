@@ -85,12 +85,12 @@ export default function ScheduleWidget({ mineOnly = false }) {
           </div>
           <WeekStrip slots={mine} selected={dayMine} onSelect={setDayMine} />
           {!mine.length ? (
-            <p className="muted small">{t('sched.noMine')}</p>
+            <div className="w-sessions"><p className="muted small">{t('sched.noMine')}</p></div>
           ) : (
-            <>
+            <div className="w-sessions">
               <SessionList items={dayItems} trainers={trainers} onDelete={removeItem} />
               {!dayItems.length && nextText && <p className="small">{nextText}</p>}
-            </>
+            </div>
           )}
         </div>
 
@@ -112,7 +112,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
               </div>
               <div key={activeTrainer} className={'tr-zone' + (dir ? ' sw-' + dir : '')} {...zone}>
                 <WeekStrip slots={trainerSlots} selected={dayTr} onSelect={setDayTr} />
-                <SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} studios={studios} showStudio />
+                <div className="w-sessions"><SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} studios={studios} showStudio /></div>
               </div>
             </>
           )}
