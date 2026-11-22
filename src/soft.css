@@ -120,6 +120,6 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .sched-daylabel { margin: 0; font-size: 15px; font-weight: 800; }
 .sched-daylabel::first-letter { text-transform: uppercase; }
 /* Тінь вибраного дня не повинна просвічувати з сусідньої панелі пейджера */
-.swp { margin-left: -6px; margin-right: -6px; }
-.swp-panel { padding: 0 6px; box-sizing: border-box; overflow: clip; }
+.swp { margin: -6px; }
+.swp-panel { padding: 6px; box-sizing: border-box; overflow: clip; }
 .sched-page > .sched-tiles { align-items: stretch; }

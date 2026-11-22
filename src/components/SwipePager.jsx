@@ -36,11 +36,14 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       const mx = p.clientX - s.x;
       const my = p.clientY - s.y;
       if (!s.lock) {
+        // горизонтальний жест не віддаємо зовнішній прокрутці віджета (інакше стрибає на «Мій розклад»)
+        if (Math.abs(mx) > Math.abs(my) && e.cancelable) e.preventDefault();
         if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
         s.lock = Math.abs(mx) > Math.abs(my) * 1.3 ? 'x' : 'y';
         if (s.lock === 'x') setDrag(true);
       }
       if (s.lock !== 'x') return;
+      if (e.cancelable) e.preventDefault();
       const atEdge = (index === 0 && mx > 0) || (index === count - 1 && mx < 0);
       setDx(atEdge ? mx * 0.25 : mx);
     };
@@ -64,7 +67,7 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       else onIndex(n);
     };
     el.addEventListener('touchstart', start, { passive: true });
-    el.addEventListener('touchmove', move, { passive: true });
+    el.addEventListener('touchmove', move, { passive: false });
     el.addEventListener('touchend', end, { passive: true });
     el.addEventListener('touchcancel', end, { passive: true });
     return () => {
