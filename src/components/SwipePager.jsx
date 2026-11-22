@@ -45,7 +45,8 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       if (s.lock !== 'x') return;
       if (e.cancelable) e.preventDefault();
       const atEdge = (index === 0 && mx > 0) || (index === count - 1 && mx < 0);
-      setDx(atEdge ? mx * 0.25 : mx);
+      // біля краю з onEdge панель не тягнемо (без гумки і ривка) — просто перехід на сусідню плитку
+      setDx(atEdge ? (onEdge ? 0 : mx * 0.25) : mx);
     };
     const end = (e) => {
       const s = st.current;
