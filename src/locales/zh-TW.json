@@ -628,5 +628,6 @@
   "sa.pausedRange": "暫停 {a}–{b}",
   "sa.editAll": "更改整個系列的課程",
   "sa.ended": "課程已結束",
-  "sa.next": "下一堂：{d}"
+  "sa.next": "下一堂：{d}",
+  "sa.paused": "暫停中"
 }

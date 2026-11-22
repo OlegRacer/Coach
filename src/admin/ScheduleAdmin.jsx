@@ -386,11 +386,12 @@ export default function ScheduleAdmin() {
               const todayIso = iso(new Date());
               const moved = !!nx && (nx.slot.moved || Object.values(withEx.ex).some((e) => e.kind === 'move' && e.new_date >= todayIso));
               const ended = !nx;
+              const paused = !ended && !!s.pause_from && !!s.pause_to && s.pause_to >= todayIso;
               const nxDate = nx ? iso(nx.date) : '';
               const nxText = nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)} ${nx.slot.start_time}` : '';
               return (
               <div key={s.id} id={'slot-' + s.id}>
-                <div className={'session' + (moved ? ' is-moved' : '') + (ended ? ' is-ended' : '')}>
+                <div className={'session' + (moved && !paused ? ' is-moved' : '') + (paused ? ' is-paused' : '') + (ended ? ' is-ended' : '')}>
                   <div className="session-time">
                     <b>{nx ? nx.slot.start_time : s.start_time}</b>
                     <span>{nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)}` : when(s)}</span>
@@ -398,7 +399,7 @@ export default function ScheduleAdmin() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="session-title">{s.title}</div>
                     <div className="muted small">{[t('common.minutes', { n: s.duration_min }), (studios.find((g) => g.id === s.studio_id) || {}).name, (classes.find((c) => c.id === s.class_id) || {}).name, s.pause_from && s.pause_to ? t('sa.pausedRange', { a: fmt(s.pause_from), b: fmt(s.pause_to) }) : null].filter(Boolean).join(' · ')}</div>
-                    <div className="small session-status">{ended ? t('sa.ended') : `${moved ? t('sa.moved') + ' · ' : ''}${t('sa.next', { d: nxText })}`}</div>
+                    <div className="small session-status">{ended ? t('sa.ended') : `${paused ? t('sa.paused') + ' · ' : moved ? t('sa.moved') + ' · ' : ''}${t('sa.next', { d: nxText })}`}</div>
                   </div>
                   <button type="button" className="icon-btn" aria-label={t('sa.edit')} aria-expanded={editId === s.id} onClick={() => setEditId(editId === s.id ? null : s.id)}>
                     <Icon name="edit" size={22} />
