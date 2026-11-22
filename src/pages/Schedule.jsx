@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import AddWorkout from '../components/AddWorkout.jsx';
 import { useAuth } from '../auth/index.jsx';
@@ -23,6 +23,29 @@ export default function Schedule() {
   const [who, setWho] = useState('mine');
   const [day, setDay] = useState(now);
 
+  const tabs = ['mine', ...trainers.map((x) => x.id)];
+  const [dir, setDir] = useState('');
+  const touch = useRef(null);
+  const go = (step) => {
+    const i = tabs.indexOf(who);
+    const n = tabs[i + step];
+    if (n === undefined) return;
+    setDir(step > 0 ? 'l' : 'r');
+    setWho(n);
+  };
+  const swipe = {
+    onTouchStart: (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; },
+    onTouchEnd: (e) => {
+      const s0 = touch.current;
+      touch.current = null;
+      if (!s0) return;
+      const p = e.changedTouches[0];
+      const dx = p.clientX - s0.x;
+      const dy = p.clientY - s0.y;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) go(dx < 0 ? 1 : -1);
+    }
+  };
+
   const list = who === 'mine' ? mine : slots.filter((s) => s.trainer_id === who);
   const cells = monthGrid(ym.y, ym.m);
   const label = new Date(ym.y, ym.m, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
@@ -39,17 +62,17 @@ export default function Schedule() {
       <TopBar title={t('schedule.title')} />
 
       <div className="chips">
-        <button type="button" className={'chip' + (who === 'mine' ? ' active' : '')} onClick={() => setWho('mine')}>
+        <button type="button" className={'chip' + (who === 'mine' ? ' active' : '')} onClick={() => { setDir('r'); setWho('mine'); }}>
           {t('home.schedule')}
         </button>
         {trainers.map((x) => (
-          <button key={x.id} type="button" className={'chip' + (who === x.id ? ' active' : '')} onClick={() => setWho(x.id)}>
+          <button key={x.id} type="button" className={'chip' + (who === x.id ? ' active' : '')} onClick={() => { setDir(tabs.indexOf(x.id) > tabs.indexOf(who) ? 'l' : 'r'); setWho(x.id); }}>
             {x.name}
           </button>
         ))}
       </div>
 
-      <section className="card">
+      <section key={who} className={'card sched-cal' + (dir ? ' sw-' + dir : '')} {...swipe}>
         <div className="row between">
           <button type="button" className="icon-btn small-btn" onClick={() => move(-1)} aria-label={t('sched.prevMonth')}>
             <Icon name="back" size={20} />

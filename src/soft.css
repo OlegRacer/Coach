@@ -73,3 +73,11 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .day-group .session + .session, .day-group > div + div { margin-top: 8px; }
 .session.is-once { background: var(--st-once-bg); }
 .session.is-once .session-time b, .session.is-once .session-status { color: var(--st-once-fg); font-weight: 600; }
+
+/* Свайп по календарю розкладу перемикає вкладки */
+.sched-cal { touch-action: pan-y; }
+.sched-cal.sw-l { animation: sw-from-r 0.28s cubic-bezier(0.2, 0, 0, 1); }
+.sched-cal.sw-r { animation: sw-from-l 0.28s cubic-bezier(0.2, 0, 0, 1); }
+@keyframes sw-from-r { from { opacity: 0.3; transform: translateX(28px); } to { opacity: 1; transform: none; } }
+@keyframes sw-from-l { from { opacity: 0.3; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sched-cal.sw-l, .sched-cal.sw-r { animation: none; } }
