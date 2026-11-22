@@ -37,9 +37,21 @@ export default function ScheduleWidget({ mineOnly = false }) {
     const el = track.current;
     if (el) setPage(Math.round(el.scrollLeft / el.clientWidth));
   };
+  // власна анімація прокрутки (надійніше за scrollTo smooth на iOS, коли нативний скрол вимкнено)
+  const anim = useRef(0);
   const goTo = (i) => {
     const el = track.current;
-    if (el) el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
+    if (!el) return;
+    cancelAnimationFrame(anim.current);
+    const from = el.scrollLeft;
+    const to = i * el.clientWidth;
+    const t0 = performance.now();
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / 300);
+      el.scrollLeft = from + (to - from) * (1 - Math.pow(1 - k, 3));
+      if (k < 1) anim.current = requestAnimationFrame(step);
+    };
+    anim.current = requestAnimationFrame(step);
   };
 
   // зовнішній перехід між плитками: тільки горизонтальний свайп (не по діагоналі), без нативного скролу
@@ -61,7 +73,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
       if (Math.abs(mx) < 30 || Math.abs(mx) < Math.abs(my) * 2.5) return;
       if (!(Math.abs(mx) > el.clientWidth * 0.22 || fast)) return;
       const n = Math.max(0, Math.min(1, pageRef.current + (mx < 0 ? 1 : -1)));
-      el.scrollTo({ left: n * el.clientWidth, behavior: 'smooth' });
+      goTo(n);
     };
     el.addEventListener('touchstart', start, { passive: true });
     el.addEventListener('touchend', end, { passive: true });
