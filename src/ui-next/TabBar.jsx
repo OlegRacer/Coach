@@ -114,6 +114,8 @@ export default function TabBar() {
   const hideTimer = useRef(null);
   useEffect(() => {
     const root = document.documentElement;
+    // на комп'ютері (миша) панель завжди видима: там немає свайпів і нижнього краю для дотику
+    if (!window.matchMedia('(pointer: coarse)').matches) { delete root.dataset.bar; return undefined; }
     const apply = (show) => { root.dataset.bar = show ? 'show' : 'hide'; };
     const reveal = (ms) => {
       apply(true);
