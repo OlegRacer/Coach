@@ -16,6 +16,7 @@ import AdminBoundary from './admin/AdminBoundary.jsx';
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
 const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
+const ChallengesAdmin = lazy(() => import('./admin/ChallengesAdmin.jsx'));
 const StorageAdmin = lazy(() => import('./admin/StorageAdmin.jsx'));
 const ContentAdmin = lazy(() => import('./admin/ContentAdmin.jsx'));
 const SectionEditor = lazy(() => import('./admin/SectionEditor.jsx'));
@@ -33,6 +34,7 @@ export default function AppRoutes({ extra = null }) {
       import('./admin/Students.jsx');
       import('./admin/ScheduleAdmin.jsx');
       import('./admin/PaymentsAdmin.jsx');
+      import('./admin/ChallengesAdmin.jsx');
       import('./admin/StorageAdmin.jsx');
       import('./admin/ContentAdmin.jsx');
       import('./admin/SectionEditor.jsx');
@@ -89,6 +91,14 @@ export default function AppRoutes({ extra = null }) {
       element={
         <AdminBoundary>
           <EquipmentAdmin />
+        </AdminBoundary>
+      }
+    />
+    <Route
+      path="/admin/challenges"
+      element={
+        <AdminBoundary>
+          <ChallengesAdmin />
         </AdminBoundary>
       }
     />

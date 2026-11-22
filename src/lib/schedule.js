@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { weekdayOf } from './dates.js';
+import { useL } from './content.jsx';
+import { itemDate } from './challenges.js';
 
 const KEY = 'schedule:v1';
 
@@ -107,7 +109,9 @@ export function useSchedule() {
   const [myStudios, setMyStudios] = useState([]);
   const [myClasses, setMyClasses] = useState([]);
   const [personal, setPersonal] = useState(() => (uid ? read(`${KEY}:p:${uid}`, []) : []));
+  const [chal, setChal] = useState(() => (uid ? read(`${KEY}:c:${uid}`, null) : null));
   const [loaded, setLoaded] = useState(false);
+  const L = useL();
 
   const load = useCallback(async () => {
     try {
@@ -145,6 +149,25 @@ export function useSchedule() {
           setPersonal(list);
           write(`${KEY}:p:${uid}`, list);
         }
+        // Челенджі, у яких учень бере участь: заняття стають звичайними пунктами розкладу
+        const cm = await supabase.from('challenge_members').select('*').eq('student_id', uid).eq('status', 'active');
+        if (!cm.error) {
+          const cids = (cm.data || []).map((m) => m.challenge_id);
+          let cs = [], ci = [], cd = [];
+          if (cids.length) {
+            const [a, b, c] = await Promise.all([
+              supabase.from('challenges').select('id,title').in('id', cids),
+              supabase.from('challenge_items').select('*').in('challenge_id', cids),
+              supabase.from('challenge_done').select('item_id').eq('student_id', uid)
+            ]);
+            cs = a.data || [];
+            ci = b.data || [];
+            cd = (c.data || []).map((x) => x.item_id);
+          }
+          const pack = { members: cm.data || [], challenges: cs, items: ci, done: cd };
+          setChal(pack);
+          write(`${KEY}:c:${uid}`, pack);
+        }
         if (!my.error) {
           const ids = (my.data || []).map((r) => r.slot_id);
           setMineIds(ids);
@@ -162,6 +185,7 @@ export function useSchedule() {
     if (!ready) return undefined;
     setMineIds(uid ? read(`${KEY}:m:${uid}`, []) : []);
     setPersonal(uid ? read(`${KEY}:p:${uid}`, []) : []);
+    setChal(uid ? read(`${KEY}:c:${uid}`, null) : null);
     load();
     const onVisible = () => document.visibilityState === 'visible' && load();
     document.addEventListener('visibilitychange', onVisible);
@@ -176,6 +200,31 @@ export function useSchedule() {
   const assigned = slots.filter(
     (s) => mineIds.includes(s.id) || (s.class_id ? myClasses.includes(s.class_id) : s.studio_id && myStudios.includes(s.studio_id))
   );
-  const mine = [...assigned, ...personal];
+  const chalItems = useMemo(() => {
+    if (!chal) return [];
+    const out = [];
+    chal.items.forEach((it) => {
+      const m = chal.members.find((x) => x.challenge_id === it.challenge_id);
+      const c = chal.challenges.find((x) => x.id === it.challenge_id);
+      if (!m || !c) return;
+      out.push({
+        id: 'c:' + it.id,
+        challenge: true,
+        itemId: it.id,
+        personal: true,
+        done: chal.done.includes(it.id),
+        title: L(it.title) || L(c.title),
+        place: L(c.title),
+        to: it.ref_kind === 'exercise' ? `/exercise/${it.ref_id}` : it.ref_kind === 'section' ? `/section/${it.ref_id}` : '',
+        weekday: null,
+        on_date: itemDate(m.start_date, it.day_no),
+        start_time: String(it.start_time).slice(0, 5),
+        duration_min: it.duration_min,
+        trainer_id: null
+      });
+    });
+    return out;
+  }, [chal, L]);
+  const mine = [...assigned, ...personal, ...chalItems];
   return { trainers, studios, slots, mine, loaded, reload: load };
 }

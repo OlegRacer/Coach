@@ -24,6 +24,7 @@ const TXT = {
   newPay: { uk: 'Нова оплата', en: 'New payment', 'zh-TW': '新付款' },
   approved: { uk: 'Доступ відкрито', en: 'Access unlocked', 'zh-TW': '已開通' },
   rejected: { uk: 'Оплату не підтверджено', en: 'Payment not confirmed', 'zh-TW': '付款未確認' },
+  chal: { uk: 'Челендж: час тренування', en: 'Challenge: workout time', 'zh-TW': '挑戰：該訓練了' },
   test: { uk: 'Сповіщення працюють', en: 'Notifications work', 'zh-TW': '通知正常' }
 };
 
@@ -46,7 +47,7 @@ async function send(userIds: string[], build: (lang: Lang) => { title: string; b
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
-  let body: { type?: string; id?: string } = {};
+  let body: { type?: string; id?: string; student_id?: string; item_id?: string } = {};
   try {
     body = await req.json();
   } catch {
@@ -60,6 +61,24 @@ Deno.serve(async (req) => {
     if (!data || !data.user) return json({ error: 'unauthorized' }, 401);
     const n = await send([data.user.id], (l) => ({ title: TXT.test[l], body: 'OK', url: './', tag: 'test' }));
     return json({ sent: n });
+  }
+
+  // Нагадування про заняття челенджу. Викликає функція бази challenge_reminders(): вона спершу пише рядок
+  // у challenge_notified, тож без свіжого неналаштованого рядка (до 10 хв) нічого не надсилаємо.
+  if (body.type === 'challenge_item') {
+    if (!body.student_id || !body.item_id) return json({ error: 'no_id' }, 400);
+    const { data: n } = await db.from('challenge_notified').select('*').eq('student_id', body.student_id).eq('item_id', body.item_id).maybeSingle();
+    if (!n || n.sent_at || Date.now() - new Date(n.created_at).getTime() > 10 * 60 * 1000) return json({ skipped: true });
+    await db.from('challenge_notified').update({ sent_at: new Date().toISOString() }).eq('student_id', n.student_id).eq('item_id', n.item_id);
+    const { data: it } = await db.from('challenge_items').select('title, challenge:challenges(title)').eq('id', body.item_id).maybeSingle();
+    if (!it) return json({ error: 'not_found' }, 404);
+    const sent = await send([body.student_id], (l) => ({
+      title: TXT.chal[l],
+      body: [pick(it.challenge && it.challenge.title, l), pick(it.title, l)].filter(Boolean).join(' · '),
+      url: './#/schedule',
+      tag: 'chal-' + body.item_id
+    }));
+    return json({ sent });
   }
 
   // Подальші типи викликає тригер бази. Дані беремо з бази за id, тож підробити текст неможливо,

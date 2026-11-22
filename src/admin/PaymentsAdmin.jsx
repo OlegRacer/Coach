@@ -102,7 +102,7 @@ function Requests() {
         <span className={'badge-status ' + r.status}>{t(`pay.status.${r.status}`)}</span>
       </div>
       <span className="muted small">
-        {L(r.plan.title)} · {t('pay.days', { n: r.plan.days })} · {formatMoney(r.plan.price, r.plan.currency, locale)} · {new Date(r.created_at).toLocaleString(locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+        {L(r.plan.title)} · {r.plan.challenge_id ? t('chal.title') : t('pay.days', { n: r.plan.days })} · {formatMoney(r.plan.price, r.plan.currency, locale)} · {new Date(r.created_at).toLocaleString(locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
       </span>
       {r.note && <p className="body pre">{r.note}</p>}
       {r.proof_path && (proof[r.id] ? <img className="pay-proof" src={proof[r.id]} alt="" /> : <button type="button" className="btn-ghost" onClick={() => showProof(r)}>{t('pay.showProof')}</button>)}

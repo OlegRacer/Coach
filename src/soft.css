@@ -54,8 +54,8 @@ html[data-theme="light"][data-ui] .badge-free, html[data-theme="light"][data-ui]
 .studio-del { margin-top: 6px; min-height: 38px; font-size: 14px; }
 
 /* Статуси занять: перенесено — м'яко-жовтий, клас закінчився — м'яко-червоний */
-:root { --st-moved-bg: #fbf0cf; --st-moved-fg: #8a6300; --st-end-bg: #fbe3e4; --st-end-fg: #b23a40; --st-pause-bg: #dde9fb; --st-pause-fg: #2f5fa8; --st-once-bg: #ece3fa; --st-once-fg: #6a45a8; }
-html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg: #f0cf7a; --st-end-bg: rgba(235, 90, 96, 0.16); --st-end-fg: #f09a9e; --st-pause-bg: rgba(110, 160, 240, 0.18); --st-pause-fg: #9fc2f5; --st-once-bg: rgba(170, 130, 235, 0.18); --st-once-fg: #c9aef2; }
+:root { --st-moved-bg: #fbf0cf; --st-moved-fg: #8a6300; --st-end-bg: #fbe3e4; --st-end-fg: #b23a40; --st-pause-bg: #dde9fb; --st-pause-fg: #2f5fa8; --st-once-bg: #ece3fa; --st-once-fg: #6a45a8; --st-chal-bg: #dcf2e8; --st-chal-fg: #1f7a55; }
+html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg: #f0cf7a; --st-end-bg: rgba(235, 90, 96, 0.16); --st-end-fg: #f09a9e; --st-pause-bg: rgba(110, 160, 240, 0.18); --st-pause-fg: #9fc2f5; --st-once-bg: rgba(170, 130, 235, 0.18); --st-once-fg: #c9aef2; --st-chal-bg: rgba(80, 200, 150, 0.16); --st-chal-fg: #8fe0bf; }
 .session.is-moved { background: var(--st-moved-bg); }
 .session.is-ended { background: var(--st-end-bg); }
 .session.is-moved .session-time b, .session.is-moved .session-status { color: var(--st-moved-fg); }
@@ -71,6 +71,13 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .trainer-body { padding: 0 12px 12px; display: grid; gap: 10px; }
 .day-head { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin: 4px 4px 6px; }
 .day-group .session + .session, .day-group > div + div { margin-top: 8px; }
+.session.is-chal { background: var(--st-chal-bg); }
+.session.is-chal .session-time b { color: var(--st-chal-fg); font-weight: 600; }
+.session.is-chal.is-done .session-title { text-decoration: line-through; opacity: 0.6; }
+.chal-check { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--st-chal-fg); background: transparent; color: #fff; display: inline-flex; align-items: center; justify-content: center; padding: 0; position: relative; }
+.chal-check::after { content: ''; position: absolute; inset: -6px; }
+.chal-check.on { background: var(--st-chal-fg); }
+html[data-theme="dark"] .chal-check.on { color: #10261c; }
 .session.is-once { background: var(--st-once-bg); }
 .session.is-once .session-time b, .session.is-once .session-status { color: var(--st-once-fg); font-weight: 600; }
 
@@ -132,3 +139,17 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .swp { margin: -6px; }
 .swp-panel { padding: 6px; box-sizing: border-box; overflow: clip; }
 .sched-page > .sched-tiles { align-items: stretch; }
+
+/* Челенджі */
+.chal-card { display: flex; flex-direction: column; gap: 12px; }
+.chal-head { all: unset; cursor: pointer; display: flex; flex-direction: column; gap: 6px; }
+.chal-progress { display: flex; flex-direction: column; gap: 4px; }
+.chal-bar { height: 8px; border-radius: 99px; background: var(--st-chal-bg); overflow: hidden; display: block; }
+.chal-bar i { display: block; height: 100%; background: var(--st-chal-fg); border-radius: 99px; transition: width 0.3s; }
+.chal-items { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.chal-items li { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 14px; background: var(--st-chal-bg); }
+.chal-items li.is-done span:last-child { text-decoration: line-through; opacity: 0.6; }
+.chal-start { display: flex; flex-direction: column; gap: 4px; }
+.chal-in { color: var(--st-chal-fg); font-weight: 700; align-self: center; }
+.chal-edit-item { background: var(--card-2, var(--card)); }
+.session-time b.any { font-size: 0.7rem; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }

@@ -164,6 +164,12 @@ export default function ProfileCard() {
               <Icon name="chevron" size={20} />
             </span>
           </Link>
+          <Link to="/admin/challenges" className="set-row link-row">
+            <span className="set-label">{t('chal.admin')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
           <Link to="/admin/content" className="set-row link-row">
             <span className="set-label">{t('content.link')}</span>
             <span className="muted">

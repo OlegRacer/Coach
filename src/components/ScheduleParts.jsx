@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { setChallengeDone } from '../lib/challenges.js';
 import Icon from './Icon.jsx';
 import { currentWeek, weekdayOf } from '../lib/dates.js';
 import { iso, slotsOn } from '../lib/schedule.js';
@@ -37,16 +38,16 @@ export function WeekStrip({ slots, selected, onSelect }) {
 // Перелік занять на день
 export function SessionList({ items, trainers, studios = [], showStudio, empty, onDelete }) {
   const { t } = useI18n();
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
   return (
     <div className="stack" style={{ gap: 10 }}>
       {items.map((s) => (
-        <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '')}>
+        <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '') + (s.challenge ? ' is-chal' : '') + (s.challenge && s.done ? ' is-done' : '')}>
           <div className="session-time">
             {s.personal ? (
-              <b>{s.start_time === '00:00' ? t('aw.anyTime') : s.start_time}</b>
+              <b className={s.start_time === '00:00' ? 'any' : undefined}>{s.start_time === '00:00' ? t('aw.anyTime') : s.start_time}</b>
             ) : (
               <>
                 <b>{s.start_time}</b>
@@ -63,7 +64,12 @@ export function SessionList({ items, trainers, studios = [], showStudio, empty, 
               <Icon name="edit" size={22} />
             </Link>
           )}
-          {s.personal && onDelete && (
+          {s.challenge && user && (
+            <button type="button" className={'chal-check' + (s.done ? ' on' : '')} aria-pressed={!!s.done} aria-label={t('chal.markDone')} onClick={() => setChallengeDone(user.id, s.itemId, !s.done)}>
+              {s.done && <Icon name="check" size={20} />}
+            </button>
+          )}
+          {s.personal && !s.challenge && onDelete && (
             <button type="button" className="icon-btn trash-btn" aria-label={t('sa.delete')} onClick={() => onDelete(s)}>
               <Icon name="trash" size={22} />
             </button>

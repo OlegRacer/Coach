@@ -8,6 +8,8 @@ import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { formatMoney } from '../lib/money.js';
+import ChallengesBlock from '../components/ChallengesBlock.jsx';
+import { useChallenges } from '../lib/challenges.js';
 
 // Доступ і оплата: учень обирає пакет, платить переказом (LINE Pay) і натискає «Я оплатив».
 // Тренер підтверджує заявку в адмінці, і доступ відкривається автоматично.
@@ -17,6 +19,7 @@ export default function Plans() {
   const online = useOnline();
   const { ready, user, isAdmin } = useAuth();
   const { section, exercise } = useContent();
+  const chal = useChallenges();
   const [plans, setPlans] = useState(null);
   const [settings, setSettings] = useState(null);
   const [requests, setRequests] = useState([]);
@@ -104,7 +107,10 @@ export default function Plans() {
     const { error } = await supabase.from('payment_requests').insert({
       student_id: user.id,
       plan_id: chosen.id,
-      plan: { title: chosen.title, sections: chosen.sections, exercises: chosen.exercises || [], days: chosen.days, price: chosen.price, currency: chosen.currency },
+      plan: {
+        title: chosen.title, sections: chosen.sections, exercises: chosen.exercises || [], days: chosen.days, price: chosen.price, currency: chosen.currency,
+        ...(chosen.challenge_id ? { challenge_id: chosen.challenge_id, start_date: chosen.start_date || null } : {})
+      },
       note: note.trim(),
       proof_path: proof
     });
@@ -135,7 +141,9 @@ export default function Plans() {
       {!chosen && (
         <>
           {isAdmin && <Link to="/admin/payments?tab=plans&new=1" className="btn-primary">{t('pay.addPlan')}</Link>}
-          {plans && !plans.length && <p className="muted">{t('pay.noPlans')}</p>}
+          <ChallengesBlock {...chal} requests={requests} onBuy={(p) => { setChosen(p); setSent(false); }} />
+          {plans && !plans.length && !(chal.challenges || []).length && <p className="muted">{t('pay.noPlans')}</p>}
+          {plans && plans.length > 0 && !!(chal.challenges || []).length && <h2 className="h2 section-title">{t('chal.packages')}</h2>}
           <div className="stack">
             {(plans || []).map((p) => (
               <button type="button" key={p.id} className="card plan-card" onClick={() => { setChosen(p); setSent(false); }}>
@@ -157,7 +165,7 @@ export default function Plans() {
             ← {t('pay.otherPlan')}
           </button>
           <h2 className="h2">{L(chosen.title)}</h2>
-          <p className="muted small">{t('pay.days', { n: chosen.days })} · {planContents(chosen)}</p>
+          <p className="muted small">{chosen.challenge_id ? t('chal.title') : `${t('pay.days', { n: chosen.days })} · ${planContents(chosen)}`}</p>
           <p className="pay-amount">{formatMoney(chosen.price, chosen.currency, locale)}</p>
 
           <h3 className="h3">{t('pay.step1')}</h3>
