@@ -66,3 +66,8 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .badge-moved { background: var(--st-moved-bg); color: var(--st-moved-fg); }
 .session.is-paused { background: var(--st-pause-bg); }
 .session.is-paused .session-time b, .session.is-paused .session-status { color: var(--st-pause-fg); font-weight: 600; }
+
+/* Тренери в адмінці розкладу: випадаючий список класів, згрупованих за днями тижня */
+.trainer-body { padding: 0 12px 12px; display: grid; gap: 10px; }
+.day-head { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin: 4px 4px 6px; }
+.day-group .session + .session, .day-group > div + div { margin-top: 8px; }

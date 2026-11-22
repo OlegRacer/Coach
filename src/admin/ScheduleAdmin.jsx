@@ -128,10 +128,15 @@ export default function ScheduleAdmin() {
   const [exs, setExs] = useState([]);
   const [params] = useSearchParams();
   const [editId, setEditId] = useState(params.get('edit'));
+  const [openTr, setOpenTr] = useState(() => new Set());
   useEffect(() => {
     if (!editId || !slots.length) return;
+    const own = slots.find((x) => x.id === editId);
+    if (own) setOpenTr((o) => new Set(o).add(own.trainer_id));
+    setTimeout(() => {
     const el = document.getElementById('slot-' + editId);
     if (el) el.scrollIntoView({ block: 'center' });
+    }, 80);
   }, [slots.length]); // eslint-disable-line react-hooks/exhaustive-deps
   const [studios, setStudios] = useState([]);
   const [classes, setClasses] = useState([]);
@@ -377,10 +382,23 @@ export default function ScheduleAdmin() {
       {trainers.map((tr) => {
         const mine = slots.filter((s) => s.trainer_id === tr.id);
         if (!mine.length) return null;
+        const open = openTr.has(tr.id);
+        const byTime = (a, b) => a.start_time.localeCompare(b.start_time);
+        const groups = [1, 2, 3, 4, 5, 6, 7]
+          .map((n) => ({ key: 'd' + n, label: t(`day.long.${n}`), items: mine.filter((x) => x.weekday === n).sort(byTime) }))
+          .concat([{ key: 'once', label: t('sa.once'), items: mine.filter((x) => x.weekday == null).sort((a, b) => String(a.on_date).localeCompare(String(b.on_date)) || byTime(a, b)) }])
+          .filter((g) => g.items.length);
         return (
-          <section key={tr.id} className="card">
-            <h2 className="h2">{tr.name}</h2>
-            {mine.map((s) => {
+          <section key={tr.id} className={'card studio' + (open ? ' open' : '')}>
+            <button type="button" className="studio-head" aria-expanded={open} onClick={() => setOpenTr((o) => { const n = new Set(o); if (n.has(tr.id)) n.delete(tr.id); else n.add(tr.id); return n; })}>
+              <span className="studio-name">{tr.name}</span>
+              <span className="muted small">{mine.length}</span>
+              <span className="fold-chev" aria-hidden="true"><Icon name="chevron" size={18} /></span>
+            </button>
+            {open && <div className="trainer-body">{groups.map((g) => (
+              <div key={g.key} className="day-group">
+                <div className="day-head">{g.label}</div>
+            {g.items.map((s) => {
               const withEx = { ...s, ex: Object.fromEntries(exs.filter((e) => e.slot_id === s.id).map((e) => [e.orig_date, { kind: e.kind, new_date: e.new_date, new_time: e.new_time ? String(e.new_time).slice(0, 5) : null }])) };
               const nx = nextOf(withEx);
               const todayIso = iso(new Date());
@@ -417,6 +435,8 @@ export default function ScheduleAdmin() {
               </div>
               );
             })}
+              </div>
+            ))}</div>}
           </section>
         );
       })}
