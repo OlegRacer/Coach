@@ -36,9 +36,11 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       const mx = p.clientX - s.x;
       const my = p.clientY - s.y;
       if (!s.lock) {
-        if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
-        // жорстко: тільки майже горизонтальний жест (по діагоналі — не свайп)
-        s.lock = Math.abs(mx) > Math.abs(my) * 2.5 ? 'x' : 'y';
+        // з першого пікселя гасимо вертикальний скрол, якщо рух схожий на горизонтальний (інакше сторінка «сіпається»)
+        if (Math.abs(mx) > Math.abs(my) * 1.2 && e.cancelable) e.preventDefault();
+        if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
+        // тільки горизонтальний жест (по діагоналі > ~30° — не свайп)
+        s.lock = Math.abs(mx) > Math.abs(my) * 1.8 ? 'x' : 'y';
         if (s.lock === 'x') setDrag(true);
       }
       if (s.lock !== 'x') return;
