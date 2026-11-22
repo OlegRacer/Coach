@@ -383,10 +383,10 @@ export default function ScheduleAdmin() {
         const mine = slots.filter((s) => s.trainer_id === tr.id);
         if (!mine.length) return null;
         const open = openTr.has(tr.id);
-        const byTime = (a, b) => a.start_time.localeCompare(b.start_time);
+        const byTime = (a, b) => a.start_time.localeCompare(b.start_time) || String(a.on_date || '').localeCompare(String(b.on_date || ''));
+        const wdOf = (x) => (x.weekday != null ? x.weekday : weekdayOf(parse(x.on_date)));
         const groups = [1, 2, 3, 4, 5, 6, 7]
-          .map((n) => ({ key: 'd' + n, label: t(`day.long.${n}`), items: mine.filter((x) => x.weekday === n).sort(byTime) }))
-          .concat([{ key: 'once', label: t('sa.once'), items: mine.filter((x) => x.weekday == null).sort((a, b) => String(a.on_date).localeCompare(String(b.on_date)) || byTime(a, b)) }])
+          .map((n) => ({ key: 'd' + n, label: t(`day.long.${n}`), items: mine.filter((x) => wdOf(x) === n).sort(byTime) }))
           .filter((g) => g.items.length);
         return (
           <section key={tr.id} className={'card studio' + (open ? ' open' : '')}>
@@ -409,7 +409,7 @@ export default function ScheduleAdmin() {
               const nxText = nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)} ${nx.slot.start_time}` : '';
               return (
               <div key={s.id} id={'slot-' + s.id}>
-                <div className={'session' + (moved && !paused ? ' is-moved' : '') + (paused ? ' is-paused' : '') + (ended ? ' is-ended' : '')}>
+                <div className={'session' + (moved && !paused ? ' is-moved' : '') + (paused ? ' is-paused' : '') + (ended ? ' is-ended' : '') + (s.weekday == null && !ended && !paused && !moved ? ' is-once' : '')}>
                   <div className="session-time">
                     <b>{nx ? nx.slot.start_time : s.start_time}</b>
                     <span>{nx ? `${t(`day.short.${weekdayOf(nx.date)}`)} ${fmt(nxDate)}` : when(s)}</span>
@@ -417,7 +417,7 @@ export default function ScheduleAdmin() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div className="session-title">{s.title}</div>
                     <div className="muted small">{[t('common.minutes', { n: s.duration_min }), (studios.find((g) => g.id === s.studio_id) || {}).name, (classes.find((c) => c.id === s.class_id) || {}).name, s.pause_from && s.pause_to ? t('sa.pausedRange', { a: fmt(s.pause_from), b: fmt(s.pause_to) }) : null].filter(Boolean).join(' · ')}</div>
-                    <div className="small session-status">{ended ? t('sa.ended') : `${paused ? t('sa.paused') + ' · ' : moved ? t('sa.moved') + ' · ' : ''}${t('sa.next', { d: nxText })}`}</div>
+                    <div className="small session-status">{ended ? t('sa.ended') : `${paused ? t('sa.paused') + ' · ' : moved ? t('sa.moved') + ' · ' : s.weekday == null ? t('sa.once') + ' · ' : ''}${t('sa.next', { d: nxText })}`}</div>
                   </div>
                   <button type="button" className="icon-btn" aria-label={t('sa.edit')} aria-expanded={editId === s.id} onClick={() => setEditId(editId === s.id ? null : s.id)}>
                     <Icon name="edit" size={22} />

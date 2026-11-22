@@ -54,8 +54,8 @@ html[data-theme="light"][data-ui] .badge-free, html[data-theme="light"][data-ui]
 .studio-del { margin-top: 6px; min-height: 38px; font-size: 14px; }
 
 /* Статуси занять: перенесено — м'яко-жовтий, клас закінчився — м'яко-червоний */
-:root { --st-moved-bg: #fbf0cf; --st-moved-fg: #8a6300; --st-end-bg: #fbe3e4; --st-end-fg: #b23a40; --st-pause-bg: #dde9fb; --st-pause-fg: #2f5fa8; }
-html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg: #f0cf7a; --st-end-bg: rgba(235, 90, 96, 0.16); --st-end-fg: #f09a9e; --st-pause-bg: rgba(110, 160, 240, 0.18); --st-pause-fg: #9fc2f5; }
+:root { --st-moved-bg: #fbf0cf; --st-moved-fg: #8a6300; --st-end-bg: #fbe3e4; --st-end-fg: #b23a40; --st-pause-bg: #dde9fb; --st-pause-fg: #2f5fa8; --st-once-bg: #ece3fa; --st-once-fg: #6a45a8; }
+html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg: #f0cf7a; --st-end-bg: rgba(235, 90, 96, 0.16); --st-end-fg: #f09a9e; --st-pause-bg: rgba(110, 160, 240, 0.18); --st-pause-fg: #9fc2f5; --st-once-bg: rgba(170, 130, 235, 0.18); --st-once-fg: #c9aef2; }
 .session.is-moved { background: var(--st-moved-bg); }
 .session.is-ended { background: var(--st-end-bg); }
 .session.is-moved .session-time b, .session.is-moved .session-status { color: var(--st-moved-fg); }
@@ -71,3 +71,5 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .trainer-body { padding: 0 12px 12px; display: grid; gap: 10px; }
 .day-head { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin: 4px 4px 6px; }
 .day-group .session + .session, .day-group > div + div { margin-top: 8px; }
+.session.is-once { background: var(--st-once-bg); }
+.session.is-once .session-time b, .session.is-once .session-status { color: var(--st-once-fg); font-weight: 600; }
