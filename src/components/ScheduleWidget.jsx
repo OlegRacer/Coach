@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import AddWorkout from './AddWorkout.jsx';
 import { Link } from 'react-router-dom';
@@ -41,6 +41,32 @@ export default function ScheduleWidget({ mineOnly = false }) {
     const el = track.current;
     if (el) el.scrollTo({ left: i * el.clientWidth, behavior: 'smooth' });
   };
+
+  // зовнішній перехід між плитками: тільки горизонтальний свайп (не по діагоналі), без нативного скролу
+  const pageRef = useRef(0);
+  pageRef.current = page;
+  useEffect(() => {
+    const el = track.current;
+    if (!el) return undefined;
+    let g = null;
+    const start = (e) => {
+      g = e.target.closest && e.target.closest('.swp') ? null : { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+    };
+    const end = (e) => {
+      if (!g) return;
+      const mx = e.changedTouches[0].clientX - g.x;
+      const my = e.changedTouches[0].clientY - g.y;
+      const fast = Math.abs(mx) / Math.max(1, Date.now() - g.t) > 0.45;
+      g = null;
+      if (Math.abs(mx) < 30 || Math.abs(mx) < Math.abs(my) * 2.5) return;
+      if (!(Math.abs(mx) > el.clientWidth * 0.22 || fast)) return;
+      const n = Math.max(0, Math.min(1, pageRef.current + (mx < 0 ? 1 : -1)));
+      el.scrollTo({ left: n * el.clientWidth, behavior: 'smooth' });
+    };
+    el.addEventListener('touchstart', start, { passive: true });
+    el.addEventListener('touchend', end, { passive: true });
+    return () => { el.removeEventListener('touchstart', start); el.removeEventListener('touchend', end); };
+  }, []);
 
   const next = mine.length ? nextOccurrence(mine) : null;
   const dayItems = slotsOn(mine, dayMine);

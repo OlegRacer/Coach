@@ -297,7 +297,7 @@ button.btn-primary { border: 0; width: 100%; }
 
 /* Віджет розкладу */
 .widget { gap: 12px; overflow: hidden; }
-.widget-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -18px; align-items: flex-start; }
+.widget-track { display: flex; overflow-x: hidden; touch-action: pan-y; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -18px; align-items: flex-start; }
 .widget-track::-webkit-scrollbar { display: none; }
 .widget-page { flex: 0 0 100%; scroll-snap-align: center; scroll-snap-stop: always; padding: 0 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
 .widget-dots { display: flex; justify-content: center; gap: 8px; }

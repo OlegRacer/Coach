@@ -36,10 +36,9 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       const mx = p.clientX - s.x;
       const my = p.clientY - s.y;
       if (!s.lock) {
-        // горизонтальний жест не віддаємо зовнішній прокрутці віджета (інакше стрибає на «Мій розклад»)
-        if (Math.abs(mx) > Math.abs(my) && e.cancelable) e.preventDefault();
         if (Math.abs(mx) < 8 && Math.abs(my) < 8) return;
-        s.lock = Math.abs(mx) > Math.abs(my) * 1.3 ? 'x' : 'y';
+        // жорстко: тільки майже горизонтальний жест (по діагоналі — не свайп)
+        s.lock = Math.abs(mx) > Math.abs(my) * 2.5 ? 'x' : 'y';
         if (s.lock === 'x') setDrag(true);
       }
       if (s.lock !== 'x') return;
