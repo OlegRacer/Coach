@@ -108,18 +108,18 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 .swp-panel { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 @media (prefers-reduced-motion: reduce) { .swp-track { transition: none; } .swp { transition: none; } }
 
-/* Розклад на широкому екрані й у ландшафті: дві плитки поруч, як віджет на головній (календар | заняття дня) */
-@media (min-width: 720px) {
-  .sched-page > .swp { grid-column: 1 / -1; }
-  .swp-panel { flex-direction: row; align-items: flex-start; gap: 16px; }
-  .swp-panel > .sched-cal { flex: 1.1 1 0; min-width: 0; }
-  .swp-panel > .sched-day { flex: 1 1 0; grid-column: auto; min-width: 0; background: var(--card); border-radius: 28px; padding: 18px; min-height: 0; }
-  .swp-panel > .sched-day .section-title { font-size: 17px; }
-}
-@media (orientation: landscape) and (max-height: 520px) {
-  .swp-panel > .sched-cal { padding: 12px 14px; gap: 8px; }
-  .swp-panel > .sched-cal .mday { min-height: 34px; border-radius: 11px; gap: 1px; font-size: 14px; }
-  .swp-panel > .sched-cal .month, .swp-panel > .sched-cal .month-head { gap: 4px; }
-  .swp-panel > .sched-day { max-height: 330px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; padding: 14px; }
-  .swp-panel > .sched-day::-webkit-scrollbar { display: none; }
-}
+
+/* Вкладка «Розклад» на широкому екрані / телефон набік: дві плитки «Мій розклад» і «Тренери» */
+.sched-page > .sched-tiles { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.sched-tile { min-width: 0; }
+.sched-tile .swp-panel { gap: 14px; }
+.sched-tile-cal { display: flex; flex-direction: column; gap: 10px; }
+.sched-tile .mday { min-height: 36px; border-radius: 12px; gap: 1px; font-size: 14px; }
+.sched-tile .month, .sched-tile .month-head { gap: 4px; }
+.sched-tile .month-label { font-size: 16px; }
+.sched-daylabel { margin: 0; font-size: 15px; font-weight: 800; }
+.sched-daylabel::first-letter { text-transform: uppercase; }
+/* Тінь вибраного дня не повинна просвічувати з сусідньої панелі пейджера */
+.swp { margin-left: -6px; margin-right: -6px; }
+.swp-panel { padding: 0 6px; box-sizing: border-box; overflow: clip; }
+.sched-page > .sched-tiles { align-items: stretch; }
