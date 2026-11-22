@@ -98,13 +98,9 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 }
 @media (min-width: 720px) { .widget-page { max-height: none; } }
 
-/* Телефон набік: нижня панель схована, поки сторінка нерухома */
-.tabbar-peek { display: none; }
+/* Телефон набік: нижня панель схована, поки сторінка нерухома; плавно з'являється під час прокрутки */
 @media (orientation: landscape) and (max-height: 520px) {
-  html[data-bar] .tabbar { transition: translate 0.3s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s; }
+  html[data-bar] .tabbar { transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease; }
   html[data-bar="hide"] .tabbar { translate: 0 150%; opacity: 0; pointer-events: none; }
   html[data-bar="show"] .tabbar { translate: 0 0; opacity: 1; }
-  .tabbar-peek { display: block; position: fixed; z-index: 29; left: 50%; bottom: 0; width: 120px; height: 28px; transform: translateX(-50%); background: none; border: 0; padding: 0; cursor: pointer; }
-  .tabbar-peek::after { content: ''; position: absolute; left: 50%; bottom: 7px; width: 72px; height: 5px; border-radius: 3px; transform: translateX(-50%); background: var(--muted); opacity: 0.55; transition: opacity 0.2s; }
-  html[data-bar="show"] .tabbar-peek { display: none; }
 }
