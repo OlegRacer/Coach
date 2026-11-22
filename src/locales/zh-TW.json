@@ -629,5 +629,8 @@
   "sa.editAll": "更改整個系列的課程",
   "sa.ended": "課程已結束",
   "sa.next": "下一堂：{d}",
-  "sa.paused": "暫停中"
+  "sa.paused": "暫停中",
+  "sched.freeDay": "休息日",
+  "home.swipeHint": "滑動查看教練",
+  "home.swipeHintBack": "返回我的課表"
 }

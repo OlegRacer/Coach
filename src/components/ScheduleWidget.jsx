@@ -33,12 +33,19 @@ export default function ScheduleWidget({ mineOnly = false }) {
   const short = (d) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
   const range = `${short(week[0])} – ${short(week[6])}`;
 
+  const dismissHint = () => { setHint(false); try { localStorage.setItem('swipe-hint', '1'); } catch { /* */ } };
+  const visited = useRef(false);
+  useEffect(() => {
+    if (page === 1) visited.current = true;
+    else if (visited.current && hint) dismissHint();
+  }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
   const onScroll = () => {
     const el = track.current;
     if (el) setPage(Math.round(el.scrollLeft / el.clientWidth));
   };
   // власна анімація прокрутки (надійніше за scrollTo smooth на iOS, коли нативний скрол вимкнено)
   const anim = useRef(0);
+  const [hint, setHint] = useState(() => { try { return !localStorage.getItem('swipe-hint'); } catch { return true; } });
   const goTo = (i) => {
     const el = track.current;
     if (!el) return;
@@ -102,7 +109,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
             <div className="w-sessions"><p className="muted small">{t('sched.noMine')}</p></div>
           ) : (
             <div className="w-sessions">
-              <SessionList items={dayItems} trainers={trainers} onDelete={removeItem} />
+              <SessionList items={dayItems} trainers={trainers} onDelete={removeItem} empty={t('sched.freeDay')} />
               {!dayItems.length && nextText && <p className="small">{nextText}</p>}
             </div>
           )}
@@ -134,7 +141,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
                   return (
                     <>
                       <WeekStrip slots={list} selected={dayTr} onSelect={setDayTr} />
-                      <div className="w-sessions"><SessionList items={slotsOn(list, dayTr)} trainers={trainers} studios={studios} showStudio /></div>
+                      <div className="w-sessions"><SessionList items={slotsOn(list, dayTr)} trainers={trainers} studios={studios} showStudio empty={t('sched.freeDay')} /></div>
                     </>
                   );
                 }}
@@ -144,6 +151,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
         </div>}
       </div>
 
+      {!mineOnly && hint && <p className="swipe-hint" aria-hidden="true">{page === 0 ? t('home.swipeHint') + ' ›' : '‹ ' + t('home.swipeHintBack')}</p>}
       {!mineOnly && <div className="widget-dots" role="tablist">
         {[0, 1].map((i) => (
           <button

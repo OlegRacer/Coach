@@ -108,16 +108,13 @@ export default function TabBar() {
     el.style.removeProperty('--drag');
     if (d.idx !== undefined && d.idx !== cur) goTo(d.idx);
   };
-  // Телефон набік: панель вкладок схована, поки сторінка нерухома. З'являється під час прокрутки
-  // і знову ховається за кілька секунд. Горизонтальні свайпи її не викликають.
+  // Панель вкладок і «+» схованi, поки сторінка нерухома. З'являються під час вертикальної прокрутки,
+  // дотику до нижнього краю екрана чи переходу на іншу сторінку, і знову ховаються за кілька секунд.
+  // Горизонтальні свайпи їх не викликають.
   const hideTimer = useRef(null);
   useEffect(() => {
-    const mq = window.matchMedia('(orientation: landscape) and (max-height: 520px)');
     const root = document.documentElement;
-    const apply = (show) => {
-      if (mq.matches) root.dataset.bar = show ? 'show' : 'hide';
-      else delete root.dataset.bar;
-    };
+    const apply = (show) => { root.dataset.bar = show ? 'show' : 'hide'; };
     const reveal = (ms) => {
       apply(true);
       clearTimeout(hideTimer.current);
@@ -125,18 +122,22 @@ export default function TabBar() {
     };
     let last = window.scrollY;
     const onScroll = () => {
-      if (!mq.matches || Math.abs(window.scrollY - last) < 3) return;
+      if (Math.abs(window.scrollY - last) < 3) return;
       last = window.scrollY;
       reveal(2200);
     };
-    const onMq = () => apply(false);
-    apply(false);
+    // коротка сторінка не скролиться: панель можна викликати дотиком біля нижнього краю
+    const onTouch = (e) => {
+      const y = e.touches && e.touches[0] ? e.touches[0].clientY : 0;
+      if (y > window.innerHeight - 90) reveal(3000);
+    };
+    reveal(2200);
     window.addEventListener('scroll', onScroll, { passive: true });
-    mq.addEventListener('change', onMq);
+    window.addEventListener('touchstart', onTouch, { passive: true });
     return () => {
       clearTimeout(hideTimer.current);
       window.removeEventListener('scroll', onScroll);
-      mq.removeEventListener('change', onMq);
+      window.removeEventListener('touchstart', onTouch);
       delete root.dataset.bar;
     };
   }, [pathname]);

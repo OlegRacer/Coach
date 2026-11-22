@@ -629,5 +629,8 @@
   "sa.editAll": "Change every class in the series",
   "sa.ended": "class has ended",
   "sa.next": "Next: {d}",
-  "sa.paused": "paused"
+  "sa.paused": "paused",
+  "sched.freeDay": "Free day",
+  "home.swipeHint": "Swipe to see trainers",
+  "home.swipeHintBack": "Back to my schedule"
 }

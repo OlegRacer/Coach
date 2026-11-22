@@ -94,16 +94,21 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 }
 @media (min-width: 720px) { .widget-page { max-height: none; } }
 
-/* Телефон набік: нижня панель схована, поки сторінка нерухома; плавно з'являється під час прокрутки */
-@media (orientation: landscape) and (max-height: 520px) {
-  html[data-bar] .tabbar { transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease; }
-  html[data-bar="hide"] .tabbar { translate: 0 150%; opacity: 0; pointer-events: none; }
-  html[data-bar="show"] .tabbar { translate: 0 0; opacity: 1; }
-  /* кнопка «+» ховається і з'являється разом із панеллю */
-  html[data-bar] .tab-add { transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease; }
-  html[data-bar="hide"] .tab-add { translate: 0 250%; opacity: 0; pointer-events: none; }
-  html[data-bar="show"] .tab-add { translate: 0 0; opacity: 1; }
-}
+/* Нижня панель і «+»: схованi, поки сторінка нерухома; плавно з'являються під час прокрутки */
+html[data-bar] .tabbar { transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease; }
+html[data-bar="hide"] .tabbar { translate: 0 150%; opacity: 0; pointer-events: none; }
+html[data-bar="show"] .tabbar { translate: 0 0; opacity: 1; }
+html[data-bar] .tab-add { transition: translate 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease; }
+html[data-bar="hide"] .tab-add { translate: 0 250%; opacity: 0; pointer-events: none; }
+html[data-bar="show"] .tab-add { translate: 0 0; opacity: 1; }
+/* підписи вкладок завжди вміщуються */
+html[data-ui="next"] .tab { min-width: 0; padding: 0 2px; }
+html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.6rem; letter-spacing: -0.01em; }
+/* підказка про свайп у віджеті */
+.swipe-hint { text-align: center; font-size: 0.75rem; color: var(--muted); margin: 0; animation: hintNudge 1.8s ease-in-out infinite; }
+@keyframes hintNudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) { .swipe-hint { animation: none; } }
+@media (min-width: 720px) { .swipe-hint { display: none; } }
 
 /* Пейджер із перетягуванням: панелі їдуть за пальцем */
 .swp { overflow: hidden; touch-action: pan-y; transition: height 0.25s ease; }
