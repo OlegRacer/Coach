@@ -81,3 +81,9 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 @keyframes sw-from-r { from { opacity: 0.3; transform: translateX(28px); } to { opacity: 1; transform: none; } }
 @keyframes sw-from-l { from { opacity: 0.3; transform: translateX(-28px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .sched-cal.sw-l, .sched-cal.sw-r { animation: none; } }
+
+/* Зона розкладу тренера у віджеті: свайп міняє тренера, горизонтальні жести обробляємо самі */
+.tr-zone { display: flex; flex-direction: column; gap: 14px; touch-action: pan-y; }
+.tr-zone.sw-l { animation: sw-from-r 0.28s cubic-bezier(0.2, 0, 0, 1); }
+.tr-zone.sw-r { animation: sw-from-l 0.28s cubic-bezier(0.2, 0, 0, 1); }
+@media (prefers-reduced-motion: reduce) { .tr-zone.sw-l, .tr-zone.sw-r { animation: none; } }
