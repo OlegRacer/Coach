@@ -1,10 +1,11 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { supabase } from '../lib/supabase.js';
 import AddWorkout from '../components/AddWorkout.jsx';
 import { useAuth } from '../auth/index.jsx';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { SessionList } from '../components/ScheduleParts.jsx';
+import SwipePager from '../components/SwipePager.jsx';
 import { iso, monthGrid, slotsOn, useSchedule } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -24,29 +25,9 @@ export default function Schedule() {
   const [day, setDay] = useState(now);
 
   const tabs = ['mine', ...trainers.map((x) => x.id)];
-  const [dir, setDir] = useState('');
-  const touch = useRef(null);
-  const go = (step) => {
-    const i = tabs.indexOf(who);
-    const n = tabs[i + step];
-    if (n === undefined) return;
-    setDir(step > 0 ? 'l' : 'r');
-    setWho(n);
-  };
-  const swipe = {
-    onTouchStart: (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; },
-    onTouchEnd: (e) => {
-      const s0 = touch.current;
-      touch.current = null;
-      if (!s0) return;
-      const p = e.changedTouches[0];
-      const dx = p.clientX - s0.x;
-      const dy = p.clientY - s0.y;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) go(dx < 0 ? 1 : -1);
-    }
-  };
+  const ti = tabs.indexOf(who);
+  const listOf = (k) => (k === 'mine' ? mine : slots.filter((x) => x.trainer_id === k));
 
-  const list = who === 'mine' ? mine : slots.filter((s) => s.trainer_id === who);
   const cells = monthGrid(ym.y, ym.m);
   const label = new Date(ym.y, ym.m, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
   const move = (delta) => {
@@ -62,17 +43,26 @@ export default function Schedule() {
       <TopBar title={t('schedule.title')} />
 
       <div className="chips">
-        <button type="button" className={'chip' + (who === 'mine' ? ' active' : '')} onClick={() => { setDir('r'); setWho('mine'); }}>
+        <button type="button" className={'chip' + (who === 'mine' ? ' active' : '')} onClick={() => setWho('mine')}>
           {t('home.schedule')}
         </button>
         {trainers.map((x) => (
-          <button key={x.id} type="button" className={'chip' + (who === x.id ? ' active' : '')} onClick={() => { setDir(tabs.indexOf(x.id) > tabs.indexOf(who) ? 'l' : 'r'); setWho(x.id); }}>
+          <button key={x.id} type="button" className={'chip' + (who === x.id ? ' active' : '')} onClick={() => setWho(x.id)}>
             {x.name}
           </button>
         ))}
       </div>
 
-      <section key={who} className={'card sched-cal' + (dir ? ' sw-' + dir : '')} {...swipe}>
+      <SwipePager
+        index={Math.max(0, ti)}
+        count={tabs.length}
+        onIndex={(i) => setWho(tabs[i])}
+        renderPanel={(i) => {
+          const k = tabs[i];
+          const list = listOf(k);
+          return (
+            <>
+              <section className="card sched-cal">
         <div className="row between">
           <button type="button" className="icon-btn small-btn" onClick={() => move(-1)} aria-label={t('sched.prevMonth')}>
             <Icon name="back" size={20} />
@@ -107,15 +97,18 @@ export default function Schedule() {
           )}
         </div>
       </section>
-
-      <div className="sched-day">
+              <div className="sched-day">
       <h2 className="h2 section-title">{dayLabel}</h2>
-      {who === 'mine' && !mine.length ? (
+      {k === 'mine' && !mine.length ? (
         <p className="muted">{t('sched.noMine')}</p>
       ) : (
-        <SessionList items={slotsOn(list, day)} trainers={trainers} studios={studios} showStudio={who !== 'mine'} onDelete={removeItem} />
+        <SessionList items={slotsOn(list, day)} trainers={trainers} studios={studios} showStudio={k !== 'mine'} onDelete={removeItem} />
       )}
       </div>
+            </>
+          );
+        }}
+      />
       {adding && <AddWorkout onClose={() => setAdding(false)} onSaved={reload} />}
     </main>
   );

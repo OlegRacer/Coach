@@ -4,6 +4,7 @@ import AddWorkout from './AddWorkout.jsx';
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
 import { WeekStrip, SessionList } from './ScheduleParts.jsx';
+import SwipePager from './SwipePager.jsx';
 import { currentWeek } from '../lib/dates.js';
 import { nextOccurrence, slotsOn, useSchedule } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -24,34 +25,9 @@ export default function ScheduleWidget({ mineOnly = false }) {
   const [dayMine, setDayMine] = useState(new Date());
   const [dayTr, setDayTr] = useState(new Date());
   const [trainerId, setTrainerId] = useState(null);
-  const [dir, setDir] = useState('');
-  const touch = useRef(null);
 
   const activeTrainer = trainerId && trainers.some((x) => x.id === trainerId) ? trainerId : trainers[0] && trainers[0].id;
-  const trainerSlots = slots.filter((s) => s.trainer_id === activeTrainer);
-  const ti = trainers.findIndex((x) => x.id === activeTrainer);
-  const pickTrainer = (id) => {
-    const j = trainers.findIndex((x) => x.id === id);
-    if (j === ti) return;
-    setDir(j > ti ? 'l' : 'r');
-    setTrainerId(id);
-  };
-  // Свайп по зоні розкладу тренера: наступний/попередній тренер; з першого тренера вправо — назад до «Мій розклад»
-  const zone = {
-    onTouchStart: (e) => { const p = e.touches[0]; touch.current = { x: p.clientX, y: p.clientY }; },
-    onTouchEnd: (e) => {
-      const s0 = touch.current;
-      touch.current = null;
-      if (!s0) return;
-      const p = e.changedTouches[0];
-      const dx = p.clientX - s0.x;
-      const dy = p.clientY - s0.y;
-      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.6) return;
-      const j = ti + (dx < 0 ? 1 : -1);
-      if (j < 0) goTo(0);
-      else if (j < trainers.length) pickTrainer(trainers[j].id);
-    }
-  };
+  const ti = Math.max(0, trainers.findIndex((x) => x.id === activeTrainer));
 
   const week = currentWeek(new Date());
   const short = (d) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
@@ -105,15 +81,26 @@ export default function ScheduleWidget({ mineOnly = false }) {
             <>
               <div className="chips">
                 {trainers.map((x) => (
-                  <button key={x.id} type="button" className={'chip' + (x.id === activeTrainer ? ' active' : '')} onClick={() => pickTrainer(x.id)}>
+                  <button key={x.id} type="button" className={'chip' + (x.id === activeTrainer ? ' active' : '')} onClick={() => setTrainerId(x.id)}>
                     {x.name}
                   </button>
                 ))}
               </div>
-              <div key={activeTrainer} className={'tr-zone' + (dir ? ' sw-' + dir : '')} {...zone}>
-                <WeekStrip slots={trainerSlots} selected={dayTr} onSelect={setDayTr} />
-                <div className="w-sessions"><SessionList items={slotsOn(trainerSlots, dayTr)} trainers={trainers} studios={studios} showStudio /></div>
-              </div>
+              <SwipePager
+                index={ti}
+                count={trainers.length}
+                onIndex={(i) => setTrainerId(trainers[i].id)}
+                onEdge={(d) => d < 0 && goTo(0)}
+                renderPanel={(i) => {
+                  const list = slots.filter((x) => x.trainer_id === trainers[i].id);
+                  return (
+                    <>
+                      <WeekStrip slots={list} selected={dayTr} onSelect={setDayTr} />
+                      <div className="w-sessions"><SessionList items={slotsOn(list, dayTr)} trainers={trainers} studios={studios} showStudio /></div>
+                    </>
+                  );
+                }}
+              />
             </>
           )}
         </div>}

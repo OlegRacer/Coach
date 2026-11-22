@@ -83,10 +83,6 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
 @media (prefers-reduced-motion: reduce) { .sched-cal.sw-l, .sched-cal.sw-r { animation: none; } }
 
 /* Зона розкладу тренера у віджеті: свайп міняє тренера, горизонтальні жести обробляємо самі */
-.tr-zone { display: flex; flex-direction: column; gap: 14px; touch-action: pan-y; }
-.tr-zone.sw-l { animation: sw-from-r 0.28s cubic-bezier(0.2, 0, 0, 1); }
-.tr-zone.sw-r { animation: sw-from-l 0.28s cubic-bezier(0.2, 0, 0, 1); }
-@media (prefers-reduced-motion: reduce) { .tr-zone.sw-l, .tr-zone.sw-r { animation: none; } }
 
 /* Віджет розкладу: фіксована висота списку занять. Портрет: 3 заняття; телефон набік: 2 і трохи третього (видно, що є прокрутка) */
 .session { min-height: 84px; }
@@ -104,3 +100,10 @@ html[data-theme="dark"] { --st-moved-bg: rgba(245, 190, 60, 0.16); --st-moved-fg
   html[data-bar="hide"] .tabbar { translate: 0 150%; opacity: 0; pointer-events: none; }
   html[data-bar="show"] .tabbar { translate: 0 0; opacity: 1; }
 }
+
+/* Пейджер із перетягуванням: панелі їдуть за пальцем */
+.swp { overflow: hidden; touch-action: pan-y; transition: height 0.25s ease; }
+.swp-track { display: flex; align-items: flex-start; transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1); will-change: transform; }
+.swp-track.drag { transition: none; }
+.swp-panel { flex: 0 0 100%; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+@media (prefers-reduced-motion: reduce) { .swp-track { transition: none; } .swp { transition: none; } }
