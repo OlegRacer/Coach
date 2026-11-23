@@ -9,6 +9,8 @@ const MB = 1024 * 1024;
 const PLANS = { free: { db: 500 * MB, files: 1024 * MB }, pro: { db: 8192 * MB, files: 100 * 1024 * MB } };
 const BUCKETS = ['payments', 'content', 'avatars'];
 const errText = (e) => (e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
+const isVideo = (n) => /\.(mp4|mov|m4v|webm)$/i.test(n);
+const isImage = (n) => /\.(jpe?g|png|webp|gif|heic|avif|svg)$/i.test(n);
 const size = (b) => (b >= 1024 * MB ? (b / 1024 / MB).toFixed(2) + ' GB' : b >= MB ? (b / MB).toFixed(1) + ' MB' : Math.round(b / 1024) + ' KB');
 
 function Bar({ label, used, max, extra }) {
@@ -38,6 +40,8 @@ export default function StorageAdmin() {
   const [files, setFiles] = useState(null); // {bucket, rows}
   const [err, setErr] = useState('');
   const [info, setInfo] = useState('');
+  const [urls, setUrls] = useState({}); // name -> тимчасове посилання для перегляду
+  const [view, setView] = useState(null); // файл на весь екран
 
   const load = useCallback(async () => {
     const u = await supabase.rpc('storage_usage');
@@ -97,6 +101,14 @@ export default function StorageAdmin() {
     const { data, error } = await supabase.rpc('storage_files', { bucket: b });
     if (error) return setErr(errText(error));
     setFiles({ bucket: b, rows: data || [] });
+    setUrls({});
+    const names = (data || []).map((r) => r.name);
+    if (names.length) {
+      const sg = await supabase.storage.from(b).createSignedUrls(names, 3600);
+      const m = {};
+      (sg.data || []).forEach((x) => { if (x.signedUrl && x.path) m[x.path] = x.signedUrl; });
+      setUrls(m);
+    }
   };
   const delFile = async (b, name) => {
     await removeFiles(b, [name]);
@@ -109,6 +121,7 @@ export default function StorageAdmin() {
   const lim = PLANS[plan];
   const bk = (usage && usage.buckets) || {};
   const filesUsed = Object.values(bk).reduce((a, b) => a + (b.bytes || 0), 0);
+  const orphanSet = new Set((orphans || []).map((o) => `${o.bucket}/${o.name}`));
   const orphanBytes = (orphans || []).reduce((a, o) => a + (o.size || 0), 0);
 
   return (
@@ -141,8 +154,25 @@ export default function StorageAdmin() {
                   <ul className="mem-files">
                     {!files.rows.length && <li className="muted small">{t('mem.empty')}</li>}
                     {files.rows.map((f) => (
-                      <li key={f.name} className="row between">
-                        <span className="small mem-name">{f.name}<br /><span className="muted">{size(f.size)} · {new Date(f.created_at).toLocaleDateString(locale)}</span></span>
+                      <li key={f.name} className="mem-file">
+                        <div className="row" style={{ gap: 12, alignItems: 'center' }}>
+                          <button type="button" className="mem-thumb" onClick={() => urls[f.name] && setView({ name: f.name, url: urls[f.name] })} aria-label={t('mem.preview')}>
+                            {!urls[f.name] ? <span className="muted small">…</span> : isVideo(f.name) ? (
+                              <video src={urls[f.name] + '#t=0.1'} preload="metadata" muted playsInline />
+                            ) : isImage(f.name) ? (
+                              <img src={urls[f.name]} alt="" loading="lazy" />
+                            ) : <span className="muted small">{(f.name.split('.').pop() || '').toUpperCase()}</span>}
+                          </button>
+                          <span className="small mem-name">
+                            {f.name}
+                            <br />
+                            <span className="muted">{size(f.size)} · {new Date(f.created_at).toLocaleDateString(locale)}</span>
+                            <br />
+                            {orphanSet.has(`${b}/${f.name}`)
+                              ? <span className="mem-tag junk">{t('mem.unused')}</span>
+                              : <span className="mem-tag used">{t('mem.used')}</span>}
+                          </span>
+                        </div>
                         <ConfirmButton label={t('mem.delete')} confirmLabel={t('pay.delConfirm')} onConfirm={() => delFile(b, f.name)} />
                       </li>
                     ))}
@@ -176,6 +206,14 @@ export default function StorageAdmin() {
           </>
         )}
       </div>
+      {view && (
+        <div className="mem-view" role="dialog" aria-modal="true" onClick={() => setView(null)}>
+          <button type="button" className="mem-view-close" aria-label={t('common.close')} onClick={() => setView(null)}>×</button>
+          {isVideo(view.name)
+            ? <video src={view.url} controls autoPlay playsInline onClick={(e) => e.stopPropagation()} />
+            : <img src={view.url} alt="" onClick={(e) => e.stopPropagation()} />}
+        </div>
+      )}
     </main>
   );
 }
