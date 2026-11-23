@@ -694,11 +694,12 @@
   "common.cancel": "Скасувати",
   "chal.ref.section": "Розділ",
   "chal.ref.exercise": "Вправа",
-  "chal.ref.none": "Не обрано (відкриє «Доступ»)",
+  "chal.ref.none": "Нічого не обрано (заняття відкриє «Доступ»)",
   "chal.ref.clear": "Прибрати",
-  "chal.ref.title": "Що відкриє заняття",
+  "chal.ref.title": "Розділи та вправи",
   "chal.ref.search": "Пошук",
   "chal.ref.tab.all": "Усе",
   "chal.ref.tab.section": "Розділи",
-  "chal.ref.tab.exercise": "Вправи"
+  "chal.ref.tab.exercise": "Вправи",
+  "chal.refsCount": "Відкриє {n} пункти: тапніть"
 }

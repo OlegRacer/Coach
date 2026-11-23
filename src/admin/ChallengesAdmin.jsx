@@ -84,7 +84,7 @@ function Editor({ start, onClose }) {
       supabase.from('challenge_items').select('*').eq('challenge_id', id).order('day_no').order('start_time'),
       supabase.from('challenge_members').select('*, student:profiles!challenge_members_student_id_fkey(full_name, email)').eq('challenge_id', id).order('joined_at')
     ]);
-    setItems((i.data || []).map((x) => ({ ...x, start_time: String(x.start_time).slice(0, 5) })));
+    setItems((i.data || []).map((x) => ({ ...x, start_time: String(x.start_time).slice(0, 5), refs: Array.isArray(x.refs) && x.refs.length ? x.refs : x.ref_id ? [{ kind: x.ref_kind || 'section', id: x.ref_id }] : [] })));
     setMembers(m.data || []);
     const ids = (i.data || []).map((x) => x.id);
     if (ids.length) {
@@ -122,7 +122,7 @@ function Editor({ start, onClose }) {
     // заняття: оновлюємо наявні за id (щоб не губити відмітки учнів), нові додаємо, прибрані видаляємо
     const rowOf = (x, n) => ({
       challenge_id: id, day_no: Number(x.day_no) || 1, start_time: x.start_time || '00:00', duration_min: Number(x.duration_min) || 30,
-      title: x.title || {}, ref_kind: x.ref_id ? x.ref_kind || 'section' : null, ref_id: x.ref_id || null, position: n
+      title: x.title || {}, refs: x.refs || [], ref_kind: (x.refs || [])[0] ? x.refs[0].kind : null, ref_id: (x.refs || [])[0] ? x.refs[0].id : null, position: n
     });
     const keep = items.filter((x) => x.id).map((x) => x.id);
     const { data: old } = await supabase.from('challenge_items').select('id').eq('challenge_id', id);
@@ -154,7 +154,7 @@ function Editor({ start, onClose }) {
 
   const addItem = () => {
     const last = items[items.length - 1];
-    setItems([...items, { _k: Math.random(), day_no: last ? Number(last.day_no) + 1 : 1, start_time: last ? last.start_time : '00:00', duration_min: last ? last.duration_min : 30, title: {}, ref_id: '' }]);
+    setItems([...items, { _k: Math.random(), day_no: last ? Number(last.day_no) + 1 : 1, start_time: last ? last.start_time : '00:00', duration_min: last ? last.duration_min : 30, title: {}, refs: [] }]);
     setSaved(false);
   };
   const patch = (n, p) => { setItems(items.map((x, i) => (i === n ? { ...x, ...p } : x))); setSaved(false); };
@@ -244,7 +244,7 @@ function Editor({ start, onClose }) {
                 </div>
                 <p className="muted small">{x.start_time === '00:00' ? t('chal.anyTime') : ''}{c.mode === 'fixed' && c.start_date ? ` ${itemDate(c.start_date, Number(x.day_no) || 1)}` : ''}</p>
                 <LangField label={t('chal.f.itemTitle')} value={x.title} onChange={(v) => patch(n, { title: v })} maxLength={160} />
-                <RefPicker value={{ kind: x.ref_kind, id: x.ref_id }} onChange={(v) => patch(n, { ref_kind: v.kind, ref_id: v.id })} />
+                <RefPicker value={x.refs || []} onChange={(v) => patch(n, { refs: v })} />
                 <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
                   <button type="button" className="btn-ghost btn-small" onClick={() => dup(n)}>{t('chal.dup')}</button>
                   <button type="button" className="btn-ghost btn-small" onClick={() => { setItems(items.filter((_, i) => i !== n)); setSaved(false); }}>{t('sa.delete')}</button>

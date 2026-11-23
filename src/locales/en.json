@@ -698,11 +698,12 @@
   "common.cancel": "Cancel",
   "chal.ref.section": "Section",
   "chal.ref.exercise": "Exercise",
-  "chal.ref.none": "None (opens “Access”)",
+  "chal.ref.none": "Nothing selected (opens “Access”)",
   "chal.ref.clear": "Clear",
-  "chal.ref.title": "What the session opens",
+  "chal.ref.title": "Sections and exercises",
   "chal.ref.search": "Search",
   "chal.ref.tab.all": "All",
   "chal.ref.tab.section": "Sections",
-  "chal.ref.tab.exercise": "Exercises"
+  "chal.ref.tab.exercise": "Exercises",
+  "chal.refsCount": "{n} items: tap to open"
 }

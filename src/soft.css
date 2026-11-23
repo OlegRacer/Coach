@@ -186,3 +186,7 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .ref-drop .ref-list { max-height: 320px; min-height: 0; }
 @keyframes refIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .ref-drop { animation: none; } }
+
+.session-refs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.session-ref { padding: 6px 12px; border-radius: 99px; background: var(--card, #fff); font-size: 0.85rem; font-weight: 600; text-decoration: none; color: inherit; }
+.ref-chip { display: inline-flex; align-items: center; gap: 6px; }

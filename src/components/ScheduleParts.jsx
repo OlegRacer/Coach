@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { setChallengeDone } from '../lib/challenges.js';
 import Icon from './Icon.jsx';
@@ -60,14 +61,19 @@ export function SessionList({ items, trainers, studios = [], showStudio, empty, 
   const { t } = useI18n();
   const { isAdmin, user } = useAuth();
   const nav = useNavigate();
+  const [openRefs, setOpenRefs] = useState(() => new Set());
+  const go = (s) => {
+    if (s.refs && s.refs.length > 1) setOpenRefs((o) => { const n = new Set(o); if (n.has(s.id)) n.delete(s.id); else n.add(s.id); return n; });
+    else nav(s.to);
+  };
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
   return (
     <div className="stack" style={{ gap: 10 }}>
       {items.map((s) => (
         <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '') + (s.challenge ? ' is-chal' : '') + (s.challenge && s.done ? ' is-done' : '') + (s.to ? ' is-link' : '')}
-          onClick={s.to ? (e) => { if (!e.target.closest('a, button')) nav(s.to); } : undefined}
-          onKeyDown={s.to ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) nav(s.to); } : undefined}
+          onClick={s.to ? (e) => { if (!e.target.closest('a, button')) go(s); } : undefined}
+          onKeyDown={s.to ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) go(s); } : undefined}
           role={s.to ? 'link' : undefined}
           tabIndex={s.to ? 0 : undefined}
         >
@@ -83,6 +89,12 @@ export function SessionList({ items, trainers, studios = [], showStudio, empty, 
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div className="session-title">{s.to ? <Link to={s.to}>{s.title}</Link> : s.title}{s.moved && <span className="badge-moved">{t('sa.moved')}</span>}</div>
+            {s.refs && s.refs.length > 1 && openRefs.has(s.id) && (
+              <div className="session-refs">
+                {s.refs.map((r) => <Link key={r.kind + r.to} to={r.to} className="session-ref">{r.title}</Link>)}
+              </div>
+            )}
+            {s.refs && s.refs.length > 1 && !openRefs.has(s.id) && <div className="muted small">{t('chal.refsCount', { n: s.refs.length })}</div>}
             <div className="muted small">{[showStudio ? (studios.find((g) => g.id === s.studio_id) || {}).name || name(s.trainer_id) : name(s.trainer_id), s.place].filter(Boolean).join(' · ')}</div>
           </div>
           {isAdmin && !s.personal && (

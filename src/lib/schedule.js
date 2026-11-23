@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from './supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { weekdayOf } from './dates.js';
-import { useL } from './content.jsx';
+import { useL, useContent } from './content.jsx';
 import { itemDate } from './challenges.js';
 
 const KEY = 'schedule:v1';
@@ -112,6 +112,7 @@ export function useSchedule() {
   const [chal, setChal] = useState(() => (uid ? read(`${KEY}:c:${uid}`, null) : null));
   const [loaded, setLoaded] = useState(false);
   const L = useL();
+  const content = useContent();
 
   const load = useCallback(async () => {
     try {
@@ -207,6 +208,11 @@ export function useSchedule() {
       const m = chal.members.find((x) => x.challenge_id === it.challenge_id);
       const c = chal.challenges.find((x) => x.id === it.challenge_id);
       if (!m || !c) return;
+      const raw = Array.isArray(it.refs) && it.refs.length ? it.refs : it.ref_id ? [{ kind: it.ref_kind || 'section', id: it.ref_id }] : [];
+      const refs = raw.map((r) => {
+        const o = r.kind === 'exercise' ? content.exercise(r.id) : content.section(r.id);
+        return { kind: r.kind, to: r.kind === 'exercise' ? `/exercise/${r.id}` : `/section/${r.id}`, title: o ? L(o.title) || r.id : r.id };
+      });
       out.push({
         id: 'c:' + it.id,
         challenge: true,
@@ -215,7 +221,8 @@ export function useSchedule() {
         done: chal.done.includes(it.id),
         title: L(it.title) || L(c.title),
         place: L(c.title),
-        to: it.ref_kind === 'exercise' ? `/exercise/${it.ref_id}` : it.ref_kind === 'section' ? `/section/${it.ref_id}` : '/plans',
+        refs,
+        to: refs.length ? refs[0].to : '/plans',
         weekday: null,
         on_date: itemDate(m.start_date, it.day_no),
         start_time: String(it.start_time).slice(0, 5),
@@ -224,7 +231,7 @@ export function useSchedule() {
       });
     });
     return out;
-  }, [chal, L]);
+  }, [chal, L, content]);
   const mine = [...assigned, ...personal, ...chalItems];
   return { trainers, studios, slots, mine, loaded, reload: load };
 }

@@ -700,9 +700,10 @@
   "chal.ref.exercise": "動作",
   "chal.ref.none": "未選擇（開啟「方案」）",
   "chal.ref.clear": "清除",
-  "chal.ref.title": "課程開啟的內容",
+  "chal.ref.title": "分類與動作",
   "chal.ref.search": "搜尋",
   "chal.ref.tab.all": "全部",
   "chal.ref.tab.section": "分類",
-  "chal.ref.tab.exercise": "動作"
+  "chal.ref.tab.exercise": "動作",
+  "chal.refsCount": "{n} 個項目：點擊展開"
 }

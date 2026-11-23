@@ -28,6 +28,7 @@ create table if not exists public.challenge_items (
   ref_id       text,
   position     int not null default 0
 );
+alter table public.challenge_items add column if not exists refs jsonb not null default '[]'::jsonb;  -- [{kind:'section'|'exercise', id}], кілька посилань на заняття
 create index if not exists challenge_items_idx on public.challenge_items (challenge_id, day_no);
 
 create table if not exists public.challenge_members (
