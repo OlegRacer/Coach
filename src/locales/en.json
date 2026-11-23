@@ -685,5 +685,9 @@
   "chal.noMembers": "No members yet.",
   "chal.paid": "paid",
   "chal.left": "left",
-  "chal.manualPayHint": "Confirm a student's payment under Payments: they are added automatically."
+  "chal.manualPayHint": "Confirm a student's payment under Payments: they are added automatically.",
+  "mem.preview": "Preview",
+  "mem.unused": "Unused: safe to delete",
+  "mem.used": "In use",
+  "common.close": "Close"
 }

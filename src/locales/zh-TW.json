@@ -685,5 +685,9 @@
   "chal.noMembers": "尚無成員。",
   "chal.paid": "已付款",
   "chal.left": "已退出",
-  "chal.manualPayHint": "在付款頁確認學員付款後會自動加入。"
+  "chal.manualPayHint": "在付款頁確認學員付款後會自動加入。",
+  "mem.preview": "預覽",
+  "mem.unused": "未使用：可刪除",
+  "mem.used": "使用中",
+  "common.close": "關閉"
 }
