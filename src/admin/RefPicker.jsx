@@ -58,7 +58,7 @@ export default function RefPicker({ value, onChange }) {
     return (
       <div key={s.id} className="ref-group">
         <div className="ref-grow">
-          {card('section', s.id, L(s.title) || s.id, pathOf(s.id), all, () => toggle('section', s.id), (
+          {card('section', s.id, L(s.title) || s.id, '', all, () => toggle('section', s.id), (
             <>
               {cnt > 0 && <span className="muted small">{cnt}/{total(s.id)}</span>}
               {box(all, cnt > 0)}
@@ -73,7 +73,7 @@ export default function RefPicker({ value, onChange }) {
         {isOpen && expandable && (
           <div className="ref-children">
             {subs.map((c) => groupNode(c))}
-            {exs.map((e) => card('exercise', e.id, L(e.title) || e.id, pathOf(s.id), has('exercise', e.id), () => toggle('exercise', e.id), box(has('exercise', e.id))))}
+            {exs.map((e) => card('exercise', e.id, L(e.title) || e.id, '', has('exercise', e.id), () => toggle('exercise', e.id), box(has('exercise', e.id))))}
           </div>
         )}
       </div>
