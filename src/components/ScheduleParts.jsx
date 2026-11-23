@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { setChallengeDone } from '../lib/challenges.js';
 import Icon from './Icon.jsx';
 import SwipePager from './SwipePager.jsx';
@@ -59,12 +59,18 @@ export function WeekCarousel({ slots, selected, onSelect, off, onShift }) {
 export function SessionList({ items, trainers, studios = [], showStudio, empty, onDelete }) {
   const { t } = useI18n();
   const { isAdmin, user } = useAuth();
+  const nav = useNavigate();
   if (!items.length) return <p className="muted small">{empty || t('sched.noSessions')}</p>;
   const name = (id) => (trainers.find((x) => x.id === id) || {}).name;
   return (
     <div className="stack" style={{ gap: 10 }}>
       {items.map((s) => (
-        <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '') + (s.challenge ? ' is-chal' : '') + (s.challenge && s.done ? ' is-done' : '')}>
+        <div key={s.id} className={'session' + (s.moved ? ' is-moved' : '') + (s.challenge ? ' is-chal' : '') + (s.challenge && s.done ? ' is-done' : '') + (s.to ? ' is-link' : '')}
+          onClick={s.to ? (e) => { if (!e.target.closest('a, button')) nav(s.to); } : undefined}
+          onKeyDown={s.to ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) nav(s.to); } : undefined}
+          role={s.to ? 'link' : undefined}
+          tabIndex={s.to ? 0 : undefined}
+        >
           <div className="session-time">
             {s.personal ? (
               <b className={s.start_time === '00:00' ? 'any' : undefined}>{s.start_time === '00:00' ? t('aw.anyTime') : s.start_time}</b>
