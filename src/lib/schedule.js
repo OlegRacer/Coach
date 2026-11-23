@@ -215,7 +215,7 @@ export function useSchedule() {
         done: chal.done.includes(it.id),
         title: L(it.title) || L(c.title),
         place: L(c.title),
-        to: it.ref_kind === 'exercise' ? `/exercise/${it.ref_id}` : it.ref_kind === 'section' ? `/section/${it.ref_id}` : '',
+        to: it.ref_kind === 'exercise' ? `/exercise/${it.ref_id}` : it.ref_kind === 'section' ? `/section/${it.ref_id}` : '/plans',
         weekday: null,
         on_date: itemDate(m.start_date, it.day_no),
         start_time: String(it.start_time).slice(0, 5),
