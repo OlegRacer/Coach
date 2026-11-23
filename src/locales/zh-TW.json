@@ -689,5 +689,11 @@
   "mem.preview": "預覽",
   "mem.unused": "未使用：可刪除",
   "mem.used": "使用中",
-  "common.close": "關閉"
+  "common.close": "關閉",
+  "chal.start.today": "今天",
+  "chal.start.tomorrow": "明天",
+  "chal.start.monday": "下週一",
+  "chal.startsOn": "開始：{d}",
+  "chal.changeStart": "更改日期",
+  "common.cancel": "取消"
 }

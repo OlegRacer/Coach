@@ -689,5 +689,11 @@
   "mem.preview": "Preview",
   "mem.unused": "Unused: safe to delete",
   "mem.used": "In use",
-  "common.close": "Close"
+  "common.close": "Close",
+  "chal.start.today": "Today",
+  "chal.start.tomorrow": "Tomorrow",
+  "chal.start.monday": "Next Monday",
+  "chal.startsOn": "Starts: {d}",
+  "chal.changeStart": "Change date",
+  "common.cancel": "Cancel"
 }

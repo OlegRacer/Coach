@@ -685,5 +685,11 @@
   "mem.preview": "Переглянути",
   "mem.unused": "Не використовується: можна видалити",
   "mem.used": "Використовується",
-  "common.close": "Закрити"
+  "common.close": "Закрити",
+  "chal.start.today": "Сьогодні",
+  "chal.start.tomorrow": "Завтра",
+  "chal.start.monday": "Наступного понеділка",
+  "chal.startsOn": "Старт: {d}",
+  "chal.changeStart": "Змінити дату",
+  "common.cancel": "Скасувати"
 }

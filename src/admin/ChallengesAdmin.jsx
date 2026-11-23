@@ -242,10 +242,6 @@ function Editor({ start, onClose }) {
                     <span className="muted small">{t('chal.f.time')}</span>
                     <input type="time" className="field" value={x.start_time} onChange={(e) => patch(n, { start_time: e.target.value || '00:00' })} />
                   </label>
-                  <label className="stack" style={{ gap: 4, width: 90 }}>
-                    <span className="muted small">{t('chal.f.min')}</span>
-                    <input type="number" min="5" max="600" inputMode="numeric" className="field" value={x.duration_min} onChange={(e) => patch(n, { duration_min: e.target.value })} />
-                  </label>
                 </div>
                 <p className="muted small">{x.start_time === '00:00' ? t('chal.anyTime') : ''}{c.mode === 'fixed' && c.start_date ? ` ${itemDate(c.start_date, Number(x.day_no) || 1)}` : ''}</p>
                 <LangField label={t('chal.f.itemTitle')} value={x.title} onChange={(v) => patch(n, { title: v })} maxLength={160} />
@@ -256,7 +252,7 @@ function Editor({ start, onClose }) {
                     {sections.map((s) => <option key={s.id} value={s.id}>{s.path}</option>)}
                   </select>
                 </label>
-                <div className="row" style={{ gap: 8 }}>
+                <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
                   <button type="button" className="btn-ghost btn-small" onClick={() => dup(n)}>{t('chal.dup')}</button>
                   <button type="button" className="btn-ghost btn-small" onClick={() => { setItems(items.filter((_, i) => i !== n)); setSaved(false); }}>{t('sa.delete')}</button>
                 </div>

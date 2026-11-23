@@ -9,6 +9,24 @@ import { ConfirmButton } from '../admin/ContentCommon.jsx';
 
 const fmt = (d, locale) => new Date(`${d}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 
+const plus = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
+const nextMon = () => { const d = new Date(); const n = ((8 - (d.getDay() || 7)) % 7) || 7; return plus(n); };
+
+// Вибір дня старту: швидкі кнопки й довільна дата
+function StartPicker({ value, onChange, t }) {
+  const opts = [['today', plus(0)], ['tomorrow', plus(1)], ['monday', nextMon()]];
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <div className="chips">
+        {opts.map(([k, d]) => (
+          <button type="button" key={k} className={'chip' + (value === d ? ' active' : '')} aria-pressed={value === d} onClick={() => onChange(d)}>{t(`chal.start.${k}`)}</button>
+        ))}
+      </div>
+      <input type="date" className="field" value={value} min={plus(0)} onChange={(e) => e.target.value && onChange(e.target.value)} />
+    </div>
+  );
+}
+
 // Челенджі учня: «Приєднатись» (безкоштовний), «Купити» (платний), «Додати» (повернутись у вже оплачений/колишній).
 // Заняття автоматично потрапляють у «Мій розклад».
 export default function ChallengesBlock({ challenges, items, members, done, requests, onBuy, reload }) {
@@ -18,6 +36,7 @@ export default function ChallengesBlock({ challenges, items, members, done, requ
   const [start, setStart] = useState(iso(new Date()));
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
+  const [chg, setChg] = useState(null); // челендж, де змінюємо старт
   if (!challenges || !challenges.length) return null;
 
   const join = async (c) => {
@@ -26,6 +45,16 @@ export default function ChallengesBlock({ challenges, items, members, done, requ
     const { error } = await supabase.rpc('join_challenge', { p_challenge: c.id, p_start: c.mode === 'flex' ? start : null });
     setBusy('');
     if (error) return setErr(`${error.code || ''} ${error.message || ''}`.trim());
+    window.dispatchEvent(new Event('schedule:changed'));
+    reload();
+  };
+  const saveStart = async (c) => {
+    setBusy(c.id);
+    setErr('');
+    const { error } = await supabase.rpc('change_challenge_start', { p_challenge: c.id, p_start: start });
+    setBusy('');
+    if (error) return setErr(`${error.code || ''} ${error.message || ''}`.trim());
+    setChg(null);
     window.dispatchEvent(new Event('schedule:changed'));
     reload();
   };
@@ -82,10 +111,28 @@ export default function ChallengesBlock({ challenges, items, members, done, requ
             )}
 
             {!active && c.mode === 'flex' && !pending && (
-              <label className="chal-start">
+              <div className="stack" style={{ gap: 6 }}>
                 <span className="muted small">{t('chal.pickStart')}</span>
-                <input type="date" className="field" value={start} min={iso(new Date())} onChange={(e) => setStart(e.target.value)} />
-              </label>
+                <StartPicker value={start} onChange={setStart} t={t} />
+              </div>
+            )}
+
+            {active && c.mode === 'flex' && (
+              chg === c.id ? (
+                <div className="stack" style={{ gap: 8 }}>
+                  <span className="muted small">{t('chal.pickStart')}</span>
+                  <StartPicker value={start} onChange={setStart} t={t} />
+                  <div className="row" style={{ gap: 8 }}>
+                    <button type="button" className="btn-primary btn-small" disabled={busy === c.id} onClick={() => saveStart(c)}>{t('chal.save')}</button>
+                    <button type="button" className="btn-ghost btn-small" onClick={() => setChg(null)}>{t('common.cancel')}</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="row between" style={{ gap: 8 }}>
+                  <span className="muted small">{t('chal.startsOn', { d: fmt(m.start_date, locale) })}</span>
+                  <button type="button" className="btn-ghost btn-small" onClick={() => { setStart(m.start_date > plus(0) ? m.start_date : plus(0)); setChg(c.id); }}>{t('chal.changeStart')}</button>
+                </div>
+              )
             )}
 
             <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
