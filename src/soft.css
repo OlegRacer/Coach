@@ -190,3 +190,17 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .session-refs { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
 .session-ref { padding: 6px 12px; border-radius: 99px; background: var(--card, #fff); font-size: 0.85rem; font-weight: 600; text-decoration: none; color: inherit; }
 .ref-chip { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Вибір розділів/вправ: картки у стилі списку, логіка груп із галочками */
+.ref-listbox { background: transparent; padding: 0; box-shadow: none; display: flex; flex-direction: column; gap: 8px; }
+.ref-group { display: flex; flex-direction: column; gap: 6px; }
+.ref-grow { display: flex; align-items: stretch; gap: 6px; }
+.ref-card { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: left; padding: 10px 14px; border-radius: 22px; border: 2px solid transparent; background: var(--card, #fff); color: inherit; }
+.ref-card.on { border-color: var(--st-chal-fg, #1f7a55); }
+.ref-card .ref-text { flex: 1; }
+.ref-expand { flex: none; width: 44px; border-radius: 22px; border: 0; background: var(--card, #fff); display: flex; align-items: center; justify-content: center; }
+.ref-children { display: flex; flex-direction: column; gap: 6px; padding-left: 14px; }
+.ref-children.flat { padding-left: 0; }
+.ref-box { flex: none; width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--muted, #8e8e93); display: inline-flex; align-items: center; justify-content: center; color: #fff; }
+.ref-box.on, .ref-box.part { background: var(--st-chal-fg, #1f7a55); border-color: var(--st-chal-fg, #1f7a55); }
+html[data-theme="dark"] .ref-box.on, html[data-theme="dark"] .ref-box.part { color: #10261c; }
