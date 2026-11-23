@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase.js';
 import AddWorkout from './AddWorkout.jsx';
 import { Link } from 'react-router-dom';
 import Icon from './Icon.jsx';
-import { WeekStrip, SessionList } from './ScheduleParts.jsx';
+import { WeekCarousel, SessionList } from './ScheduleParts.jsx';
 import SwipePager from './SwipePager.jsx';
 import { currentWeek } from '../lib/dates.js';
 import { nextOccurrence, slotsOn, useSchedule } from '../lib/schedule.js';
@@ -29,7 +29,14 @@ export default function ScheduleWidget({ mineOnly = false }) {
   const activeTrainer = trainerId && trainers.some((x) => x.id === trainerId) ? trainerId : trainers[0] && trainers[0].id;
   const ti = Math.max(0, trainers.findIndex((x) => x.id === activeTrainer));
 
-  const week = currentWeek(new Date());
+  const [off, setOff] = useState(0);
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const shiftWeek = (step) => {
+    setOff((o) => o + step);
+    setDayMine((d) => addDays(d, 7 * step));
+    setDayTr((d) => addDays(d, 7 * step));
+  };
+  const week = currentWeek(addDays(new Date(), off * 7));
   const short = (d) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
   const range = `${short(week[0])} – ${short(week[6])}`;
 
@@ -104,7 +111,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
             <h2 className="h2">{t('home.schedule')}</h2>
             <span className="muted small">{range}</span>
           </div>
-          <WeekStrip slots={mine} selected={dayMine} onSelect={setDayMine} />
+          <WeekCarousel slots={mine} selected={dayMine} onSelect={setDayMine} off={off} onShift={shiftWeek} />
           {!mine.length ? (
             <div className="w-sessions"><p className="muted small">{t('sched.noMine')}</p></div>
           ) : (
@@ -140,7 +147,7 @@ export default function ScheduleWidget({ mineOnly = false }) {
                   const list = slots.filter((x) => x.trainer_id === trainers[i].id);
                   return (
                     <>
-                      <WeekStrip slots={list} selected={dayTr} onSelect={setDayTr} />
+                      <WeekCarousel slots={list} selected={dayTr} onSelect={setDayTr} off={off} onShift={shiftWeek} />
                       <div className="w-sessions"><SessionList items={slotsOn(list, dayTr)} trainers={trainers} studios={studios} showStudio empty={t('sched.freeDay')} /></div>
                     </>
                   );

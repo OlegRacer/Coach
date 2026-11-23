@@ -1,16 +1,17 @@
 import { Link } from 'react-router-dom';
 import { setChallengeDone } from '../lib/challenges.js';
 import Icon from './Icon.jsx';
+import SwipePager from './SwipePager.jsx';
 import { currentWeek, weekdayOf } from '../lib/dates.js';
 import { iso, slotsOn } from '../lib/schedule.js';
 import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/index.jsx';
 
 // Смужка тижня: тап по дню вибирає його.
-export function WeekStrip({ slots, selected, onSelect }) {
+export function WeekStrip({ slots, selected, onSelect, anchor }) {
   const { t } = useI18n();
   const today = new Date();
-  const week = currentWeek(today);
+  const week = currentWeek(anchor || today);
   return (
     <div className="week">
       {week.map((d, i) => {
@@ -32,6 +33,25 @@ export function WeekStrip({ slots, selected, onSelect }) {
         );
       })}
     </div>
+  );
+}
+
+// Смужка тижня з каруселлю: свайп по числах гортає тижні. off — зсув у тижнях від поточного.
+export function WeekCarousel({ slots, selected, onSelect, off, onShift }) {
+  return (
+    <SwipePager
+      className="wk"
+      index={1}
+      count={3}
+      infinite
+      onShift={onShift}
+      onIndex={() => {}}
+      renderPanel={(i) => {
+        const a = new Date();
+        a.setDate(a.getDate() + (off + i - 1) * 7);
+        return <WeekStrip slots={slots} selected={selected} onSelect={onSelect} anchor={a} />;
+      }}
+    />
   );
 }
 

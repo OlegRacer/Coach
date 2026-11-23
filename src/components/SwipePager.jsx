@@ -2,10 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 // Горизонтальний «пейджер»: панелі йдуть слідом за пальцем, а після відпускання докочуються на місце.
 // Вертикальна прокрутка сторінки не зачіпається. onEdge(±1) викликається, коли свайпнули за край списку.
-export default function SwipePager({ index, count, onIndex, onEdge, renderPanel }) {
+// infinite: три панелі (минула/поточна/наступна), index завжди 1; після свайпу панель докочується, потім onShift(±1)
+// підміняє вміст і трек без анімації повертається в центр (ефект каруселі).
+export default function SwipePager({ index, count, onIndex, onEdge, renderPanel, infinite = false, onShift, className = '' }) {
   const box = useRef(null);
   const panels = useRef([]);
   const st = useRef(null);
+  const busy = useRef(false);
   const [dx, setDx] = useState(0);
   const [drag, setDrag] = useState(false);
   const [h, setH] = useState(null);
@@ -26,6 +29,10 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
     const el = box.current;
     if (!el) return undefined;
     const start = (e) => {
+      // вкладений пейджер вже забрав цей дотик: зовнішній не реагує
+      if (e.__swp) return;
+      e.__swp = true;
+      if (busy.current) return;
       const p = e.touches[0];
       st.current = { x: p.clientX, y: p.clientY, t: Date.now(), lock: null };
     };
@@ -45,7 +52,7 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       }
       if (s.lock !== 'x') return;
       if (e.cancelable) e.preventDefault();
-      const atEdge = (index === 0 && mx > 0) || (index === count - 1 && mx < 0);
+      const atEdge = !infinite && ((index === 0 && mx > 0) || (index === count - 1 && mx < 0));
       // біля краю з onEdge панель не тягнемо (без гумки і ривка) — просто перехід на сусідню плитку
       setDx(atEdge ? (onEdge ? 0 : mx * 0.25) : mx);
     };
@@ -61,9 +68,20 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       const fast = Math.abs(mx) / Math.max(1, Date.now() - s.t) > 0.45 && Math.abs(mx) > 30;
       const far = Math.abs(mx) > w * 0.22;
       setDrag(false);
+      const step = mx < 0 ? 1 : -1;
+      if (infinite && (far || fast)) {
+        busy.current = true;
+        setDx(-step * w);
+        setTimeout(() => {
+          setDrag(true);
+          setDx(0);
+          onShift && onShift(step);
+          requestAnimationFrame(() => requestAnimationFrame(() => { setDrag(false); busy.current = false; }));
+        }, 300);
+        return;
+      }
       setDx(0);
       if (!(far || fast)) return;
-      const step = mx < 0 ? 1 : -1;
       const n = index + step;
       if (n < 0 || n >= count) onEdge && onEdge(step);
       else onIndex(n);
@@ -78,10 +96,10 @@ export default function SwipePager({ index, count, onIndex, onEdge, renderPanel 
       el.removeEventListener('touchend', end);
       el.removeEventListener('touchcancel', end);
     };
-  }, [index, count, onIndex, onEdge]);
+  }, [index, count, onIndex, onEdge, infinite, onShift]);
 
   return (
-    <div ref={box} className="swp" style={h != null ? { height: h } : undefined}>
+    <div ref={box} className={'swp ' + className} style={h != null ? { height: h } : undefined}>
       <div className={'swp-track' + (drag ? ' drag' : '')} style={{ transform: `translateX(calc(${-index * 100}% + ${dx}px))` }}>
         {Array.from({ length: count }, (_, i) => (
           <div key={i} ref={(el) => { panels.current[i] = el; }} className="swp-panel" aria-hidden={i !== index} inert={i !== index ? '' : undefined}>
