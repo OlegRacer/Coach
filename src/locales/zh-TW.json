@@ -705,5 +705,8 @@
   "chal.ref.tab.all": "全部",
   "chal.ref.tab.section": "分類",
   "chal.ref.tab.exercise": "動作",
-  "chal.refsCount": "{n} 個項目：點擊展開"
+  "chal.refsCount": "{n} 個項目：點擊展開",
+  "chal.sec.main": "基本資料",
+  "chal.sec.dates": "日期",
+  "chal.sec.price": "價格與發布"
 }

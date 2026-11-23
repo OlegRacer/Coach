@@ -49,7 +49,7 @@ export default function ChallengesAdmin() {
       {rows && !rows.length && <p className="muted">{t('chal.none')}</p>}
       <div className="list">
         {(rows || []).map((c) => (
-          <button type="button" key={c.id} className="list-item" onClick={() => setEdit(c)}>
+          <button type="button" key={c.id} className={'chal-row' + (c.active ? '' : ' draft')} onClick={() => setEdit(c)}>
             <div className="list-main">
               <span className="list-title">{L(c.title) || '—'}</span>
               <span className="muted small">
@@ -192,10 +192,15 @@ function Editor({ start, onClose }) {
       )}
 
       {tab === 'edit' && (
-        <section className="card stack">
+        <div className="chal-edit">
+          <section className="chal-sec tone-green">
+          <h3 className="chal-sec-h"><span className="chal-sec-ico" aria-hidden="true">✦</span>{t('chal.sec.main')}</h3>
           <LangField label={t('chal.f.title')} value={c.title} onChange={(v) => set('title', v)} maxLength={120} />
           <LangField label={t('chal.f.desc')} value={c.description} multiline onChange={(v) => set('description', v)} />
 
+        </section>
+          <section className="chal-sec tone-blue">
+          <h3 className="chal-sec-h"><span className="chal-sec-ico" aria-hidden="true">◷</span>{t('chal.sec.dates')}</h3>
           <span className="muted small">{t('chal.f.mode')}</span>
           <div className="chips">
             {['fixed', 'flex'].map((m) => (
@@ -211,6 +216,9 @@ function Editor({ start, onClose }) {
             <p className="muted small">{t('chal.flexHint')}</p>
           )}
 
+        </section>
+          <section className="chal-sec tone-yellow">
+          <h3 className="chal-sec-h"><span className="chal-sec-ico" aria-hidden="true">₮</span>{t('chal.sec.price')}</h3>
           <div className="row" style={{ gap: 8 }}>
             <label className="stack" style={{ gap: 4, flex: 1 }}>
               <span className="muted small">{t('chal.f.price')}</span>
@@ -223,15 +231,18 @@ function Editor({ start, onClose }) {
           </div>
           <p className="muted small">{t('chal.priceHint')}</p>
 
-          <label className="row" style={{ gap: 10 }}>
+          <label className="chal-switch">
             <input type="checkbox" checked={c.active} onChange={(e) => set('active', e.target.checked)} />
+            <span className="chal-switch-ui" aria-hidden="true" />
             <span>{t('chal.f.active')}</span>
           </label>
-
-          <h3 className="h3">{t('chal.f.items')}</h3>
+        </section>
+          <section className="chal-sec tone-purple">
+          <h3 className="chal-sec-h"><span className="chal-sec-ico" aria-hidden="true">☰</span>{t('chal.f.items')}</h3>
           <div className="stack">
             {items.map((x, n) => (
-              <div key={x.id || x._k} className="card stack chal-edit-item">
+              <div key={x.id || x._k} className="chal-item">
+                <span className="chal-item-no">{n + 1}</span>
                 <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
                   <label className="stack" style={{ gap: 4, width: 80 }}>
                     <span className="muted small">{t('chal.f.day')}</span>
@@ -246,22 +257,25 @@ function Editor({ start, onClose }) {
                 <LangField label={t('chal.f.itemTitle')} value={x.title} onChange={(v) => patch(n, { title: v })} maxLength={160} />
                 <RefPicker value={x.refs || []} onChange={(v) => patch(n, { refs: v })} />
                 <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
-                  <button type="button" className="btn-ghost btn-small" onClick={() => dup(n)}>{t('chal.dup')}</button>
-                  <button type="button" className="btn-ghost btn-small" onClick={() => { setItems(items.filter((_, i) => i !== n)); setSaved(false); }}>{t('sa.delete')}</button>
+                  <button type="button" className="chal-soft blue" onClick={() => dup(n)}>{t('chal.dup')}</button>
+                  <button type="button" className="chal-soft red" onClick={() => { setItems(items.filter((_, i) => i !== n)); setSaved(false); }}>{t('sa.delete')}</button>
                 </div>
               </div>
             ))}
           </div>
-          <button type="button" className="btn-ghost" onClick={addItem}>{t('chal.addItem')}</button>
+          <button type="button" className="chal-soft green wide" onClick={addItem}>＋ {t('chal.addItem')}</button>
+        </section>
 
+        <div className="chal-actions">
           <button type="button" className="btn-primary" disabled={busy} onClick={save}>{busy ? t('pay.sending') : t('chal.save')}</button>
           {saved && <p className="muted small" role="status">✓ {t('chal.saved')}</p>}
-          {c.id && <ConfirmButton label={t('chal.delete')} confirmLabel={t('chal.deleteConfirm')} onConfirm={remove} />}
-        </section>
+          {c.id && <ConfirmButton className="chal-soft red wide" label={t('chal.delete')} confirmLabel={t('chal.deleteConfirm')} onConfirm={remove} />}
+        </div>
+        </div>
       )}
 
       {tab === 'members' && (
-        <section className="card stack">
+        <section className="chal-sec tone-green">
           <div className="row" style={{ gap: 8 }}>
             <select className="field" style={{ flex: 1 }} value={pick} onChange={(e) => setPick(e.target.value)}>
               <option value="">{t('chal.pickStudent')}</option>
@@ -272,7 +286,7 @@ function Editor({ start, onClose }) {
           {!members.length && <p className="muted small">{t('chal.noMembers')}</p>}
           <div className="list">
             {members.map((m) => (
-              <div key={m.id} className="list-item">
+              <div key={m.id} className="chal-member">
                 <div className="list-main">
                   <span className="list-title">{(m.student && (m.student.full_name || m.student.email)) || m.student_id}</span>
                   <span className="muted small">

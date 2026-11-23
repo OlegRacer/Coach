@@ -701,5 +701,8 @@
   "chal.ref.tab.all": "Усе",
   "chal.ref.tab.section": "Розділи",
   "chal.ref.tab.exercise": "Вправи",
-  "chal.refsCount": "Відкриє {n} пункти: тапніть"
+  "chal.refsCount": "Відкриє {n} пункти: тапніть",
+  "chal.sec.main": "Основне",
+  "chal.sec.dates": "Дати",
+  "chal.sec.price": "Ціна та публікація"
 }

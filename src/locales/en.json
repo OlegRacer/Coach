@@ -705,5 +705,8 @@
   "chal.ref.tab.all": "All",
   "chal.ref.tab.section": "Sections",
   "chal.ref.tab.exercise": "Exercises",
-  "chal.refsCount": "{n} items: tap to open"
+  "chal.refsCount": "{n} items: tap to open",
+  "chal.sec.main": "Basics",
+  "chal.sec.dates": "Dates",
+  "chal.sec.price": "Price and visibility"
 }

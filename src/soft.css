@@ -204,3 +204,40 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .ref-box { flex: none; width: 24px; height: 24px; border-radius: 8px; border: 2px solid var(--muted, #8e8e93); display: inline-flex; align-items: center; justify-content: center; color: #fff; }
 .ref-box.on, .ref-box.part { background: var(--st-chal-fg, #1f7a55); border-color: var(--st-chal-fg, #1f7a55); }
 html[data-theme="dark"] .ref-box.on, html[data-theme="dark"] .ref-box.part { color: #10261c; }
+
+/* Челенджі в адмінці: один м'який стиль. Секції з пастельним акцентом, світлі поля, м'які кнопки */
+:root { --tone-green-bg: #e6f4ec; --tone-green-fg: #1f7a55; --tone-blue-bg: #e3edfb; --tone-blue-fg: #2f5fa8; --tone-yellow-bg: #fbf0cf; --tone-yellow-fg: #8a6300; --tone-purple-bg: #ece3fa; --tone-purple-fg: #6a45a8; --tone-red-bg: #fbe3e4; --tone-red-fg: #b23a40; }
+html[data-theme="dark"] { --tone-green-bg: rgba(80,200,150,0.14); --tone-green-fg: #8fe0bf; --tone-blue-bg: rgba(110,160,240,0.16); --tone-blue-fg: #a9c7f5; --tone-yellow-bg: rgba(240,200,90,0.15); --tone-yellow-fg: #f0d58a; --tone-purple-bg: rgba(170,130,240,0.16); --tone-purple-fg: #c9aef2; --tone-red-bg: rgba(240,110,110,0.15); --tone-red-fg: #f2a3a6; }
+.chal-edit { display: flex; flex-direction: column; gap: 14px; }
+.chal-sec { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 26px; background: var(--card, #fff); border: 1.5px solid transparent; }
+.chal-sec.tone-green { border-color: var(--tone-green-bg); }
+.chal-sec.tone-blue { border-color: var(--tone-blue-bg); }
+.chal-sec.tone-yellow { border-color: var(--tone-yellow-bg); }
+.chal-sec.tone-purple { border-color: var(--tone-purple-bg); }
+.chal-sec-h { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 1.05rem; font-weight: 700; }
+.chal-sec-ico { width: 32px; height: 32px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.95rem; }
+.tone-green .chal-sec-ico { background: var(--tone-green-bg); color: var(--tone-green-fg); }
+.tone-blue .chal-sec-ico { background: var(--tone-blue-bg); color: var(--tone-blue-fg); }
+.tone-yellow .chal-sec-ico { background: var(--tone-yellow-bg); color: var(--tone-yellow-fg); }
+.tone-purple .chal-sec-ico { background: var(--tone-purple-bg); color: var(--tone-purple-fg); }
+.chal-item { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 16px 14px 14px; border-radius: 22px; background: var(--tone-purple-bg); }
+.chal-item .field, .chal-sec .field { background: var(--bg, #fff); }
+.chal-item-no { align-self: flex-start; padding: 2px 12px; border-radius: 99px; background: var(--card, #fff); color: var(--tone-purple-fg); font-weight: 700; font-size: 0.8rem; }
+.chal-soft { border: 0; border-radius: 99px; padding: 10px 16px; font-weight: 700; font-size: 0.92rem; min-height: 40px; }
+.chal-soft.wide { width: 100%; min-height: 48px; }
+.chal-soft.green { background: var(--tone-green-bg); color: var(--tone-green-fg); }
+.chal-soft.blue { background: var(--tone-blue-bg); color: var(--tone-blue-fg); }
+.chal-soft.red { background: var(--tone-red-bg); color: var(--tone-red-fg); }
+.chal-actions { display: flex; flex-direction: column; gap: 10px; }
+.chal-switch { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; background: var(--tone-yellow-bg); color: var(--tone-yellow-fg); font-weight: 600; cursor: pointer; }
+.chal-switch input { position: absolute; opacity: 0; pointer-events: none; }
+.chal-switch-ui { flex: none; width: 46px; height: 28px; border-radius: 99px; background: rgba(0,0,0,0.18); position: relative; transition: background 0.2s; }
+.chal-switch-ui::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.25); }
+.chal-switch input:checked + .chal-switch-ui { background: var(--tone-green-fg); }
+.chal-switch input:checked + .chal-switch-ui::after { transform: translateX(18px); }
+.chal-switch input:focus-visible + .chal-switch-ui { outline: 2px solid var(--tone-green-fg); outline-offset: 2px; }
+.chal-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: left; padding: 14px 16px; border-radius: 22px; border: 1.5px solid var(--tone-green-bg); background: var(--card, #fff); color: inherit; }
+.chal-row.draft { border-color: var(--tone-yellow-bg); }
+.chal-member { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 20px; background: var(--tone-green-bg); }
+.chal-edit .ref-card, .chal-edit .ref-expand { background: var(--bg, #fff); }
+.chal-edit .mz-rhead { background: var(--bg, #fff); }
