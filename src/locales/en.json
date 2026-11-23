@@ -695,5 +695,14 @@
   "chal.start.monday": "Next Monday",
   "chal.startsOn": "Starts: {d}",
   "chal.changeStart": "Change date",
-  "common.cancel": "Cancel"
+  "common.cancel": "Cancel",
+  "chal.ref.section": "Section",
+  "chal.ref.exercise": "Exercise",
+  "chal.ref.none": "None (opens “Access”)",
+  "chal.ref.clear": "Clear",
+  "chal.ref.title": "What the session opens",
+  "chal.ref.search": "Search",
+  "chal.ref.tab.all": "All",
+  "chal.ref.tab.section": "Sections",
+  "chal.ref.tab.exercise": "Exercises"
 }

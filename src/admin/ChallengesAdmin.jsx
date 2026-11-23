@@ -9,6 +9,7 @@ import { formatMoney } from '../lib/money.js';
 import { itemDate } from '../lib/challenges.js';
 import { iso } from '../lib/schedule.js';
 import { ConfirmButton, LangField } from './ContentCommon.jsx';
+import RefPicker from './RefPicker.jsx';
 
 const errText = (e) => (e ? `${e.code || ''} ${e.message || ''}`.trim() : '');
 const blank = () => ({ id: null, title: {}, description: {}, mode: 'fixed', start_date: iso(new Date()), price: 0, currency: 'TWD', active: false, position: 0 });
@@ -66,8 +67,7 @@ export default function ChallengesAdmin() {
 function Editor({ start, onClose }) {
   const { t, locale } = useI18n();
   const L = useL();
-  const { rawSections, chainOf } = useContent();
-  const [c, setC] = useState(start);
+    const [c, setC] = useState(start);
   const [items, setItems] = useState([]);
   const [members, setMembers] = useState([]);
   const [doneBy, setDoneBy] = useState({});
@@ -100,7 +100,6 @@ function Editor({ start, onClose }) {
   }, []);
 
   const set = (k, v) => { setC((x) => ({ ...x, [k]: v })); setSaved(false); };
-  const sections = [...(rawSections || [])].map((s) => ({ id: s.id, path: chainOf(s.id).map((a) => L(a.title) || a.id).join(' › ') })).sort((a, b) => a.path.localeCompare(b.path));
 
   const save = async () => {
     setBusy(true);
@@ -123,7 +122,7 @@ function Editor({ start, onClose }) {
     // заняття: оновлюємо наявні за id (щоб не губити відмітки учнів), нові додаємо, прибрані видаляємо
     const rowOf = (x, n) => ({
       challenge_id: id, day_no: Number(x.day_no) || 1, start_time: x.start_time || '00:00', duration_min: Number(x.duration_min) || 30,
-      title: x.title || {}, ref_kind: x.ref_id ? 'section' : null, ref_id: x.ref_id || null, position: n
+      title: x.title || {}, ref_kind: x.ref_id ? x.ref_kind || 'section' : null, ref_id: x.ref_id || null, position: n
     });
     const keep = items.filter((x) => x.id).map((x) => x.id);
     const { data: old } = await supabase.from('challenge_items').select('id').eq('challenge_id', id);
@@ -245,13 +244,7 @@ function Editor({ start, onClose }) {
                 </div>
                 <p className="muted small">{x.start_time === '00:00' ? t('chal.anyTime') : ''}{c.mode === 'fixed' && c.start_date ? ` ${itemDate(c.start_date, Number(x.day_no) || 1)}` : ''}</p>
                 <LangField label={t('chal.f.itemTitle')} value={x.title} onChange={(v) => patch(n, { title: v })} maxLength={160} />
-                <label className="stack" style={{ gap: 4 }}>
-                  <span className="muted small">{t('chal.f.link')}</span>
-                  <select className="field" value={x.ref_id || ''} onChange={(e) => patch(n, { ref_id: e.target.value })}>
-                    <option value="">—</option>
-                    {sections.map((s) => <option key={s.id} value={s.id}>{s.path}</option>)}
-                  </select>
-                </label>
+                <RefPicker value={{ kind: x.ref_kind, id: x.ref_id }} onChange={(v) => patch(n, { ref_kind: v.kind, ref_id: v.id })} />
                 <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
                   <button type="button" className="btn-ghost btn-small" onClick={() => dup(n)}>{t('chal.dup')}</button>
                   <button type="button" className="btn-ghost btn-small" onClick={() => { setItems(items.filter((_, i) => i !== n)); setSaved(false); }}>{t('sa.delete')}</button>

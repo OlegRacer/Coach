@@ -166,3 +166,17 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .mem-view { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.88); display: flex; align-items: center; justify-content: center; padding: 16px; }
 .mem-view img, .mem-view video { max-width: 100%; max-height: 100%; border-radius: 12px; }
 .mem-view-close { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 16px; width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.18); color: #fff; font-size: 28px; line-height: 1; }
+
+/* Вибір розділу/вправи */
+.ref-btn { flex: 1; display: flex; align-items: center; gap: 8px; text-align: left; min-height: 48px; cursor: pointer; min-width: 0; }
+.ref-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ref-kind { flex: none; padding: 2px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; }
+.ref-kind.section { background: var(--st-once-bg, #eee); color: var(--st-once-fg, #6a45a8); }
+.ref-kind.exercise { background: var(--st-chal-bg, #dcf2e8); color: var(--st-chal-fg, #1f7a55); }
+.ref-sheet { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; }
+.ref-panel { width: 100%; max-width: 560px; max-height: 85vh; background: var(--bg, #fff); border-radius: 28px 28px 0 0; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; }
+.ref-list { overflow-y: auto; display: flex; flex-direction: column; gap: 6px; min-height: 160px; }
+.ref-item { display: flex; align-items: center; gap: 10px; text-align: left; padding: 10px 12px; border-radius: 16px; border: 0; background: var(--card, rgba(0,0,0,0.04)); }
+.ref-item.on { outline: 2px solid var(--st-chal-fg, #1f7a55); }
+.ref-text { display: flex; flex-direction: column; min-width: 0; }
+@media (min-width: 720px) { .ref-sheet { align-items: center; } .ref-panel { border-radius: 28px; } }

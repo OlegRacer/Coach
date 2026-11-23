@@ -691,5 +691,14 @@
   "chal.start.monday": "Наступного понеділка",
   "chal.startsOn": "Старт: {d}",
   "chal.changeStart": "Змінити дату",
-  "common.cancel": "Скасувати"
+  "common.cancel": "Скасувати",
+  "chal.ref.section": "Розділ",
+  "chal.ref.exercise": "Вправа",
+  "chal.ref.none": "Не обрано (відкриє «Доступ»)",
+  "chal.ref.clear": "Прибрати",
+  "chal.ref.title": "Що відкриє заняття",
+  "chal.ref.search": "Пошук",
+  "chal.ref.tab.all": "Усе",
+  "chal.ref.tab.section": "Розділи",
+  "chal.ref.tab.exercise": "Вправи"
 }
