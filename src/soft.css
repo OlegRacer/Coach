@@ -275,12 +275,12 @@ html[data-ui][data-theme] .chip-sub.active,
 html[data-ui][data-theme] .lang-btn.active,
 html[data-ui][data-theme] .gender-btn.active,
 html[data-ui][data-theme] .admin-btn.armed {
-  background: var(--soft-bg); color: var(--soft-fg); box-shadow: inset 0 0 0 1.5px var(--soft-ring);
+  background: var(--soft-bg); color: var(--soft-fg); box-shadow: none;
 }
 
 /* Сьогодні / вибраний день (тиждень і місяць) */
 html[data-ui][data-theme] .day.today,
-html[data-ui][data-theme] .mday.today { background: var(--soft-bg); color: var(--soft-fg); box-shadow: inset 0 0 0 1.5px var(--soft-ring); }
+html[data-ui][data-theme] .mday.today { background: var(--soft-bg); color: var(--soft-fg); }
 html[data-ui][data-theme] .day.today .day-name { color: var(--soft-fg); }
 html[data-ui][data-theme] .day.today .dot.on,
 html[data-ui][data-theme] .mday.today .dot.on { background: var(--soft-fg); }
