@@ -241,3 +241,8 @@ html[data-theme="dark"] { --tone-green-bg: rgba(80,200,150,0.14); --tone-green-f
 .chal-member { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 20px; background: var(--tone-green-bg); }
 .chal-edit .ref-card, .chal-edit .ref-expand { background: var(--bg, #fff); }
 .chal-edit .mz-rhead { background: var(--bg, #fff); }
+
+/* м'які активні чипи й кнопки на сторінках челенджів */
+.chal-page .chip.active { background: var(--tone-green-bg); color: var(--tone-green-fg); box-shadow: inset 0 0 0 1.5px var(--tone-green-fg); }
+.chal-soft.strong { min-height: 52px; font-size: 1rem; }
+.chal-soft:disabled { opacity: 0.5; }

@@ -38,14 +38,14 @@ export default function ChallengesAdmin() {
   useEffect(() => { if (isAdmin) load(); }, [isAdmin, load]);
 
   if (!ready) return <main className="page" />;
-  if (!isAdmin) return <main className="page"><TopBar title={t('chal.admin')} /><p className="muted">{t('students.noAccess')}</p></main>;
+  if (!isAdmin) return <main className="page chal-page"><TopBar title={t('chal.admin')} /><p className="muted">{t('students.noAccess')}</p></main>;
   if (edit) return <Editor key={edit.id || 'new'} start={edit} onClose={() => { setEdit(null); load(); }} />;
 
   return (
-    <main className="page">
+    <main className="page chal-page">
       <TopBar title={t('chal.admin')} />
       {err && <p className="err" role="alert">{err}</p>}
-      <button type="button" className="btn-primary" onClick={() => setEdit(blank())}>{t('chal.new')}</button>
+      <button type="button" className="chal-soft green wide" onClick={() => setEdit(blank())}>{t('chal.new')}</button>
       {rows && !rows.length && <p className="muted">{t('chal.none')}</p>}
       <div className="list">
         {(rows || []).map((c) => (
@@ -178,7 +178,7 @@ function Editor({ start, onClose }) {
   };
 
   return (
-    <main className="page">
+    <main className="page chal-page">
       <TopBar title={c.id ? L(c.title) || t('chal.admin') : t('chal.new')} />
       {err && <p className="err" role="alert">{err}</p>}
       {c.id && (
@@ -267,7 +267,7 @@ function Editor({ start, onClose }) {
         </section>
 
         <div className="chal-actions">
-          <button type="button" className="btn-primary" disabled={busy} onClick={save}>{busy ? t('pay.sending') : t('chal.save')}</button>
+          <button type="button" className="chal-soft green wide strong" disabled={busy} onClick={save}>{busy ? t('pay.sending') : t('chal.save')}</button>
           {saved && <p className="muted small" role="status">✓ {t('chal.saved')}</p>}
           {c.id && <ConfirmButton className="chal-soft red wide" label={t('chal.delete')} confirmLabel={t('chal.deleteConfirm')} onConfirm={remove} />}
         </div>
@@ -281,7 +281,7 @@ function Editor({ start, onClose }) {
               <option value="">{t('chal.pickStudent')}</option>
               {students.map((s) => <option key={s.id} value={s.id}>{s.full_name || s.email}</option>)}
             </select>
-            <button type="button" className="btn-primary btn-small" disabled={!pick} onClick={addMember}>{t('chal.add')}</button>
+            <button type="button" className="chal-soft green" disabled={!pick} onClick={addMember}>{t('chal.add')}</button>
           </div>
           {!members.length && <p className="muted small">{t('chal.noMembers')}</p>}
           <div className="list">
