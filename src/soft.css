@@ -180,3 +180,9 @@ html[data-ui="next"] .tab-label { max-width: 100%; white-space: nowrap; overflow
 .ref-item.on { outline: 2px solid var(--st-chal-fg, #1f7a55); }
 .ref-text { display: flex; flex-direction: column; min-width: 0; }
 @media (min-width: 720px) { .ref-sheet { align-items: center; } .ref-panel { border-radius: 28px; } }
+
+/* випадаюче меню вибору: під кнопкою, у тому ж стилі */
+.ref-drop { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 22px; background: var(--bg, #fff); box-shadow: 0 10px 30px rgba(0,0,0,0.14); animation: refIn 0.18s ease-out; }
+.ref-drop .ref-list { max-height: 320px; min-height: 0; }
+@keyframes refIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ref-drop { animation: none; } }

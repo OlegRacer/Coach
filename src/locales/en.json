@@ -674,7 +674,7 @@
   "chal.f.min": "Minutes",
   "chal.anyTime": "No time set: reminder at 08:00.",
   "chal.f.itemTitle": "Session title",
-  "chal.f.link": "Opens section (optional)",
+  "chal.f.link": "Opens a section or exercise (optional)",
   "chal.dup": "Duplicate to next day",
   "chal.addItem": "Add session",
   "chal.save": "Save",

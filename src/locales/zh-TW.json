@@ -674,7 +674,7 @@
   "chal.f.min": "分鐘",
   "chal.anyTime": "未設時間：早上 08:00 提醒。",
   "chal.f.itemTitle": "課程名稱",
-  "chal.f.link": "開啟的分類（選填）",
+  "chal.f.link": "開啟分類或動作（選填）",
   "chal.dup": "複製到隔天",
   "chal.addItem": "新增課程",
   "chal.save": "儲存",

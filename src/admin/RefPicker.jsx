@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Icon from '../components/Icon.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useContent, useL } from '../lib/content.jsx';
@@ -12,6 +12,17 @@ export default function RefPicker({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [tab, setTab] = useState('all');
+  const box = useRef(null);
+
+  // закрити по тапу поза меню або по Escape
+  useEffect(() => {
+    if (!open) return undefined;
+    const away = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
+    const esc = (e) => { if (e.key === 'Escape') setOpen(false); };
+    document.addEventListener('pointerdown', away);
+    document.addEventListener('keydown', esc);
+    return () => { document.removeEventListener('pointerdown', away); document.removeEventListener('keydown', esc); };
+  }, [open]);
 
   const pathOf = (id) => chainOf(id).map((a) => L(a.title) || a.id).join(' › ');
   const rows = useMemo(() => {
@@ -30,10 +41,10 @@ export default function RefPicker({ value, onChange }) {
   const pick = (r) => { onChange({ kind: r.kind, id: r.id }); setOpen(false); setQ(''); };
 
   return (
-    <div className="stack" style={{ gap: 6 }}>
+    <div className="stack" ref={box} style={{ gap: 6 }}>
       <span className="muted small">{t('chal.f.link')}</span>
       <div className="row" style={{ gap: 8 }}>
-        <button type="button" className="field ref-btn" onClick={() => setOpen(true)}>
+        <button type="button" className="field ref-btn" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
           {cur ? (
             <>
               <span className={'ref-kind ' + cur.kind}>{t(`chal.ref.${cur.kind}`)}</span>
@@ -45,27 +56,21 @@ export default function RefPicker({ value, onChange }) {
       </div>
 
       {open && (
-        <div className="ref-sheet" role="dialog" aria-modal="true" onClick={() => setOpen(false)}>
-          <div className="ref-panel" onClick={(e) => e.stopPropagation()}>
-            <div className="row between">
-              <b>{t('chal.ref.title')}</b>
-              <button type="button" className="icon-btn" aria-label={t('common.close')} onClick={() => setOpen(false)}><Icon name="close" size={22} /></button>
-            </div>
-            <input className="field" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('chal.ref.search')} autoFocus />
-            <div className="chips">
-              {['all', 'section', 'exercise'].map((k) => (
-                <button type="button" key={k} className={'chip' + (tab === k ? ' active' : '')} aria-pressed={tab === k} onClick={() => setTab(k)}>{t(`chal.ref.tab.${k}`)}</button>
-              ))}
-            </div>
-            <div className="ref-list">
-              {!shown.length && <p className="muted small">{t('mem.empty')}</p>}
-              {shown.map((r) => (
-                <button type="button" key={r.kind + r.id} className={'ref-item' + (cur && cur.id === r.id && cur.kind === r.kind ? ' on' : '')} onClick={() => pick(r)}>
-                  <span className={'ref-kind ' + r.kind}>{t(`chal.ref.${r.kind}`)}</span>
-                  <span className="ref-text"><b>{r.title}</b>{r.sub && <span className="muted small">{r.sub}</span>}</span>
-                </button>
-              ))}
-            </div>
+        <div className="ref-drop" role="listbox">
+          <input className="field" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('chal.ref.search')} />
+          <div className="chips">
+            {['all', 'section', 'exercise'].map((k) => (
+              <button type="button" key={k} className={'chip' + (tab === k ? ' active' : '')} aria-pressed={tab === k} onClick={() => setTab(k)}>{t(`chal.ref.tab.${k}`)}</button>
+            ))}
+          </div>
+          <div className="ref-list">
+            {!shown.length && <p className="muted small">{t('mem.empty')}</p>}
+            {shown.map((r) => (
+              <button type="button" role="option" aria-selected={!!cur && cur.id === r.id && cur.kind === r.kind} key={r.kind + r.id} className={'ref-item' + (cur && cur.id === r.id && cur.kind === r.kind ? ' on' : '')} onClick={() => pick(r)}>
+                <span className={'ref-kind ' + r.kind}>{t(`chal.ref.${r.kind}`)}</span>
+                <span className="ref-text"><b>{r.title}</b>{r.sub && <span className="muted small">{r.sub}</span>}</span>
+              </button>
+            ))}
           </div>
         </div>
       )}
