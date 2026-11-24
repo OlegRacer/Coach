@@ -66,7 +66,7 @@ export function convertVideo(file, { maxBytes = 28 * 1024 * 1024, onProgress, si
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d', { alpha: false });
-      const bps = Math.max(400000, Math.min(3500000, Math.floor(((maxBytes * 8) / seconds) * 0.8)));
+      const bps = Math.max(2000000, Math.min(5000000, Math.floor(((maxBytes * 8) / seconds) * 0.8)));
       const stream = canvas.captureStream(FPS);
       const chunks = [];
       try {
