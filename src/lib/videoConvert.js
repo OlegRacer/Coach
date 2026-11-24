@@ -3,7 +3,7 @@
 // 30 к/с, без звуку й перекодовується в H.264 .mp4 (або webm, якщо браузер не вміє mp4).
 // Кодування іде в реальному часі (відео грає й записується), тому 10 с відео = ~10 с очікування.
 export const MAX_SECONDS = 20;
-const MAX_SIDE = 720;
+const MAX_SIDE = 1080;
 const FPS = 30;
 
 export function canConvertVideo() {
@@ -66,7 +66,7 @@ export function convertVideo(file, { maxBytes = 28 * 1024 * 1024, onProgress, si
       canvas.width = w;
       canvas.height = h;
       const ctx = canvas.getContext('2d', { alpha: false });
-      const bps = Math.max(1500000, Math.min(6000000, Math.floor(((maxBytes * 8) / seconds) * 0.8)));
+      const bps = Math.max(400000, Math.min(3500000, Math.floor(((maxBytes * 8) / seconds) * 0.8)));
       const stream = canvas.captureStream(FPS);
       const chunks = [];
       try {
