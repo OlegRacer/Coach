@@ -357,3 +357,8 @@ html[data-ui][data-theme] .ios-switch.on,
 html[data-ui][data-theme] .sw.on i,
 html[data-ui][data-theme] .ios-switch.on span,
 .chal-switch input:checked + .chal-switch-ui::after { background: color-mix(in srgb, var(--muted) 75%, var(--card, #fff)); box-shadow: none; opacity: 1; }
+
+/* Вибрана тема: іконка контрастна (темна у світлій, світла у темній) */
+html[data-ui][data-theme] .theme-opt.on { color: var(--text, #111); }
+html[data-ui][data-theme="light"] .theme-opt.on { color: #14210a; }
+html[data-ui][data-theme="dark"] .theme-opt.on { color: #f2f5ee; }
