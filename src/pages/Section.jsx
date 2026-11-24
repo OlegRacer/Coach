@@ -73,16 +73,27 @@ export default function Section() {
     setSortErr(bad ? `${bad.error.code || ''} ${bad.error.message}` : '');
     reload();
   };
-  const sortSubs = useSortable(subs.map((x) => x.id), persist('content_sections'), isAdmin);
+  const sortSubs = useSortable(subs.map((x) => x.id), persist('content_sections'), isAdmin, (id, target) => moveSub(id, target), (k) => k === '__up');
   const own = exercisesOf(category);
-  // перетягни вправу на плитку підрозділу: вона переміщується туди (не копіюється)
+  // перетягни вправу чи підрозділ на плитку підрозділу або на кнопку «назад»: переміщення, не копія
+  const parentSec = chainOf(category).slice(-2, -1)[0];
+  const { rawSections } = useContent();
   const moveEx = async (id, target) => {
-    const n = (exercisesOf(target) || []).length;
-    const { error } = await supabase.from('content_exercises').update({ section_id: target, position: n }).eq('id', id);
+    const dest = target === '__up' ? (parentSec && parentSec.id) : target;
+    if (!dest) return; // вправу не можна винести на головний екран
+    const n = (exercisesOf(dest) || []).length;
+    const { error } = await supabase.from('content_exercises').update({ section_id: dest, position: n }).eq('id', id);
     setSortErr(error ? `${error.code || ''} ${error.message}` : '');
     reload();
   };
-  const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin, moveEx);
+  const moveSub = async (id, target) => {
+    const dest = target === '__up' ? ((sec && sec.parent_id) || null) : target;
+    const n = rawSections.filter((x) => (x.parent_id || null) === dest).length;
+    const { error } = await supabase.from('content_sections').update({ parent_id: dest, position: n }).eq('id', id);
+    setSortErr(error ? `${error.code || ''} ${error.message}` : '');
+    reload();
+  };
+  const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin, moveEx, (k) => k !== '__up' || !!parentSec);
 
   const ownById = Object.fromEntries(own.map((x) => [x.id, x]));
   const items = isAdmin ? [...sortEx.order.map((id) => ownById[id]).filter(Boolean), ...programExercisesOf(category)] : itemsRaw;
@@ -100,7 +111,7 @@ export default function Section() {
   const parent = chainOf(category).slice(-2, -1)[0];
   return (
     <main className="page wide">
-      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} action={isAdmin ? (
+      <TopBar title={title} to={parent ? `/section/${parent.id}` : '/'} dropKey={isAdmin ? '__up' : undefined} hot={sortEx.hot === '__up' || sortSubs.hot === '__up'} action={isAdmin ? (
         <div className="add-menu-wrap">
           <button type="button" className="edit-inline" aria-label={t('content.add')} aria-expanded={menu} onClick={() => setMenu(!menu)}>
             <Icon name="plus" size={22} />

@@ -4,7 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 
 // «Назад» повертає на попередню сторінку з історії (куди учень реально заходив).
 // Якщо історії немає (відкрили за прямим посиланням), веде на `to`.
-export default function TopBar({ title, to = '/', action }) {
+export default function TopBar({ title, to = '/', action, dropKey, hot }) {
   const { t } = useI18n();
   const nav = useNavigate();
   const onBack = (e) => {
@@ -16,7 +16,7 @@ export default function TopBar({ title, to = '/', action }) {
   };
   return (
     <header className="topbar">
-      <Link to={to} onClick={onBack} className="back" aria-label={t('common.back')}>
+      <Link to={to} onClick={onBack} data-drop={dropKey} className={'back' + (hot ? ' drop-hot' : '')} aria-label={t('common.back')}>
         <Icon name="back" size={22} />
       </Link>
       <h1>{title}</h1>

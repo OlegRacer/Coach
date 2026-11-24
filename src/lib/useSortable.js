@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const HOLD = 250;
 const SLOP = 8;
 
-export default function useSortable(ids, onCommit, enabled = true, onDrop = null) {
+export default function useSortable(ids, onCommit, enabled = true, onDrop = null, accept = null) {
   const key = ids.join('|');
   const [local, setLocal] = useState(null);
   const [drag, setDrag] = useState(null); // { id, dy, to }
@@ -15,6 +15,8 @@ export default function useSortable(ids, onCommit, enabled = true, onDrop = null
   commit.current = onCommit;
   const dropRef = useRef(onDrop);
   dropRef.current = onDrop;
+  const acceptRef = useRef(accept);
+  acceptRef.current = accept;
   const idsRef = useRef(ids);
   idsRef.current = local || ids;
 
@@ -83,7 +85,7 @@ export default function useSortable(ids, onCommit, enabled = true, onDrop = null
       // чи палець/курсор над плиткою-призначенням (data-drop): тоді це переміщення, а не пересортування
       let target = null;
       if (dropRef.current) {
-        const hit = document.elementsFromPoint(ev.clientX, ev.clientY).find((n) => n.dataset && n.dataset.drop);
+        const hit = document.elementsFromPoint(ev.clientX, ev.clientY).find((n) => n.dataset && n.dataset.drop && n.dataset.drop !== s.id && (!acceptRef.current || acceptRef.current(n.dataset.drop)));
         if (hit) target = hit.dataset.drop;
       }
       s.target = target;

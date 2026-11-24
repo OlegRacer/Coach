@@ -372,3 +372,4 @@ html[data-ui][data-theme="dark"] .theme-opt.on { color: #f2f5ee; }
 .crop-box { isolation: isolate; clip-path: inset(0 round 20px); }
 .media video, .ex-thumb video, .crop-box video { border-radius: inherit; }
 .thumb-play { border-radius: 12px; overflow: hidden; }
+.topbar .back.drop-hot { background: var(--soft-bg); color: var(--soft-fg); box-shadow: 0 0 0 2px var(--soft-ring); transform: scale(1.12); transition: transform .12s; }
