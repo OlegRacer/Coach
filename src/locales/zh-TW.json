@@ -708,5 +708,6 @@
   "chal.refsCount": "{n} 個項目：點擊展開",
   "chal.sec.main": "基本資料",
   "chal.sec.dates": "日期",
-  "chal.sec.price": "價格與發布"
+  "chal.sec.price": "價格與發布",
+  "content.cropFrame": "起始畫面"
 }

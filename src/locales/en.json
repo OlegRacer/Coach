@@ -708,5 +708,6 @@
   "chal.refsCount": "{n} items: tap to open",
   "chal.sec.main": "Basics",
   "chal.sec.dates": "Dates",
-  "chal.sec.price": "Price and visibility"
+  "chal.sec.price": "Price and visibility",
+  "content.cropFrame": "First frame"
 }

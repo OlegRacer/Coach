@@ -7,7 +7,7 @@ import Locked from '../components/Locked.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { setsText } from '../lib/setsText.js';
-import { cropStyle } from '../lib/crop.js';
+import { cropStyle, startOf } from '../lib/crop.js';
 import { useContent, useL, mediaUrl } from '../lib/content.jsx';
 import { useEquipment } from '../lib/equipment.jsx';
 import SectionTile from '../components/SectionIcon.jsx';
@@ -23,6 +23,7 @@ let playing = null;
 function Thumb({ src, crop }) {
   const ref = useRef(null);
   const [on, setOn] = useState(false);
+  const t0 = startOf(crop);
   const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
   useEffect(() => () => { if (playing === ref.current) playing = null; }, []);
   if (!isVideo) return <img src={src} alt="" loading="lazy" style={cropStyle(crop)} />;
@@ -39,8 +40,9 @@ function Thumb({ src, crop }) {
   };
   return (
     <span className="thumb-play" onClick={toggle}>
-      <video ref={ref} src={src + '#t=0.001'} muted loop playsInline preload="metadata" aria-hidden="true" style={cropStyle(crop)}
-        onPlay={() => setOn(true)} onPause={() => setOn(false)} />
+      <video ref={ref} src={src + '#t=' + (t0 || 0.001)} muted playsInline preload="metadata" aria-hidden="true" style={cropStyle(crop)}
+        onPlay={() => setOn(true)} onPause={() => setOn(false)}
+        onEnded={(e) => { const v = e.currentTarget; v.currentTime = t0 || 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); }} />
       {!on && <span className="thumb-btn"><Icon name="play" size={18} /></span>}
     </span>
   );

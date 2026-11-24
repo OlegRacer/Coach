@@ -2,7 +2,7 @@
 // Відео з айфона (HEVC .mov, 4K, 60 к/с, зі звуком) відтворюється, зменшується до 720 px,
 // 30 к/с, без звуку й перекодовується в H.264 .mp4 (або webm, якщо браузер не вміє mp4).
 // Кодування іде в реальному часі (відео грає й записується), тому 10 с відео = ~10 с очікування.
-export const MAX_SECONDS = 20;
+export const MAX_SECONDS = 6;
 const MAX_SIDE = 720;
 const FPS = 30;
 
@@ -97,9 +97,18 @@ export function convertVideo(file, { maxBytes = 28 * 1024 * 1024, onProgress, si
       };
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, w, h);
-      rec.start(500);
+      // запис стартує лише після першого справжнього кадру, щоб відео не починалось із чорного
+      const begin = () => {
+        if (done) return;
+        ctx.drawImage(v, 0, 0, w, h);
+        rec.start(500);
+        draw();
+      };
       v.play()
-        .then(() => draw())
+        .then(() => {
+          if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(begin);
+          else setTimeout(begin, 80);
+        })
         .catch(fail);
       v.onended = () => {
         if (!done && rec.state !== 'inactive') setTimeout(() => rec.state !== 'inactive' && rec.stop(), 120);

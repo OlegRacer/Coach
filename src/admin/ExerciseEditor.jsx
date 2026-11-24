@@ -37,12 +37,26 @@ function Toggle({ label, on, onChange }) {
 // Кадрування квадратної мініатюри: перетягни відео пальцем і за потреби збільш.
 function CropBox({ src, crop, onChange }) {
   const { t } = useI18n();
-  const c = cropOf(crop);
+  const [c, setC] = useState(() => cropOf(crop)); // локальний стан: форма не перемальовується на кожен рух пальця
   const box = useRef(null);
+  const vid = useRef(null);
   const drag = useRef(null);
+  const timer = useRef(0);
   const [ar, setAr] = useState(16 / 9);
+  const [dur, setDur] = useState(MAX_SECONDS);
   const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
-  const style = cropStyle(c);
+  useEffect(() => { setC(cropOf(crop)); }, [src]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const commit = (n, now) => {
+    setC(n);
+    clearTimeout(timer.current);
+    if (now) onChange(n);
+    else timer.current = setTimeout(() => onChange(n), 200);
+  };
+  const seek = (sec) => {
+    const v = vid.current;
+    if (v && Number.isFinite(sec)) { try { v.currentTime = sec; } catch { /* ignore */ } }
+  };
   const down = (e) => { drag.current = { x: e.clientX, y: e.clientY, c }; e.currentTarget.setPointerCapture(e.pointerId); };
   const move = (e) => {
     const d = drag.current;
@@ -50,26 +64,43 @@ function CropBox({ src, crop, onChange }) {
     const size = box.current ? box.current.offsetWidth : 160;
     const sx = 100 / (size * Math.max(ar - 1, 0.3)) / d.c.z;
     const sy = 100 / (size * Math.max(1 / ar - 1, 0.3)) / d.c.z;
-    onChange(cropOf({ ...d.c, x: d.c.x - (e.clientX - d.x) * sx, y: d.c.y - (e.clientY - d.y) * sy }));
+    setC(cropOf({ ...d.c, x: d.c.x - (e.clientX - d.x) * sx, y: d.c.y - (e.clientY - d.y) * sy }));
   };
-  const up = () => { drag.current = null; };
+  const up = () => { if (drag.current) { drag.current = null; commit(c, true); } };
+  const meta = (e) => {
+    const v = e.currentTarget;
+    if (v.videoHeight) setAr(v.videoWidth / v.videoHeight);
+    if (Number.isFinite(v.duration) && v.duration > 0) { setDur(v.duration); seek(c.t || 0.001); return; }
+    // записані браузером файли можуть не мати тривалості: примусово дізнаємось її
+    const fix = () => { v.removeEventListener('timeupdate', fix); if (Number.isFinite(v.duration)) setDur(v.duration); v.currentTime = c.t || 0.001; };
+    v.addEventListener('timeupdate', fix);
+    v.currentTime = 1e7;
+  };
+  const style = cropStyle(c);
+  const maxT = Math.max(0.1, Math.min(dur, 60));
   return (
     <div className="crop-wrap">
       <span className="muted small">{t('content.cropTitle')}: {t('content.cropHint')}</span>
       <div className="crop-box" ref={box} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
         {isVideo ? (
-          <video src={src + '#t=0.001'} muted loop playsInline autoPlay style={style}
-            onLoadedMetadata={(e) => e.currentTarget.videoHeight && setAr(e.currentTarget.videoWidth / e.currentTarget.videoHeight)} />
+          <video ref={vid} src={src + '#t=0.001'} muted playsInline preload="auto" style={style} onLoadedMetadata={meta} />
         ) : (
           <img src={src} alt="" draggable="false" style={style}
             onLoad={(e) => e.currentTarget.naturalHeight && setAr(e.currentTarget.naturalWidth / e.currentTarget.naturalHeight)} />
         )}
       </div>
+      {isVideo && (
+        <label className="crop-zoom small muted">
+          {t('content.cropFrame')} {c.t.toFixed(1)}s
+          <input type="range" min="0" max={maxT} step="0.1" value={Math.min(c.t, maxT)}
+            onChange={(e) => { const n = { ...c, t: Number(e.target.value) }; seek(n.t || 0.001); commit(n); }} />
+        </label>
+      )}
       <label className="crop-zoom small muted">
         {t('content.cropZoom')}
-        <input type="range" min="1" max="3" step="0.05" value={c.z} onChange={(e) => onChange({ ...c, z: Number(e.target.value) })} />
+        <input type="range" min="1" max="3" step="0.05" value={c.z} onChange={(e) => commit({ ...c, z: Number(e.target.value) })} />
       </label>
-      <button type="button" className="btn-ghost btn-small" onClick={() => onChange({ x: 50, y: 50, z: 1 })}>{t('content.cropReset')}</button>
+      <button type="button" className="btn-ghost btn-small" onClick={() => commit({ ...c, x: 50, y: 50, z: 1 }, true)}>{t('content.cropReset')}</button>
     </div>
   );
 }
