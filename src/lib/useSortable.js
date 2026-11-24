@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const HOLD = 250;
 const SLOP = 8;
 
-export default function useSortable(ids, onCommit, enabled = true) {
+export default function useSortable(ids, onCommit, enabled = true, onDrop = null) {
   const key = ids.join('|');
   const [local, setLocal] = useState(null);
   const [drag, setDrag] = useState(null); // { id, dy, to }
@@ -13,6 +13,8 @@ export default function useSortable(ids, onCommit, enabled = true) {
   const st = useRef(null);
   const commit = useRef(onCommit);
   commit.current = onCommit;
+  const dropRef = useRef(onDrop);
+  dropRef.current = onDrop;
   const idsRef = useRef(ids);
   idsRef.current = local || ids;
 
@@ -32,7 +34,9 @@ export default function useSortable(ids, onCommit, enabled = true) {
       s.suppress.current = true;
       setTimeout(() => { s.suppress.current = false; }, 350);
       const to = s.to;
-      if (apply && to !== s.from) {
+      if (apply && s.target && dropRef.current) {
+        dropRef.current(s.id, s.target);
+      } else if (apply && to !== s.from) {
         const next = [...s.order];
         const [m] = next.splice(s.from, 1);
         next.splice(to, 0, m);
@@ -76,8 +80,15 @@ export default function useSortable(ids, onCommit, enabled = true) {
         const dist = Math.abs(q.top + q.height / 2 - c);
         if (dist < best) { best = dist; to = i; }
       });
-      s.to = to;
-      setDrag({ id, dy, to });
+      // чи палець/курсор над плиткою-призначенням (data-drop): тоді це переміщення, а не пересортування
+      let target = null;
+      if (dropRef.current) {
+        const hit = document.elementsFromPoint(ev.clientX, ev.clientY).find((n) => n.dataset && n.dataset.drop);
+        if (hit) target = hit.dataset.drop;
+      }
+      s.target = target;
+      s.to = target ? s.from : to;
+      setDrag({ id, dy, to: s.to, target });
     };
     s.up = () => finish(true);
     s.cancel = () => finish(false);
@@ -117,5 +128,5 @@ export default function useSortable(ids, onCommit, enabled = true) {
     return { ...base, className: cls, style };
   };
 
-  return { order, rowProps, dragging: !!drag };
+  return { order, rowProps, dragging: !!drag, hot: drag ? drag.target || null : null };
 }

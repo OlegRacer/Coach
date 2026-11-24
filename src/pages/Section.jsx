@@ -75,7 +75,14 @@ export default function Section() {
   };
   const sortSubs = useSortable(subs.map((x) => x.id), persist('content_sections'), isAdmin);
   const own = exercisesOf(category);
-  const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin);
+  // перетягни вправу на плитку підрозділу: вона переміщується туди (не копіюється)
+  const moveEx = async (id, target) => {
+    const n = (exercisesOf(target) || []).length;
+    const { error } = await supabase.from('content_exercises').update({ section_id: target, position: n }).eq('id', id);
+    setSortErr(error ? `${error.code || ''} ${error.message}` : '');
+    reload();
+  };
+  const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin, moveEx);
 
   const ownById = Object.fromEntries(own.map((x) => [x.id, x]));
   const items = isAdmin ? [...sortEx.order.map((id) => ownById[id]).filter(Boolean), ...programExercisesOf(category)] : itemsRaw;
@@ -125,7 +132,7 @@ export default function Section() {
           const n = open ? 0 : openCount(s.id);
           const locked = !open && !n;
           return (
-            <div key={s.id} {...(sortSubs.rowProps(s.id))} className={'edit-wrap ' + (sortSubs.rowProps(s.id).className || '')}>
+            <div key={s.id} {...(sortSubs.rowProps(s.id))} data-drop={isAdmin ? s.id : undefined} className={'edit-wrap ' + (sortSubs.rowProps(s.id).className || '') + (sortEx.hot === s.id ? ' drop-hot' : '')}>
             <Link to={`/section/${s.id}`} draggable={false} onClick={(e) => { if (s.draft && !isAdmin) e.preventDefault(); }} className={'list-item' + (locked ? ' locked-tile' : '')}>
               <SectionTile section={s} size={22} className="small-icon" />
               <span className="list-main">

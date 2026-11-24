@@ -362,3 +362,6 @@ html[data-ui][data-theme] .ios-switch.on span,
 html[data-ui][data-theme] .theme-opt.on { color: var(--text, #111); }
 html[data-ui][data-theme="light"] .theme-opt.on { color: #14210a; }
 html[data-ui][data-theme="dark"] .theme-opt.on { color: #f2f5ee; }
+
+/* Перетягування вправи на підрозділ: підсвітка плитки-призначення */
+.edit-wrap.drop-hot .list-item { background: var(--soft-bg); box-shadow: 0 0 0 2px var(--soft-ring); transform: scale(1.02); transition: transform .12s, background .12s; }
