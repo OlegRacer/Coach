@@ -250,12 +250,12 @@ html[data-theme="dark"] { --tone-green-bg: rgba(80,200,150,0.14); --tone-green-f
 html[data-ui] { --soft-base: var(--accent); }
 html[data-ui="classic"] { --soft-base: var(--m-primary, var(--accent)); }
 html[data-ui][data-theme="light"] {
-  --soft-bg: color-mix(in srgb, var(--soft-base) 20%, #fff);
+  --soft-bg: color-mix(in srgb, var(--soft-base) 30%, #fff);
   --soft-fg: color-mix(in srgb, var(--soft-base) 52%, #14210a);
   --soft-ring: color-mix(in srgb, var(--soft-base) 55%, #fff);
 }
 html[data-ui][data-theme="dark"] {
-  --soft-bg: color-mix(in srgb, var(--soft-base) 18%, var(--card, #1c1c1e));
+  --soft-bg: color-mix(in srgb, var(--soft-base) 28%, var(--card, #1c1c1e));
   --soft-fg: color-mix(in srgb, var(--soft-base) 88%, #fff);
   --soft-ring: color-mix(in srgb, var(--soft-base) 45%, transparent);
 }
