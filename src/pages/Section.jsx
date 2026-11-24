@@ -150,7 +150,6 @@ export default function Section() {
                 <span className="list-title">
                   {L(s.title)}
                   {!s.published && isAdmin && <span className="badge-draft">{t('content.draft')}</span>}
-                  {isFreeSection(s.id) && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
                 </span>
                 <span className={'muted small' + (s.draft ? ' draft' : '')}>{s.draft ? t('content.draft') : n > 0 ? t('access.partial', { n }) : L(s.hint)}</span>
               </span>
@@ -172,7 +171,6 @@ export default function Section() {
               <span className="list-title">
                 {L(e.title)}
                 {!e.published && isAdmin && <span className="badge-draft">{t('content.draft')}</span>}
-                {e.free && !isAdmin && <span className="badge-free">{t('content.free')}</span>}
               </span>
               <span className={'muted small' + (e.draft ? ' draft' : '')}>{e.draft ? t('content.draft') : exerciseOpen(e) ? progText(e.id) : t('access.closed')}</span>
               {!isAdmin && exerciseOpen(e) && missing(e).length > 0 && (
