@@ -338,3 +338,14 @@ html[data-ui="next"][data-theme] .tab-bubble { background: var(--soft-bg); box-s
 .ref-box { width: 22px; height: 22px; border-radius: 7px; }
 .ref-children { gap: 4px; padding-left: 12px; }
 .ref-group { gap: 4px; }
+
+/* Анатомія: вибрану групу без рамки, достатньо галочки */
+html[data-ui] .mz-group.has { box-shadow: none !important; }
+
+/* Тумблери: м'яка зелена доріжка + білий бігунок (без темно-зеленого) */
+html[data-ui][data-theme] .sw.on,
+html[data-ui][data-theme] .ios-switch.on { background: color-mix(in srgb, var(--soft-fg) 42%, var(--soft-bg)); }
+html[data-ui][data-theme] .sw.on i,
+html[data-ui][data-theme] .ios-switch.on span { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.22); }
+.chal-switch input:checked + .chal-switch-ui { background: color-mix(in srgb, var(--soft-fg, #1f7a55) 42%, var(--soft-bg, #e6f4ec)); }
+.chal-switch input:checked + .chal-switch-ui::after { background: #fff; opacity: 1; }
