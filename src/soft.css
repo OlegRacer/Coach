@@ -365,3 +365,10 @@ html[data-ui][data-theme="dark"] .theme-opt.on { color: #f2f5ee; }
 
 /* Перетягування вправи на підрозділ: підсвітка плитки-призначення */
 .edit-wrap.drop-hot .list-item { background: var(--soft-bg); box-shadow: 0 0 0 2px var(--soft-ring); transform: scale(1.02); transition: transform .12s, background .12s; }
+
+/* Відео на ПК: заокруглення обрізає й саме відео (Chrome інколи ігнорує overflow для <video>) */
+.media { isolation: isolate; clip-path: inset(0 round 24px); }
+.ex-thumb { isolation: isolate; clip-path: inset(0 round 12px); }
+.crop-box { isolation: isolate; clip-path: inset(0 round 20px); }
+.media video, .ex-thumb video, .crop-box video { border-radius: inherit; }
+.thumb-play { border-radius: 12px; overflow: hidden; }
