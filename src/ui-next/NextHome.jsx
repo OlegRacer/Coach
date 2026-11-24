@@ -160,7 +160,7 @@ export default function NextHome() {
     const open = full || partN > 0;
     const until = !isAdmin && full && access[x.id] ? new Date(access[x.id]).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) : '';
     const to = x.kind === 'anatomy' ? '/anatomy' : `/section/${x.id}`;
-    const sub = !x.published ? t('content.draft') : isFreeSection(x.id) ? t('content.free') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : L(x.hint)) : t('access.closed');
+    const sub = !x.published ? t('content.draft') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : L(x.hint)) : t('access.closed');
     return (
       <>
         <Link to={to} onClick={(e) => (x.draft && !isAdmin ? e.preventDefault() : zoomTo(e, to))} className={'tile' + (open ? '' : ' locked-tile')} tabIndex={editing ? -1 : undefined}>
