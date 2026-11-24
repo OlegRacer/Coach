@@ -349,3 +349,11 @@ html[data-ui][data-theme] .sw.on i,
 html[data-ui][data-theme] .ios-switch.on span { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.22); }
 .chal-switch input:checked + .chal-switch-ui { background: color-mix(in srgb, var(--soft-fg, #1f7a55) 42%, var(--soft-bg, #e6f4ec)); }
 .chal-switch input:checked + .chal-switch-ui::after { background: #fff; opacity: 1; }
+
+/* Єдиний зелений: доріжка тумблера = той самий --soft-bg, що й пігулки; бігунок сірий з інтерфейсу */
+html[data-ui][data-theme] .sw.on,
+html[data-ui][data-theme] .ios-switch.on,
+.chal-switch input:checked + .chal-switch-ui { background: var(--soft-bg); }
+html[data-ui][data-theme] .sw.on i,
+html[data-ui][data-theme] .ios-switch.on span,
+.chal-switch input:checked + .chal-switch-ui::after { background: color-mix(in srgb, var(--muted) 75%, var(--card, #fff)); box-shadow: none; opacity: 1; }
