@@ -3,7 +3,7 @@
 // 30 к/с, без звуку й перекодовується в H.264 .mp4 (або webm, якщо браузер не вміє mp4).
 // Кодування іде в реальному часі (відео грає й записується), тому 10 с відео = ~10 с очікування.
 export const MAX_SECONDS = 20;
-const MAX_SIDE = 720;
+const MAX_SIDE = 1080;
 const FPS = 30;
 
 export function canConvertVideo() {
