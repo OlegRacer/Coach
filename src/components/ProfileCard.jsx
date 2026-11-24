@@ -10,6 +10,7 @@ import SignInNotice from './SignInNotice.jsx';
 import Icon from './Icon.jsx';
 import useOnline from '../lib/useOnline.js';
 import { supabase } from '../lib/supabase.js';
+import { resetCache } from '../lib/resetCache.js';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
@@ -35,6 +36,7 @@ export default function ProfileCard() {
   const { user, isAdmin, details, signInGoogle, signInLine, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);
+  const [clearing, setClearing] = useState(false);
   const filled = !!(details && details.completed_at);
   const online = useOnline();
   useEffect(() => {
@@ -137,6 +139,13 @@ export default function ProfileCard() {
       <LinkedLogins />
 
       <PushToggle />
+
+      <div className="set-block">
+        <button type="button" className="btn-ghost" disabled={clearing} onClick={() => { setClearing(true); resetCache(); }}>
+          {clearing ? t('profile.resetting') : t('profile.resetCache')}
+        </button>
+        <span className="muted small">{t('profile.resetCacheHint')}</span>
+      </div>
 
       {user && !isAdmin && (
         <Link to="/feedback" className="set-row link-row">

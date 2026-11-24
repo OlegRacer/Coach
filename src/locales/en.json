@@ -709,5 +709,8 @@
   "chal.sec.main": "Basics",
   "chal.sec.dates": "Dates",
   "chal.sec.price": "Price and visibility",
-  "content.cropFrame": "First frame"
+  "content.cropFrame": "First frame",
+  "profile.resetCache": "Reset cache",
+  "profile.resetting": "Clearing…",
+  "profile.resetCacheHint": "Deletes saved data copies and the app cache on this device and reloads. Your login and settings are kept."
 }

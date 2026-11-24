@@ -709,5 +709,8 @@
   "chal.sec.main": "基本資料",
   "chal.sec.dates": "日期",
   "chal.sec.price": "價格與發布",
-  "content.cropFrame": "起始畫面"
+  "content.cropFrame": "起始畫面",
+  "profile.resetCache": "重設快取",
+  "profile.resetting": "清除中…",
+  "profile.resetCacheHint": "刪除此裝置上儲存的資料副本與應用程式快取並重新載入，登入與設定會保留。"
 }

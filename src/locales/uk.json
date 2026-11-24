@@ -705,5 +705,8 @@
   "chal.sec.main": "Основне",
   "chal.sec.dates": "Дати",
   "chal.sec.price": "Ціна та публікація",
-  "content.cropFrame": "Перший кадр"
+  "content.cropFrame": "Перший кадр",
+  "profile.resetCache": "Скинути кеш",
+  "profile.resetting": "Очищення…",
+  "profile.resetCacheHint": "Видаляє збережені копії даних і кеш застосунку на цьому пристрої та перезавантажує. Вхід і налаштування лишаються."
 }
