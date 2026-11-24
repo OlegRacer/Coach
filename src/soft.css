@@ -296,22 +296,24 @@ html[data-ui][data-theme] .wdot.on { background: color-mix(in srgb, var(--soft-f
 
 /* Перемикачі */
 html[data-ui][data-theme] .sw.on,
-html[data-ui][data-theme] .ios-switch.on { background: var(--soft-bg); box-shadow: inset 0 0 0 1.5px var(--soft-ring); }
+html[data-ui][data-theme] .ios-switch.on { background: var(--soft-bg); box-shadow: none; }
 html[data-ui][data-theme] .sw.on i { background: var(--soft-fg); }
 html[data-ui][data-theme] .ios-switch.on span { background: var(--soft-fg); }
-html[data-ui][data-theme] .theme-knob { background: var(--soft-bg); box-shadow: inset 0 0 0 1.5px var(--soft-ring); }
+html[data-ui][data-theme] .theme-knob { background: var(--soft-bg); box-shadow: none; }
 
 /* Галочки */
-html[data-ui][data-theme] input[type="checkbox"]:checked { background: var(--soft-bg); border-color: var(--soft-fg); }
+html[data-ui][data-theme] input[type="checkbox"]:checked { background: var(--soft-bg); border-color: var(--soft-bg); }
 html[data-ui][data-theme] input[type="checkbox"]:checked::after { border-color: var(--soft-fg); }
 html[data-ui][data-theme] .mz-box.on, html[data-ui][data-theme] .mz-box.part,
-html[data-ui][data-theme] .ref-box.on, html[data-ui][data-theme] .ref-box.part { background: var(--soft-bg); border-color: var(--soft-fg); color: var(--soft-fg); }
+html[data-ui][data-theme] .ref-box.on, html[data-ui][data-theme] .ref-box.part { background: var(--soft-bg); border-color: var(--soft-bg); color: var(--soft-fg); }
 
 /* Поле дати не вилазить за картку */
 input[type="date"], input[type="time"] { max-width: 100%; min-width: 0; box-sizing: border-box; }
 /* перемикач і зелені кнопки челенджів: ті самі м'які кольори */
-.chal-switch-ui { background: rgba(0,0,0,0.12); box-shadow: inset 0 0 0 1.5px rgba(0,0,0,0.1); }
+.chal-switch-ui { background: rgba(0,0,0,0.12); box-shadow: none; }
 .chal-switch-ui::after { background: var(--soft-fg, #1f7a55); opacity: 0.55; box-shadow: none; }
-.chal-switch input:checked + .chal-switch-ui { background: var(--soft-bg, #e6f4ec); box-shadow: inset 0 0 0 1.5px var(--soft-ring, #1f7a55); }
+.chal-switch input:checked + .chal-switch-ui { background: var(--soft-bg, #e6f4ec); box-shadow: none; }
 .chal-switch input:checked + .chal-switch-ui::after { opacity: 1; }
 .chal-soft.green { background: var(--soft-bg, var(--tone-green-bg)); color: var(--soft-fg, var(--tone-green-fg)); }
+/* бульбашка активної вкладки: без обводки, м'яка заливка */
+html[data-ui="next"][data-theme] .tab-bubble { background: var(--soft-bg); box-shadow: none; }
