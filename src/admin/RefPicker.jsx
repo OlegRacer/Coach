@@ -57,7 +57,7 @@ export default function RefPicker({ value, onChange }) {
     const expandable = subs.length > 0 || exs.length > 0;
     return (
       <div key={s.id} className="ref-group">
-        <div className="ref-grow">
+        <div className={'ref-grow' + (expandable ? ' has-exp' : '')}>
           {card('section', s.id, L(s.title) || s.id, '', all, () => toggle('section', s.id), (
             <>
               {cnt > 0 && <span className="muted small">{cnt}/{total(s.id)}</span>}

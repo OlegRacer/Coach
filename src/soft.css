@@ -317,3 +317,24 @@ input[type="date"], input[type="time"] { max-width: 100%; min-width: 0; box-sizi
 .chal-soft.green { background: var(--soft-bg, var(--tone-green-bg)); color: var(--soft-fg, var(--tone-green-fg)); }
 /* бульбашка активної вкладки: без обводки, м'яка заливка */
 html[data-ui="next"][data-theme] .tab-bubble { background: var(--soft-bg); box-shadow: none; }
+
+/* ===== Вибір розділів/вправ: компактний, легший шрифт, без фіолетового й зеленої рамки ===== */
+.chal-item { background: color-mix(in srgb, var(--text, #000) 4%, var(--card, #fff)); }
+.chal-item-no { color: var(--muted); }
+.ref-grow { display: flex; align-items: center; background: var(--bg, #fff); border-radius: 18px; }
+.ref-grow .ref-card { background: transparent; border: 0; border-radius: 18px; }
+.ref-grow .ref-expand { background: transparent; width: 40px; align-self: stretch; border-radius: 18px; }
+.ref-card { padding: 9px 12px; gap: 8px; border: 0 !important; border-radius: 18px; }
+.chal-edit .ref-card { background: var(--bg, #fff); }
+.chal-edit .ref-grow .ref-card { background: transparent; }
+.ref-card .ref-text b { font-size: 0.92rem; font-weight: 500; line-height: 1.25; }
+.ref-card .ref-text .small { font-size: 0.75rem; }
+.ref-kind { padding: 0; background: transparent !important; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em; min-width: 52px; }
+.ref-kind.section { color: var(--tone-purple-fg); }
+.ref-kind.exercise { color: var(--tone-green-fg); }
+.ref-chip { font-size: 0.8rem; font-weight: 500; padding: 6px 12px; gap: 6px; text-align: left; }
+.ref-chip .ref-kind { color: inherit !important; opacity: 0.7; min-width: 0; }
+.mz-rhead .mz-rname, .chal-edit .mz-rname { font-weight: 600; font-size: 0.95rem; }
+.ref-box { width: 22px; height: 22px; border-radius: 7px; }
+.ref-children { gap: 4px; padding-left: 12px; }
+.ref-group { gap: 4px; }
