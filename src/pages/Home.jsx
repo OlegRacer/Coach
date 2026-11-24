@@ -94,7 +94,7 @@ export default function Home() {
             : '';
           const to = x.kind === 'anatomy' ? '/anatomy' : `/section/${x.id}`;
           const hint = L(x.hint);
-          const sub = !x.published ? t('content.draft') : isFreeSection(x.id) ? t('content.free') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
+          const sub = !x.published ? t('content.draft') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
           const body = (
             <>
               <SectionTile section={x} size={32} />
