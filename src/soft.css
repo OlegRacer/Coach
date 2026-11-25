@@ -255,7 +255,7 @@ html[data-ui][data-theme="light"] {
   --soft-ring: color-mix(in srgb, var(--soft-base) 55%, #fff);
 }
 html[data-ui][data-theme="dark"] {
-  --soft-bg: color-mix(in srgb, var(--soft-base) 28%, var(--card, #1c1c1e));
+  --soft-bg: color-mix(in srgb, var(--soft-base) 42%, var(--card, #1c1c1e));
   --soft-fg: color-mix(in srgb, var(--soft-base) 88%, #fff);
   --soft-ring: color-mix(in srgb, var(--soft-base) 45%, transparent);
 }
@@ -387,3 +387,8 @@ html[data-ui][data-theme] .ios-switch.on span,
 html[data-ui][data-theme="dark"] .sw.on,
 html[data-ui][data-theme="dark"] .ios-switch.on,
 html[data-theme="dark"] .chal-switch input:checked + .chal-switch-ui { background: color-mix(in srgb, var(--soft-base) 68%, #1c1c1e); }
+
+/* Один зелений у темній темі: тумблер = пігулки = рухома плашка теми */
+html[data-ui][data-theme="dark"] .sw.on,
+html[data-ui][data-theme="dark"] .ios-switch.on,
+html[data-theme="dark"] .chal-switch input:checked + .chal-switch-ui { background: var(--soft-bg); }
