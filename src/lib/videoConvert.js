@@ -2,12 +2,14 @@
 // Відео з айфона (HEVC .mov, 4K, 60 к/с, зі звуком) відтворюється, зменшується до 720 px,
 // 30 к/с, без звуку й перекодовується в H.264 .mp4 (або webm, якщо браузер не вміє mp4).
 // Кодування іде в реальному часі (відео грає й записується), тому 10 с відео = ~10 с очікування.
+import { Muxer, ArrayBufferTarget } from 'mp4-muxer';
+
 export const MAX_SECONDS = 20;
 const MAX_SIDE = 1080;
-const FPS = 30;
+const FPS = 24;
 
 export function canConvertVideo() {
-  return typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined' && !!HTMLCanvasElement.prototype.captureStream;
+  return hasWebCodecs() || (typeof MediaRecorder !== 'undefined' && typeof HTMLCanvasElement !== 'undefined' && !!HTMLCanvasElement.prototype.captureStream);
 }
 
 function pickMime() {
@@ -15,8 +17,9 @@ function pickMime() {
   return list.find((m) => MediaRecorder.isTypeSupported(m)) || '';
 }
 
+// Запасний варіант: запис canvas через MediaRecorder (гірша якість, у реальному часі).
 // file -> { blob, type, ext, seconds, trimmed, width, height }
-export function convertVideo(file, { maxBytes = 28 * 1024 * 1024, onProgress, signal } = {}) {
+function convertVideoLegacy(file, { maxBytes = 28 * 1024 * 1024, onProgress, signal } = {}) {
   return new Promise((resolve, reject) => {
     const mime = pickMime();
     if (!mime) return reject(new Error('unsupported'));
@@ -116,4 +119,123 @@ export function convertVideo(file, { maxBytes = 28 * 1024 * 1024, onProgress, si
     };
     v.src = url;
   });
+}
+
+const hasWebCodecs = () => typeof VideoEncoder !== 'undefined' && typeof VideoFrame !== 'undefined' && typeof HTMLVideoElement !== 'undefined' && 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+
+// Основний варіант: H.264 через WebCodecs (змінний бітрейт, ключовий кадр кожні 2 с) і mp4-muxer (faststart).
+function convertVideoWC(file, { onProgress, signal } = {}) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const v = document.createElement('video');
+    v.muted = true;
+    v.playsInline = true;
+    v.setAttribute('playsinline', '');
+    v.preload = 'auto';
+    let enc = null;
+    let done = false;
+    const cleanup = () => {
+      try { v.pause(); } catch { /* ignore */ }
+      v.removeAttribute('src');
+      v.load();
+      URL.revokeObjectURL(url);
+      try { if (enc && enc.state !== 'closed') enc.close(); } catch { /* ignore */ }
+    };
+    const fail = (e) => {
+      if (done) return;
+      done = true;
+      cleanup();
+      reject(e instanceof Error ? e : new Error(String(e)));
+    };
+    if (signal) signal.addEventListener('abort', () => fail(new Error('aborted')));
+    v.onerror = () => fail(new Error('decode'));
+    v.onloadedmetadata = async () => {
+      try {
+        const sw = v.videoWidth;
+        const sh = v.videoHeight;
+        if (!sw || !sh) throw new Error('decode');
+        const dur = v.duration && Number.isFinite(v.duration) ? v.duration : MAX_SECONDS;
+        const seconds = Math.min(dur, MAX_SECONDS);
+        const k = Math.min(1, MAX_SIDE / Math.max(sw, sh));
+        const w = Math.max(2, Math.round((sw * k) / 2) * 2);
+        const h = Math.max(2, Math.round((sh * k) / 2) * 2);
+        const bitrate = Math.max(1500000, Math.min(4000000, Math.round(w * h * FPS * 0.09)));
+        let cfg = null;
+        for (const codec of ['avc1.640033', 'avc1.64002A', 'avc1.640028', 'avc1.4D0028', 'avc1.42E01F']) {
+          const c = { codec, width: w, height: h, bitrate, framerate: FPS, bitrateMode: 'variable', latencyMode: 'quality', avc: { format: 'avc' } };
+          try {
+            const r = await VideoEncoder.isConfigSupported(c);
+            if (r && r.supported) { cfg = r.config || c; break; }
+          } catch { /* наступний */ }
+        }
+        if (!cfg) throw new Error('unsupported');
+        const target = new ArrayBufferTarget();
+        const muxer = new Muxer({ target, video: { codec: 'avc', width: w, height: h, frameRate: FPS }, fastStart: 'in-memory' });
+        let encErr = null;
+        enc = new VideoEncoder({ output: (chunk, meta) => muxer.addVideoChunk(chunk, meta), error: (e) => { encErr = e; } });
+        enc.configure(cfg);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d', { alpha: false });
+        const step = 1 / FPS;
+        let next = 0;
+        let n = 0;
+        let t0 = null;
+        const finish = async () => {
+          if (done) return;
+          try {
+            if (encErr) throw encErr;
+            await enc.flush();
+            if (encErr) throw encErr;
+            if (!n) throw new Error('decode');
+            muxer.finalize();
+            done = true;
+            const blob = new Blob([target.buffer], { type: 'video/mp4' });
+            cleanup();
+            resolve({ blob, type: 'video/mp4', ext: 'mp4', seconds, trimmed: dur > MAX_SECONDS, width: w, height: h });
+          } catch (e) {
+            fail(e);
+          }
+        };
+        const onFrame = async (_now, md) => {
+          if (done) return;
+          if (encErr) return fail(encErr);
+          if (t0 === null) t0 = md.mediaTime;
+          const t = md.mediaTime - t0;
+          if (t >= seconds - 1e-3 || v.ended) return finish();
+          if (t + 1e-4 >= next) {
+            ctx.drawImage(v, 0, 0, w, h);
+            const frame = new VideoFrame(canvas, { timestamp: Math.round(n * step * 1e6), duration: Math.round(step * 1e6) });
+            enc.encode(frame, { keyFrame: n % (FPS * 2) === 0 });
+            frame.close();
+            n += 1;
+            next = n * step;
+            if (onProgress) onProgress(Math.min(1, t / seconds));
+            while (enc.encodeQueueSize > 6) await new Promise((r) => setTimeout(r, 5));
+          }
+          v.requestVideoFrameCallback(onFrame);
+        };
+        v.onended = () => finish();
+        v.requestVideoFrameCallback(onFrame);
+        await v.play();
+      } catch (e) {
+        fail(e);
+      }
+    };
+    v.src = url;
+  });
+}
+
+// file -> { blob, type, ext, seconds, trimmed, width, height }. Спершу WebCodecs, за потреби запасний запис.
+export async function convertVideo(file, opts = {}) {
+  if (hasWebCodecs()) {
+    try {
+      return await convertVideoWC(file, opts);
+    } catch (e) {
+      if (e && e.message === 'aborted') throw e;
+      if (typeof MediaRecorder === 'undefined') throw e;
+    }
+  }
+  return convertVideoLegacy(file, opts);
 }
