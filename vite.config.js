@@ -7,6 +7,19 @@ import { VitePWA } from 'vite-plugin-pwa';
 export default defineConfig({
   define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
   base: './',
+  build: {
+    rollupOptions: {
+      output: {
+        // Бібліотеки окремими файлами: після оновлення додатка вони лишаються в кеші, перезавантажується лише наш код
+        manualChunks: (id) => {
+          if (!id.includes('node_modules')) return undefined;
+          if (id.includes('@supabase')) return 'supabase';
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler|@remix-run)\//.test(id)) return 'react';
+          return undefined;
+        }
+      }
+    }
+  },
   plugins: [
     react(),
     VitePWA({

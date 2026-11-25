@@ -1,18 +1,18 @@
-import { lazy, useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useAuth } from './auth/index.jsx';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home.jsx';
-import Schedule from './pages/Schedule.jsx';
-import Section from './pages/Section.jsx';
-import Exercise from './pages/Exercise.jsx';
-import Anatomy from './pages/Anatomy.jsx';
-import Plans from './pages/Plans.jsx';
-import MyProgram from './pages/MyProgram.jsx';
-import Equipment from './pages/Equipment.jsx';
-import Feedback from './pages/Feedback.jsx';
 import AdminBoundary from './admin/AdminBoundary.jsx';
 
 
+const Schedule = lazy(() => import('./pages/Schedule.jsx'));
+const Section = lazy(() => import('./pages/Section.jsx'));
+const Exercise = lazy(() => import('./pages/Exercise.jsx'));
+const Anatomy = lazy(() => import('./pages/Anatomy.jsx'));
+const Plans = lazy(() => import('./pages/Plans.jsx'));
+const MyProgram = lazy(() => import('./pages/MyProgram.jsx'));
+const Equipment = lazy(() => import('./pages/Equipment.jsx'));
+const Feedback = lazy(() => import('./pages/Feedback.jsx'));
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
 const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
@@ -28,6 +28,12 @@ const FeedbackAdmin = lazy(() => import('./admin/FeedbackAdmin.jsx'));
 export default function AppRoutes({ extra = null }) {
   const { isAdmin } = useAuth();
   // Тренеру заздалегідь підвантажуємо адмінські сторінки, щоб перехід не чекав на завантаження (раніше був порожній екран)
+  // Сторінки учня вантажаться окремими файлами; після першого показу підтягуємо їх у фоні, щоб перехід був миттєвий
+  useEffect(() => {
+    const warm = () => ['Schedule', 'Section', 'Exercise', 'Anatomy', 'Plans', 'MyProgram', 'Equipment', 'Feedback'].forEach((n) => import(`./pages/${n}.jsx`));
+    const id = 'requestIdleCallback' in window ? window.requestIdleCallback(warm, { timeout: 3000 }) : setTimeout(warm, 1200);
+    return () => ('cancelIdleCallback' in window ? window.cancelIdleCallback(id) : clearTimeout(id));
+  }, []);
   useEffect(() => {
     if (!isAdmin) return undefined;
     const warm = () => {
@@ -45,6 +51,7 @@ export default function AppRoutes({ extra = null }) {
     return () => ('cancelIdleCallback' in window ? window.cancelIdleCallback(id) : clearTimeout(id));
   }, [isAdmin]);
   return (
+  <Suspense fallback={null}>
   <Routes>
     {extra}
     <Route path="/" element={<Home />} />
@@ -138,5 +145,6 @@ export default function AppRoutes({ extra = null }) {
     />
     <Route path="*" element={<Home />} />
   </Routes>
+  </Suspense>
   );
 }
