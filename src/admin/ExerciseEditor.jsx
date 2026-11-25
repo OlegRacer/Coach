@@ -174,7 +174,7 @@ export default function ExerciseEditor() {
         ctype = r.type;
         ext = r.ext;
         if (r.trimmed) setNote(t('content.convertTrimmed', { sec: MAX_SECONDS }));
-        else setNote(t('content.convertDone', { mb: (r.blob.size / 1048576).toFixed(1) }));
+        else setNote(t('content.convertDone', { mb: (r.blob.size / 1048576).toFixed(1) }) + ` · ${r.width}×${r.height}, ${Math.round((r.blob.size * 8) / Math.max(r.seconds, 0.1) / 1000)} кбіт/с, ${r.method}`);
       } catch (e) {
         setBusy(false);
         setProg(null);
