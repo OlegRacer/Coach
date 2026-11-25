@@ -712,5 +712,8 @@
   "content.cropFrame": "First frame",
   "profile.resetCache": "Reset cache",
   "profile.resetting": "Clearing…",
-  "profile.resetCacheHint": "Deletes saved data copies and the app cache on this device and reloads. Your login and settings are kept."
+  "profile.resetCacheHint": "Deletes saved data copies and the app cache on this device and reloads. Your login and settings are kept.",
+  "content.alsoIn": "Also show in sections",
+  "content.alsoInHint": "The exercise stays in its own section and also appears in the ones you tick (the same exercise, not a copy). It is open if any of these sections is open.",
+  "content.linkedBadge": "linked"
 }

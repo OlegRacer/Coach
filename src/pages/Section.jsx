@@ -52,14 +52,16 @@ export default function Section() {
   const { category } = useParams();
   const { t, lang } = useI18n();
   const { ready, isAdmin } = useAuth();
-  const { section, exercisesOf, childrenOf, chainOf, sectionOpen, exerciseOpen, openCount, isFreeSection, programExercisesOf } = useContent();
+  const { section, exercisesOf, childrenOf, chainOf, sectionOpen, exerciseOpen, openCount, isFreeSection, programExercisesOf, linkedOf } = useContent();
   const L = useL();
   const { byId, needed, missing, only, setOnly } = useEquipment();
   const sec = section(category);
   const progText = (id) => setsText(sec && sec.program_sets && sec.program_sets[id], lang);
   const full = sectionOpen(category);
   const subs = childrenOf(category);
-  const all = [...exercisesOf(category), ...programExercisesOf(category)]; // закриті (locked) показуємо із замком
+  const progEx = programExercisesOf(category);
+  const linkedEx = linkedOf(category).filter((e) => !progEx.some((p) => p.id === e.id));
+  const all = [...exercisesOf(category), ...progEx, ...linkedEx]; // закриті (locked) показуємо із замком
   const hasEquip = !isAdmin && all.some((e) => needed(e).length > 0);
   const itemsRaw = hasEquip && only ? all.filter((e) => missing(e).length === 0) : all;
   const total = openCount(category);
@@ -96,7 +98,7 @@ export default function Section() {
   const sortEx = useSortable(own.map((x) => x.id), persist('content_exercises'), isAdmin, moveEx, (k) => k !== '__up' || !!parentSec);
 
   const ownById = Object.fromEntries(own.map((x) => [x.id, x]));
-  const items = isAdmin ? [...sortEx.order.map((id) => ownById[id]).filter(Boolean), ...programExercisesOf(category)] : itemsRaw;
+  const items = isAdmin ? [...sortEx.order.map((id) => ownById[id]).filter(Boolean), ...progEx, ...linkedEx] : itemsRaw;
   const subsById = Object.fromEntries(subs.map((x) => [x.id, x]));
   const subsOrdered = isAdmin ? sortSubs.order.map((id) => subsById[id]).filter(Boolean) : subs;
   const title = sec ? L(sec.title) : t('section.exercises');
@@ -171,6 +173,7 @@ export default function Section() {
               <span className="list-title">
                 {L(e.title)}
                 {!e.published && isAdmin && <span className="badge-draft">{t('content.draft')}</span>}
+                {isAdmin && e.section_id !== category && <span className="badge-link">{t('content.linkedBadge')}</span>}
               </span>
               <span className={'muted small' + (e.draft ? ' draft' : '')}>{e.draft ? t('content.draft') : exerciseOpen(e) ? progText(e.id) : t('access.closed')}</span>
               {!isAdmin && exerciseOpen(e) && missing(e).length > 0 && (

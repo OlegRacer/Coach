@@ -111,7 +111,7 @@ export default function ExerciseEditor() {
   const L = useL();
   const nav = useNavigate();
   const { ready, isAdmin } = useAuth();
-  const { exercise, section, reload } = useContent();
+  const { exercise, section, reload, rawSections, chainOf } = useContent();
   const { list: equipList } = useEquipment();
   const ex = exercise(eid);
   const [f, setF] = useState(null);
@@ -131,6 +131,7 @@ export default function ExerciseEditor() {
         videos: videosOf(ex).map((v) => ({ id: v.id, label: v.label || {}, blocks: v.blocks.map((b) => ({ ...b, loops: String(b.loops) })) })),
         published: ex.published,
         audience: ex.audience || [],
+        also_in: ex.also_in || [],
         free: !!ex.free
       });
       const has = (v) => !!v && Object.values(v).some((x) => String(x || '').trim());
@@ -356,6 +357,20 @@ export default function ExerciseEditor() {
             </button>
           )}
 
+      </Fold>
+      <Fold title={t('content.alsoIn')} summary={(f.also_in || []).length ? String(f.also_in.length) : ''} defaultOpen={(f.also_in || []).length > 0}>
+        <p className="muted small">{t('content.alsoInHint')}</p>
+        <div className="also-list">
+          {rawSections.filter((s) => s.id !== ex.section_id && s.kind !== 'anatomy').map((s) => {
+            const on2 = (f.also_in || []).includes(s.id);
+            return (
+              <label key={s.id} className={'also-row' + (on2 ? ' on' : '')}>
+                <input type="checkbox" checked={on2} onChange={() => set('also_in', on2 ? f.also_in.filter((x) => x !== s.id) : [...(f.also_in || []), s.id])} />
+                <span>{chainOf(s.id).map((a) => L(a.title)).join(' › ')}</span>
+              </label>
+            );
+          })}
+        </div>
       </Fold>
       <Fold title={t('content.published')} summary={f.published ? t('content.publishedOn') : t('content.publishedOff')} defaultOpen={false}>
           <label className="access-row">

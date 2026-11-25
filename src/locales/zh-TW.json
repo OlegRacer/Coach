@@ -712,5 +712,8 @@
   "content.cropFrame": "起始畫面",
   "profile.resetCache": "重設快取",
   "profile.resetting": "清除中…",
-  "profile.resetCacheHint": "刪除此裝置上儲存的資料副本與應用程式快取並重新載入，登入與設定會保留。"
+  "profile.resetCacheHint": "刪除此裝置上儲存的資料副本與應用程式快取並重新載入，登入與設定會保留。",
+  "content.alsoIn": "同時顯示於其他區段",
+  "content.alsoInHint": "動作仍屬於原區段，並同時出現在勾選的區段（同一個動作，非副本）。只要其中任一區段已開通即可使用。",
+  "content.linkedBadge": "連結"
 }
