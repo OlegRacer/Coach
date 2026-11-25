@@ -85,7 +85,7 @@ function convertVideoLegacy(file, { maxBytes = 28 * 1024 * 1024, onProgress, sig
         cleanup();
         const type = mime.split(';')[0];
         const blob = new Blob(chunks, { type });
-        resolve({ blob, type, ext: type === 'video/mp4' ? 'mp4' : 'webm', seconds, trimmed: dur > MAX_SECONDS, width: w, height: h });
+        resolve({ blob, type, ext: type === 'video/mp4' ? 'mp4' : 'webm', seconds, trimmed: dur > MAX_SECONDS, width: w, height: h, method: 'recorder' });
       };
       const draw = () => {
         if (done) return;
@@ -159,7 +159,7 @@ function convertVideoWC(file, { onProgress, signal } = {}) {
         const k = Math.min(1, MAX_SIDE / Math.max(sw, sh));
         const w = Math.max(2, Math.round((sw * k) / 2) * 2);
         const h = Math.max(2, Math.round((sh * k) / 2) * 2);
-        const bitrate = Math.max(1500000, Math.min(4000000, Math.round(w * h * FPS * 0.09)));
+        const bitrate = Math.max(1200000, Math.min(2800000, Math.round(w * h * FPS * 0.06)));
         let cfg = null;
         for (const codec of ['avc1.640033', 'avc1.64002A', 'avc1.640028', 'avc1.4D0028', 'avc1.42E01F']) {
           const c = { codec, width: w, height: h, bitrate, framerate: FPS, bitrateMode: 'variable', latencyMode: 'quality', avc: { format: 'avc' } };
@@ -193,7 +193,7 @@ function convertVideoWC(file, { onProgress, signal } = {}) {
             done = true;
             const blob = new Blob([target.buffer], { type: 'video/mp4' });
             cleanup();
-            resolve({ blob, type: 'video/mp4', ext: 'mp4', seconds, trimmed: dur > MAX_SECONDS, width: w, height: h });
+            resolve({ blob, type: 'video/mp4', ext: 'mp4', seconds, trimmed: dur > MAX_SECONDS, width: w, height: h, method: 'webcodecs' });
           } catch (e) {
             fail(e);
           }
