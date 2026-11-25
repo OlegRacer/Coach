@@ -379,3 +379,11 @@ html[data-ui][data-theme="dark"] .theme-opt.on { color: #f2f5ee; }
 html[data-ui][data-theme] .theme-opt.on,
 html[data-ui][data-theme="light"] .theme-opt.on,
 html[data-ui][data-theme="dark"] .theme-opt.on { color: var(--muted); }
+
+/* Тумблери: білий бігунок, у темній темі яскравіша зелена доріжка */
+html[data-ui][data-theme] .sw.on i,
+html[data-ui][data-theme] .ios-switch.on span,
+.chal-switch input:checked + .chal-switch-ui::after { background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+html[data-ui][data-theme="dark"] .sw.on,
+html[data-ui][data-theme="dark"] .ios-switch.on,
+html[data-theme="dark"] .chal-switch input:checked + .chal-switch-ui { background: color-mix(in srgb, var(--soft-base) 68%, #1c1c1e); }
