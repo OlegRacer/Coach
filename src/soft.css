@@ -392,3 +392,8 @@ html[data-theme="dark"] .chal-switch input:checked + .chal-switch-ui { backgroun
 html[data-ui][data-theme="dark"] .sw.on,
 html[data-ui][data-theme="dark"] .ios-switch.on,
 html[data-theme="dark"] .chal-switch input:checked + .chal-switch-ui { background: var(--soft-bg); }
+
+/* Вибрана тема: іконка того самого зеленого, що й текст активної пігулки (Liquid Glass) */
+html[data-ui][data-theme] .theme-opt.on,
+html[data-ui][data-theme="light"] .theme-opt.on,
+html[data-ui][data-theme="dark"] .theme-opt.on { color: var(--soft-fg); }
