@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import TopBar from '../components/TopBar.jsx';
 import { supabase } from '../lib/supabase.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -27,7 +28,7 @@ export default function PushAdmin() {
     if (!isAdmin) return;
     supabase.from('studios').select('id, name').order('sort').then(({ data }) => setStudios(data || []));
     supabase.from('studio_classes').select('id, name, studio_id').order('sort').then(({ data }) => setClasses(data || []));
-    supabase.from('profiles').select('id, full_name, email, role').order('full_name').then(({ data }) => setStudents((data || []).filter((p) => p.role !== 'admin')));
+    supabase.from('profiles').select('id, full_name, email, role, ' + DETAILS).order('full_name').then(({ data }) => setStudents((data || []).filter((p) => p.role !== 'admin')));
   }, [isAdmin]);
 
   // Скільки людей отримають: сервер рахує (dry-run), поки тренер обирає
@@ -46,7 +47,7 @@ export default function PushAdmin() {
   const studioName = useMemo(() => Object.fromEntries(studios.map((s) => [s.id, s.name])), [studios]);
   const toggle = (id) => setIds((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
   const pickMode = (m) => { setMode(m); setIds([]); setRes(null); };
-  const shown = students.filter((p) => !q || `${p.full_name || ''} ${p.email || ''}`.toLowerCase().includes(q.toLowerCase()));
+  const shown = students.filter((p) => !q || `${displayName(p)} ${p.email || ''}`.toLowerCase().includes(q.toLowerCase()));
 
   const send = async () => {
     setErr('');
@@ -105,7 +106,7 @@ export default function PushAdmin() {
               {shown.map((p) => (
                 <label key={p.id} className={'also-row' + (ids.includes(p.id) ? ' on' : '')}>
                   <input type="checkbox" checked={ids.includes(p.id)} onChange={() => toggle(p.id)} />
-                  <span>{p.full_name || p.email}</span>
+                  <span>{displayName(p)}</span>
                 </label>
               ))}
             </div>

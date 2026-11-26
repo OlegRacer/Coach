@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import { useNavigate, useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -32,7 +33,7 @@ export default function ChatGroupEditor() {
     if (!isAdmin) return;
     supabase.from('studios').select('id, name').order('sort').then(({ data }) => setStudios(data || []));
     supabase.from('studio_classes').select('id, name, studio_id').order('sort').then(({ data }) => setClasses(data || []));
-    supabase.from('profiles').select('id, full_name, email, role').order('full_name').then(({ data }) => setStudents(Array.isArray(data) ? data.filter((p) => p.role !== 'admin') : []));
+    supabase.from('profiles').select('id, full_name, email, role, ' + DETAILS).order('full_name').then(({ data }) => setStudents(Array.isArray(data) ? data.filter((p) => p.role !== 'admin') : []));
     if (gid) {
       supabase.from('chat_groups').select('title, students_can_write').eq('id', gid).maybeSingle().then(({ data }) => {
         if (data) { setTitle(data.title); setWrite(data.students_can_write); }
@@ -46,7 +47,7 @@ export default function ChatGroupEditor() {
     }
   }, [isAdmin, gid]);
 
-  const nameOf = useMemo(() => ({ ...known, ...Object.fromEntries(students.map((s) => [s.id, s.full_name || s.email])) }), [students, known]);
+  const nameOf = useMemo(() => ({ ...known, ...Object.fromEntries(students.map((s) => [s.id, displayName(s)])) }), [students, known]);
   const studioName = useMemo(() => Object.fromEntries(studios.map((s) => [s.id, s.name])), [studios]);
   const togglePick = (id) => setPick((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]));
   const setM = (m) => { setMode(m); setPick([]); };
@@ -96,7 +97,7 @@ export default function ChatGroupEditor() {
   };
 
   if (!isAdmin) return null;
-  const shown = students.filter((p) => !q || `${p.full_name || ''} ${p.email || ''}`.toLowerCase().includes(q.toLowerCase()));
+  const shown = students.filter((p) => !q || `${displayName(p)} ${p.email || ''}`.toLowerCase().includes(q.toLowerCase()));
   return (
     <main className="page">
       <TopBar title={isNew ? t('chat.newGroup') : t('chat.groupSettings')} to={isNew ? '/admin/chat' : `/admin/chat/g/${gid}`} />
@@ -150,7 +151,7 @@ export default function ChatGroupEditor() {
             <div className="also-list">
               {shown.map((p) => (
                 <label key={p.id} className={'also-row' + (pick.includes(p.id) ? ' on' : '')}>
-                  <input type="checkbox" checked={pick.includes(p.id)} onChange={() => togglePick(p.id)} /><span>{p.full_name || p.email}</span>
+                  <input type="checkbox" checked={pick.includes(p.id)} onChange={() => togglePick(p.id)} /><span>{displayName(p)}</span>
                 </label>
               ))}
             </div>

@@ -29,6 +29,16 @@ const TXT = {
   test: { uk: 'Сповіщення працюють', en: 'Notifications work', 'zh-TW': '通知正常' }
 };
 
+// Ім'я учня: спершу з анкети (ім'я та прізвище), потім ім'я акаунта, потім пошта.
+async function nameOf(id: string): Promise<string> {
+  const [{ data: p }, { data: d }] = await Promise.all([
+    db.from('profiles').select('full_name, email').eq('id', id).maybeSingle(),
+    db.from('student_details').select('first_name, last_name').eq('student_id', id).maybeSingle()
+  ]);
+  const own = d ? [d.first_name, d.last_name].filter(Boolean).join(' ').trim() : '';
+  return own || (p && (p.full_name || (p.email || '').split('@')[0])) || '';
+}
+
 // Адміни, які не вимкнули цю категорію сповіщень (admin_push_prefs: { chat: false, payments: false }).
 async function adminsFor(cat: string): Promise<string[]> {
   const { data: admins } = await db.from('profiles').select('id').eq('role', 'admin');
@@ -133,8 +143,7 @@ Deno.serve(async (req) => {
     await db.from('chat_messages').update({ notified_at: new Date().toISOString() }).eq('id', m.id);
     const text = String(m.body).replace(/\s+/g, ' ').slice(0, 140);
     if (m.sender_id === m.student_id) {
-      const { data: st } = await db.from('profiles').select('full_name, email').eq('id', m.student_id).maybeSingle();
-      const who = (st && (st.full_name || st.email)) || '';
+      const who = await nameOf(m.student_id);
       const n = await send(await adminsFor('chat'), () => ({ title: who || 'Чат', body: text, url: './#/admin/chat/' + m.student_id, tag: 'chat-' + m.student_id }));
       return json({ sent: n });
     }
@@ -154,7 +163,7 @@ Deno.serve(async (req) => {
       db.from('profiles').select('full_name, email, role').eq('id', m.sender_id).maybeSingle(),
       db.from('chat_group_members').select('student_id').eq('group_id', m.group_id)
     ]);
-    const who = (me && (me.full_name || (me.email || '').split('@')[0])) || '';
+    const who = await nameOf(m.sender_id);
     const text = String(m.body).replace(/\s+/g, ' ').slice(0, 140);
     const title = (g && g.title) || 'Чат';
     const students = (mem || []).map((x) => x.student_id).filter((id) => id !== m.sender_id);
@@ -177,7 +186,7 @@ Deno.serve(async (req) => {
   if (body.type === 'new_payment') {
     if (r.status !== 'pending' || r.admin_notified_at) return json({ skipped: true });
     await db.from('payment_requests').update({ admin_notified_at: new Date().toISOString() }).eq('id', r.id);
-    const who = (r.student && (r.student.full_name || r.student.email)) || '';
+    const who = await nameOf(r.student_id);
     const n = await send(await adminsFor('payments'), (l) => ({
       title: TXT.newPay[l],
       body: `${who}: ${pick(r.plan.title, l)} · ${r.plan.price} ${r.plan.currency}`,

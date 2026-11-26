@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import TopBar from '../components/TopBar.jsx';
 import Icon from '../components/Icon.jsx';
 import { supabase } from '../lib/supabase.js';
@@ -82,7 +83,7 @@ function Editor({ start, onClose }) {
     if (!id) return;
     const [i, m] = await Promise.all([
       supabase.from('challenge_items').select('*').eq('challenge_id', id).order('day_no').order('start_time'),
-      supabase.from('challenge_members').select('*, student:profiles!challenge_members_student_id_fkey(full_name, email)').eq('challenge_id', id).order('joined_at')
+      supabase.from('challenge_members').select('*, student:profiles!challenge_members_student_id_fkey(full_name, email, ' + DETAILS + ')').eq('challenge_id', id).order('joined_at')
     ]);
     setItems((i.data || []).map((x) => ({ ...x, start_time: String(x.start_time).slice(0, 5), refs: Array.isArray(x.refs) && x.refs.length ? x.refs : x.ref_id ? [{ kind: x.ref_kind || 'section', id: x.ref_id }] : [] })));
     setMembers(m.data || []);
@@ -96,7 +97,7 @@ function Editor({ start, onClose }) {
   }, []);
   useEffect(() => { loadAll(c.id); }, [c.id, loadAll]);
   useEffect(() => {
-    supabase.from('profiles').select('id, full_name, email').order('full_name').limit(300).then((r) => setStudents(r.data || []));
+    supabase.from('profiles').select('id, full_name, email, ' + DETAILS).order('full_name').limit(300).then((r) => setStudents(r.data || []));
   }, []);
 
   const set = (k, v) => { setC((x) => ({ ...x, [k]: v })); setSaved(false); };
@@ -279,7 +280,7 @@ function Editor({ start, onClose }) {
           <div className="row" style={{ gap: 8 }}>
             <select className="field" style={{ flex: 1 }} value={pick} onChange={(e) => setPick(e.target.value)}>
               <option value="">{t('chal.pickStudent')}</option>
-              {students.map((s) => <option key={s.id} value={s.id}>{s.full_name || s.email}</option>)}
+              {students.map((s) => <option key={s.id} value={s.id}>{displayName(s)}</option>)}
             </select>
             <button type="button" className="chal-soft green" disabled={!pick} onClick={addMember}>{t('chal.add')}</button>
           </div>
@@ -288,7 +289,7 @@ function Editor({ start, onClose }) {
             {members.map((m) => (
               <div key={m.id} className="chal-member">
                 <div className="list-main">
-                  <span className="list-title">{(m.student && (m.student.full_name || m.student.email)) || m.student_id}</span>
+                  <span className="list-title">{displayName(m.student) || m.student_id}</span>
                   <span className="muted small">
                     {t('chal.progress', { a: doneBy[m.student_id] || 0, b: items.length })} · {new Date(`${m.start_date}T12:00:00`).toLocaleDateString(locale, { day: 'numeric', month: 'short' })}
                     {m.paid ? ` · ${t('chal.paid')}` : ''}{m.status === 'left' ? ` · ${t('chal.left')}` : ''}

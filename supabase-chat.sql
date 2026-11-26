@@ -117,11 +117,24 @@ language sql stable security definer set search_path = public as $$
     and (m.student_id = auth.uid() or coalesce(public.is_admin(), false))
 $$;
 
+-- Ім'я учня для чату: спершу ім'я та прізвище з анкети, потім ім'я з Google/LINE, потім пошта.
+create or replace function public.student_display_name(p_id uuid) returns text
+language sql stable security definer set search_path = public as $$
+  select coalesce(
+    nullif(btrim(concat_ws(' ', d.first_name, d.last_name)), ''),
+    nullif(p.full_name, ''),
+    split_part(p.email, '@', 1)
+  )
+  from public.profiles p left join public.student_details d on d.student_id = p.id
+  where p.id = p_id
+$$;
+grant execute on function public.student_display_name(uuid) to authenticated;
+
 -- Список розмов для тренера: останнє повідомлення, непрочитані, мут
 create or replace function public.chat_threads() returns table (
   student_id uuid, full_name text, email text, last_body text, last_at timestamptz, last_by_student boolean, unread integer, muted boolean
 ) language sql stable security definer set search_path = public as $$
-  select t.student_id, p.full_name, p.email, t.body, t.created_at, (t.sender_id = t.student_id),
+  select t.student_id, public.student_display_name(t.student_id), p.email, t.body, t.created_at, (t.sender_id = t.student_id),
     (select count(*)::int from public.chat_messages u where u.student_id = t.student_id and u.read_at is null and u.sender_id = t.student_id),
     exists (select 1 from public.chat_mutes m where m.student_id = t.student_id)
   from (select distinct on (student_id) * from public.chat_messages order by student_id, created_at desc) t

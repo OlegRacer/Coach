@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import AudiencePicker from './AudiencePicker.jsx';
 import { useSearchParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
@@ -48,7 +49,7 @@ function Requests() {
   const load = useCallback(async () => {
     const { data, error } = await supabase
       .from('payment_requests')
-      .select('*, student:profiles!payment_requests_student_id_fkey(full_name, email)')
+      .select('*, student:profiles!payment_requests_student_id_fkey(full_name, email, ' + DETAILS + ')')
       .order('created_at', { ascending: false })
       .limit(100);
     if (error) setErr(errText(error));
@@ -98,7 +99,7 @@ function Requests() {
   const card = (r) => (
     <div key={r.id} className="card stack">
       <div className="row between">
-        <b>{(r.student && (r.student.full_name || r.student.email)) || r.student_id}</b>
+        <b>{displayName(r.student) || r.student_id}</b>
         <span className={'badge-status ' + r.status}>{t(`pay.status.${r.status}`)}</span>
       </div>
       <span className="muted small">

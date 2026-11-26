@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import TopBar from '../components/TopBar.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/index.jsx';
@@ -25,8 +26,8 @@ export default function FeedbackAdmin() {
     setRows(data || []);
     const ids = [...new Set((data || []).map((r) => r.user_id))];
     if (ids.length) {
-      const { data: ps } = await supabase.from('profiles').select('id, full_name, email').in('id', ids);
-      setNames(Object.fromEntries((ps || []).map((p) => [p.id, p.full_name || p.email || ''])));
+      const { data: ps } = await supabase.from('profiles').select('id, full_name, email, ' + DETAILS).in('id', ids);
+      setNames(Object.fromEntries((ps || []).map((p) => [p.id, displayName(p)])));
     }
   }, []);
   useEffect(() => {

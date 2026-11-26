@@ -151,7 +151,7 @@ create or replace function public.chat_group_messages_get(p_group uuid, p_limit 
   id uuid, group_id uuid, sender_id uuid, sender_name text, body text, created_at timestamptz, edited_at timestamptz, pinned boolean
 ) language sql stable security definer set search_path = public as $$
   select * from (
-    select m.id, m.group_id, m.sender_id, coalesce(nullif(p.full_name, ''), split_part(p.email, '@', 1)) as sender_name,
+    select m.id, m.group_id, m.sender_id, public.student_display_name(m.sender_id) as sender_name,
            m.body, m.created_at, m.edited_at, m.pinned
     from public.chat_group_messages m left join public.profiles p on p.id = m.sender_id
     where m.group_id = p_group and public.chat_is_member(p_group)
@@ -165,7 +165,7 @@ create or replace function public.chat_groups_list() returns table (
 ) language sql stable security definer set search_path = public as $$
   select g.id, g.title, g.students_can_write,
     (select count(*)::int from public.chat_group_members m where m.group_id = g.id),
-    l.body, l.created_at, coalesce(nullif(p.full_name, ''), split_part(p.email, '@', 1)),
+    l.body, l.created_at, public.student_display_name(l.sender_id),
     (select count(*)::int from public.chat_group_messages x
       where x.group_id = g.id and x.sender_id <> auth.uid()
         and x.created_at > coalesce((select r.last_read_at from public.chat_group_reads r where r.group_id = g.id and r.user_id = auth.uid()), '-infinity'::timestamptz))
@@ -179,8 +179,8 @@ $$;
 -- Учасники групи (для тренера)
 create or replace function public.chat_group_members_get(p_group uuid) returns table (student_id uuid, full_name text, email text)
 language sql stable security definer set search_path = public as $$
-  select m.student_id, p.full_name, p.email from public.chat_group_members m join public.profiles p on p.id = m.student_id
-  where m.group_id = p_group and coalesce(public.is_admin(), false) order by p.full_name nulls last
+  select m.student_id, public.student_display_name(m.student_id), p.email from public.chat_group_members m join public.profiles p on p.id = m.student_id
+  where m.group_id = p_group and coalesce(public.is_admin(), false) order by 2
 $$;
 
 -- Лічильник непрочитаних тепер враховує і групи

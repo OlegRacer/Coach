@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { DETAILS, displayName } from '../lib/names.js';
 import { useParams } from 'react-router-dom';
 import TopBar from '../components/TopBar.jsx';
 import ChatThread from '../components/ChatThread.jsx';
@@ -12,7 +13,7 @@ export default function ChatAdminThread() {
   const [name, setName] = useState('');
   useEffect(() => {
     if (!isAdmin) return;
-    supabase.from('profiles').select('full_name, email').eq('id', sid).maybeSingle().then(({ data }) => setName((data && (data.full_name || data.email)) || ''));
+    supabase.from('profiles').select('full_name, email, ' + DETAILS).eq('id', sid).maybeSingle().then(({ data }) => setName(displayName(data)));
   }, [sid, isAdmin]);
   if (!isAdmin) return null;
   return (
