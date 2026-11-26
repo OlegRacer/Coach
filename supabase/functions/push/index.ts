@@ -47,7 +47,7 @@ async function send(userIds: string[], build: (lang: Lang) => { title: string; b
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
-  let body: { type?: string; id?: string; student_id?: string; item_id?: string } = {};
+  let body: { type?: string; id?: string; student_id?: string; item_id?: string; mode?: string; ids?: string[]; title?: string; text?: string; dry?: boolean } = {};
   try {
     body = await req.json();
   } catch {
@@ -61,6 +61,38 @@ Deno.serve(async (req) => {
     if (!data || !data.user) return json({ error: 'unauthorized' }, 401);
     const n = await send([data.user.id], (l) => ({ title: TXT.test[l], body: 'OK', url: './', tag: 'test' }));
     return json({ sent: n });
+  }
+
+  // Розсилка від тренера: усім, студіям, класам або окремим учням. dry=true лише рахує отримувачів.
+  if (body.type === 'broadcast') {
+    const token = (req.headers.get('Authorization') || '').replace(/^Bearer\s+/i, '');
+    const { data: u } = await db.auth.getUser(token);
+    if (!u || !u.user) return json({ error: 'unauthorized' }, 401);
+    const { data: me } = await db.from('profiles').select('role').eq('id', u.user.id).maybeSingle();
+    if (!me || me.role !== 'admin') return json({ error: 'forbidden' }, 403);
+    const ids = Array.isArray(body.ids) ? body.ids.filter((x) => typeof x === 'string') : [];
+    let users: string[] = [];
+    if (body.mode === 'all') {
+      const { data } = await db.from('profiles').select('id').neq('role', 'admin');
+      users = (data || []).map((r) => r.id);
+    } else if (body.mode === 'studios' && ids.length) {
+      const { data } = await db.from('student_studios').select('student_id').in('studio_id', ids);
+      users = (data || []).map((r) => r.student_id);
+    } else if (body.mode === 'classes' && ids.length) {
+      const { data } = await db.from('student_classes').select('student_id').in('class_id', ids);
+      users = (data || []).map((r) => r.student_id);
+    } else if (body.mode === 'students' && ids.length) {
+      users = ids;
+    }
+    users = [...new Set(users)];
+    const { data: subs } = users.length ? await db.from('push_subscriptions').select('user_id').in('user_id', users) : { data: [] };
+    const reachable = new Set((subs || []).map((r) => r.user_id)).size;
+    if (body.dry) return json({ recipients: users.length, reachable });
+    const text = String(body.text || '').trim().slice(0, 300);
+    const title = String(body.title || '').trim().slice(0, 80) || 'Тренування';
+    if (!text) return json({ error: 'empty' }, 400);
+    const sent = await send(users, () => ({ title, body: text, url: './', tag: 'bc-' + Date.now() }));
+    return json({ recipients: users.length, reachable, sent });
   }
 
   // Нагадування про заняття челенджу. Викликає функція бази challenge_reminders(): вона спершу пише рядок

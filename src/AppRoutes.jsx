@@ -13,6 +13,7 @@ const Plans = lazy(() => import('./pages/Plans.jsx'));
 const MyProgram = lazy(() => import('./pages/MyProgram.jsx'));
 const Equipment = lazy(() => import('./pages/Equipment.jsx'));
 const Feedback = lazy(() => import('./pages/Feedback.jsx'));
+const PushAdmin = lazy(() => import('./admin/PushAdmin.jsx'));
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
 const PaymentsAdmin = lazy(() => import('./admin/PaymentsAdmin.jsx'));
@@ -98,6 +99,14 @@ export default function AppRoutes({ extra = null }) {
       element={
         <AdminBoundary>
           <EquipmentAdmin />
+        </AdminBoundary>
+      }
+    />
+    <Route
+      path="/admin/push"
+      element={
+        <AdminBoundary>
+          <PushAdmin />
         </AdminBoundary>
       }
     />
