@@ -1,15 +1,18 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
-import { useThread } from '../lib/chat.js';
+import { useGroupThread, useThread } from '../lib/chat.js';
 
 const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 // Розмова: бульбашки, поле вводу, редагування/видалення своїх, для тренера ще закріплення й мут.
-export default function ChatThread({ studentId, admin = false }) {
+export default function ChatThread({ studentId, groupId, admin = false }) {
   const { t, lang } = useI18n();
   const { user } = useAuth();
-  const th = useThread(studentId);
+  const personal = useThread(groupId ? null : studentId);
+  const grp = useGroupThread(groupId || null);
+  const th = groupId ? grp : personal;
+  const isGroup = !!groupId;
   const [text, setText] = useState('');
   const [editId, setEditId] = useState(null);
   const [open, setOpen] = useState(null); // id повідомлення з відкритим меню
@@ -74,18 +77,19 @@ export default function ChatThread({ studentId, admin = false }) {
           const head = k !== lastDay ? <div className="chat-day">{fmtDay(d)}</div> : null;
           lastDay = k;
           const mine = m.sender_id === user.id;
-          const canEdit = mine && !th.muted;
+          const canEdit = mine && (!th.muted || admin);
           return (
             <div key={m.id}>
               {head}
               <div className={'chat-row' + (mine ? ' mine' : '')}>
                 <button type="button" className={'bubble' + (mine ? ' mine' : '') + (m.pinned ? ' pinned' : '')} onClick={() => setOpen(open === m.id ? null : m.id)}>
                   {m.pinned && <span className="pin-tag">{t('chat.pinned')}</span>}
+                  {isGroup && !mine && <span className="sender-tag">{m.sender_name}</span>}
                   <span className="bubble-text">{m.body}</span>
                   <span className="bubble-meta">
                     {m.edited_at && <i>{t('chat.edited')}</i>}
                     <i>{fmtTime(m.created_at)}</i>
-                    {mine && <i className={m.read_at ? 'rd' : ''}>{m.read_at ? t('chat.read') : t('chat.sent')}</i>}
+                    {mine && !isGroup && <i className={m.read_at ? 'rd' : ''}>{m.read_at ? t('chat.read') : t('chat.sent')}</i>}
                   </span>
                 </button>
                 {open === m.id && (
@@ -108,11 +112,11 @@ export default function ChatThread({ studentId, admin = false }) {
       {th.error && <p className="small bc-err">{th.error}</p>}
       {admin && (
         <div className="chat-admin-bar">
-          <button type="button" className="btn-ghost btn-small" onClick={() => th.setMute(!th.muted)}>{th.muted ? t('chat.unmute') : t('chat.mute')}</button>
+          {!isGroup && <button type="button" className="btn-ghost btn-small" onClick={() => th.setMute(!th.muted)}>{th.muted ? t('chat.unmute') : t('chat.mute')}</button>}
           <button type="button" className="btn-ghost btn-small" onClick={async () => { if (window.confirm(t('chat.clearConfirm'))) await th.clear(); }}>{t('chat.clear')}</button>
         </div>
       )}
-      {th.muted && <p className="muted small chat-note">{admin ? t('chat.mutedAdmin') : t('chat.mutedStudent')}</p>}
+      {th.muted && <p className="muted small chat-note">{isGroup ? (admin ? t('chat.groupReadonlyAdmin') : t('chat.groupReadonly')) : admin ? t('chat.mutedAdmin') : t('chat.mutedStudent')}</p>}
       {canWrite && (
         <div className="chat-compose">
           {editId && (

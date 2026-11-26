@@ -768,5 +768,22 @@
   "ap.title": "Which pushes I receive",
   "ap.chat": "New chat messages",
   "ap.payments": "New payments",
-  "ap.hint": "If turned off, there is no push, but counters in chat and payments remain."
+  "ap.hint": "If turned off, there is no push, but counters in chat and payments remain.",
+  "chat.chats": "Chats",
+  "chat.groups": "Groups",
+  "chat.personal": "Direct",
+  "chat.newGroup": "New group",
+  "chat.members": "Members: {n}",
+  "chat.groupSettings": "Settings",
+  "chat.groupName": "Group name",
+  "chat.onlyCoach": "Only the coach can write",
+  "chat.noMembers": "Nobody yet.",
+  "chat.addMembers": "Add members",
+  "chat.addPicked": "Add selected",
+  "chat.syncNote": "Members are added at the moment you tap. If a new student joins a class later, add them here manually.",
+  "chat.titleRequired": "Enter a group name",
+  "chat.deleteGroup": "Delete group",
+  "chat.deleteGroupConfirm": "Delete the group with all its messages?",
+  "chat.groupReadonly": "Only the coach can write in this group.",
+  "chat.groupReadonlyAdmin": "Students cannot write in this group. You can."
 }

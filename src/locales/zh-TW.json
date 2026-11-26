@@ -768,5 +768,22 @@
   "ap.title": "我會收到的推播",
   "ap.chat": "聊天新訊息",
   "ap.payments": "新付款",
-  "ap.hint": "關閉後不會推播，但聊天與付款的計數仍會顯示。"
+  "ap.hint": "關閉後不會推播，但聊天與付款的計數仍會顯示。",
+  "chat.chats": "聊天",
+  "chat.groups": "群組",
+  "chat.personal": "私訊",
+  "chat.newGroup": "新增群組",
+  "chat.members": "成員：{n}",
+  "chat.groupSettings": "設定",
+  "chat.groupName": "群組名稱",
+  "chat.onlyCoach": "僅教練可發言",
+  "chat.noMembers": "目前沒有成員。",
+  "chat.addMembers": "新增成員",
+  "chat.addPicked": "加入所選",
+  "chat.syncNote": "成員於點擊當下加入。若之後有新學員加入該課程，請手動新增。",
+  "chat.titleRequired": "請輸入群組名稱",
+  "chat.deleteGroup": "刪除群組",
+  "chat.deleteGroupConfirm": "要刪除群組及其所有訊息嗎？",
+  "chat.groupReadonly": "此群組僅教練可發言。",
+  "chat.groupReadonlyAdmin": "學員無法在此群組發言，你可以。"
 }

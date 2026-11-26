@@ -443,3 +443,9 @@ html[data-ui][data-theme="dark"] .theme-opt.on { color: var(--soft-fg); }
 .chat-input textarea { min-width: 0; width: auto; }
 .chat-input .chat-send { width: auto !important; flex: none; }
 .chat-admin-bar { padding-top: 4px; }
+.sender-tag { font-size: .7rem; font-weight: 600; color: var(--soft-fg); }
+.chat-section { display: block; margin: 14px 16px 6px; }
+/* поле вводу над нижньою панеллю; коли панель ховається, опускається нижче */
+.chat-compose { bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); }
+html[data-bar="hide"] .chat-compose { bottom: calc(env(safe-area-inset-bottom, 0px) + 10px); }
+.chat { padding-bottom: 12px; }

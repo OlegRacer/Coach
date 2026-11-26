@@ -6,12 +6,12 @@ const PAGE = 300;
 
 // Підписка на зміни таблиці чату: нові повідомлення приходять без оновлення сторінки.
 // Запасний варіант: перечитування за таймером і при поверненні у вкладку.
-function useLive(filter, onChange, everyMs) {
+function useLive(filter, onChange, everyMs, table = 'chat_messages') {
   const cb = useRef(onChange);
   cb.current = onChange;
   useEffect(() => {
-    const name = 'chat:' + (filter || 'all') + ':' + Math.random().toString(36).slice(2, 7);
-    const opts = { event: '*', schema: 'public', table: 'chat_messages' };
+    const name = 'chat:' + table + ':' + (filter || 'all') + ':' + Math.random().toString(36).slice(2, 7);
+    const opts = { event: '*', schema: 'public', table };
     if (filter) opts.filter = filter;
     const ch = supabase.channel(name).on('postgres_changes', opts, () => cb.current()).subscribe();
     const tick = setInterval(() => document.visibilityState === 'visible' && cb.current(), everyMs);
@@ -24,7 +24,7 @@ function useLive(filter, onChange, everyMs) {
       window.removeEventListener('online', vis);
       supabase.removeChannel(ch);
     };
-  }, [filter, everyMs]);
+  }, [filter, everyMs, table]);
 }
 
 // Розмова учня: повідомлення, надсилання, редагування, видалення, закріплення, мут.
@@ -96,6 +96,7 @@ export function useChatUnread() {
     return () => window.removeEventListener('chat:read', load);
   }, [load]);
   useLive(null, load, 60000);
+  useLive(null, load, 60000, 'chat_group_messages');
   return n;
 }
 
@@ -129,4 +130,73 @@ export function useAdminPushPrefs() {
     await supabase.from('admin_push_prefs').upsert({ user_id: user.id, prefs: next });
   };
   return { prefs, set };
+}
+
+// Розмова групи: ті самі дії, що й в особистій, але через окремі таблиці й функції.
+export function useGroupThread(groupId) {
+  const { user } = useAuth();
+  const [messages, setMessages] = useState([]);
+  const [group, setGroup] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const load = useCallback(async () => {
+    if (!groupId) return;
+    const [m, g] = await Promise.all([
+      supabase.rpc('chat_group_messages_get', { p_group: groupId, p_limit: PAGE }),
+      supabase.from('chat_groups').select('id, title, students_can_write').eq('id', groupId).maybeSingle()
+    ]);
+    if (!m.error) setMessages(m.data || []);
+    setGroup(g.data || null);
+    setLoading(false);
+  }, [groupId]);
+  useEffect(() => {
+    setLoading(true);
+    load();
+  }, [load]);
+  useLive(groupId ? `group_id=eq.${groupId}` : null, load, 15000, 'chat_group_messages');
+
+  const last = messages.length ? messages[messages.length - 1].created_at : '';
+  useEffect(() => {
+    if (!groupId || document.visibilityState !== 'visible') return;
+    supabase.rpc('chat_group_mark_read', { p_group: groupId }).then(() => window.dispatchEvent(new Event('chat:read')));
+  }, [groupId, last]);
+
+  const run = async (p) => {
+    setError('');
+    const { error: e } = await p;
+    if (e) setError(e.message);
+    await load();
+    window.dispatchEvent(new Event('chat:read'));
+    return !e;
+  };
+  return {
+    messages,
+    group,
+    loading,
+    muted: !!group && !group.students_can_write,
+    error,
+    send: (text) => run(supabase.from('chat_group_messages').insert({ group_id: groupId, sender_id: user.id, body: text.trim() })),
+    edit: (id, text) => run(supabase.rpc('chat_group_edit', { p_id: id, p_body: text.trim() })),
+    remove: (id) => run(supabase.rpc('chat_group_msg_delete', { p_id: id })),
+    pin: (id, pin) => run(supabase.rpc('chat_group_pin', { p_id: id, p_pin: pin })),
+    setMute: () => Promise.resolve(),
+    clear: () => run(supabase.rpc('chat_group_clear', { p_group: groupId }))
+  };
+}
+
+// Список груп поточного користувача (тренер бачить усі).
+export function useGroups() {
+  const [rows, setRows] = useState(null);
+  const load = useCallback(async () => {
+    const { data, error } = await supabase.rpc('chat_groups_list');
+    if (!error) setRows(data || []);
+  }, []);
+  useEffect(() => {
+    load();
+    window.addEventListener('chat:read', load);
+    return () => window.removeEventListener('chat:read', load);
+  }, [load]);
+  useLive(null, load, 30000, 'chat_group_messages');
+  return { rows, reload: load };
 }

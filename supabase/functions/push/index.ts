@@ -142,6 +142,28 @@ Deno.serve(async (req) => {
     return json({ sent: n });
   }
 
+  // Нове повідомлення в груповому чаті: учасникам (крім автора) і тренерам, які не вимкнули пуш чату.
+  if (body.type === 'chat_group_message') {
+    if (!body.id) return json({ error: 'no_id' }, 400);
+    const { data: m } = await db.from('chat_group_messages').select('*').eq('id', body.id).maybeSingle();
+    if (!m) return json({ error: 'not_found' }, 404);
+    if (m.notified_at) return json({ skipped: true });
+    await db.from('chat_group_messages').update({ notified_at: new Date().toISOString() }).eq('id', m.id);
+    const [{ data: g }, { data: me }, { data: mem }] = await Promise.all([
+      db.from('chat_groups').select('title').eq('id', m.group_id).maybeSingle(),
+      db.from('profiles').select('full_name, email, role').eq('id', m.sender_id).maybeSingle(),
+      db.from('chat_group_members').select('student_id').eq('group_id', m.group_id)
+    ]);
+    const who = (me && (me.full_name || (me.email || '').split('@')[0])) || '';
+    const text = String(m.body).replace(/\s+/g, ' ').slice(0, 140);
+    const title = (g && g.title) || 'Чат';
+    const students = (mem || []).map((x) => x.student_id).filter((id) => id !== m.sender_id);
+    const admins = (await adminsFor('chat')).filter((id) => id !== m.sender_id);
+    const n1 = await send(students, () => ({ title, body: `${who}: ${text}`, url: './#/chat/g/' + m.group_id, tag: 'cg-' + m.group_id }));
+    const n2 = await send(admins, () => ({ title, body: `${who}: ${text}`, url: './#/admin/chat/g/' + m.group_id, tag: 'cg-' + m.group_id }));
+    return json({ sent: n1 + n2 });
+  }
+
   // Подальші типи викликає тригер бази. Дані беремо з бази за id, тож підробити текст неможливо,
   // а прапорці *_notified_at не дають надіслати те саме двічі.
   if (!body.id) return json({ error: 'no_id' }, 400);

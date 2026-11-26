@@ -16,6 +16,9 @@ const Feedback = lazy(() => import('./pages/Feedback.jsx'));
 const ChatInbox = lazy(() => import('./admin/ChatInbox.jsx'));
 const ChatAdminThread = lazy(() => import('./admin/ChatAdminThread.jsx'));
 const Chat = lazy(() => import('./pages/Chat.jsx'));
+const ChatGroupPage = lazy(() => import('./pages/Chat.jsx').then((m) => ({ default: m.ChatGroupPage })));
+const ChatGroupAdmin = lazy(() => import('./admin/ChatGroupAdmin.jsx'));
+const ChatGroupEditor = lazy(() => import('./admin/ChatGroupEditor.jsx'));
 const PushAdmin = lazy(() => import('./admin/PushAdmin.jsx'));
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
@@ -106,6 +109,11 @@ export default function AppRoutes({ extra = null }) {
       }
     />
     <Route path="/chat" element={<Chat />} />
+    <Route path="/chat/me" element={<Chat personal />} />
+    <Route path="/chat/g/:gid" element={<ChatGroupPage />} />
+    <Route path="/admin/chat/new" element={<AdminBoundary><ChatGroupEditor /></AdminBoundary>} />
+    <Route path="/admin/chat/g/:gid" element={<AdminBoundary><ChatGroupAdmin /></AdminBoundary>} />
+    <Route path="/admin/chat/g/:gid/edit" element={<AdminBoundary><ChatGroupEditor /></AdminBoundary>} />
     <Route
       path="/admin/chat"
       element={
