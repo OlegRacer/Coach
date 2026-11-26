@@ -24,9 +24,20 @@ const TXT = {
   newPay: { uk: 'Нова оплата', en: 'New payment', 'zh-TW': '新付款' },
   approved: { uk: 'Доступ відкрито', en: 'Access unlocked', 'zh-TW': '已開通' },
   rejected: { uk: 'Оплату не підтверджено', en: 'Payment not confirmed', 'zh-TW': '付款未確認' },
+  coach: { uk: 'Тренер', en: 'Coach', 'zh-TW': '教練' },
   chal: { uk: 'Челендж: час тренування', en: 'Challenge: workout time', 'zh-TW': '挑戰：該訓練了' },
   test: { uk: 'Сповіщення працюють', en: 'Notifications work', 'zh-TW': '通知正常' }
 };
+
+// Адміни, які не вимкнули цю категорію сповіщень (admin_push_prefs: { chat: false, payments: false }).
+async function adminsFor(cat: string): Promise<string[]> {
+  const { data: admins } = await db.from('profiles').select('id').eq('role', 'admin');
+  const ids = (admins || []).map((a) => a.id);
+  if (!ids.length) return [];
+  const { data: prefs } = await db.from('admin_push_prefs').select('user_id, prefs').in('user_id', ids);
+  const off = new Set((prefs || []).filter((p) => p.prefs && p.prefs[cat] === false).map((p) => p.user_id));
+  return ids.filter((id) => !off.has(id));
+}
 
 async function send(userIds: string[], build: (lang: Lang) => { title: string; body: string; url: string; tag?: string }) {
   if (!userIds.length) return 0;
@@ -113,6 +124,24 @@ Deno.serve(async (req) => {
     return json({ sent });
   }
 
+  // Нове повідомлення в чаті (тригер бази). Текст беремо з бази за id; notified_at не дає надіслати двічі.
+  if (body.type === 'chat_message') {
+    if (!body.id) return json({ error: 'no_id' }, 400);
+    const { data: m } = await db.from('chat_messages').select('*').eq('id', body.id).maybeSingle();
+    if (!m) return json({ error: 'not_found' }, 404);
+    if (m.notified_at) return json({ skipped: true });
+    await db.from('chat_messages').update({ notified_at: new Date().toISOString() }).eq('id', m.id);
+    const text = String(m.body).replace(/\s+/g, ' ').slice(0, 140);
+    if (m.sender_id === m.student_id) {
+      const { data: st } = await db.from('profiles').select('full_name, email').eq('id', m.student_id).maybeSingle();
+      const who = (st && (st.full_name || st.email)) || '';
+      const n = await send(await adminsFor('chat'), () => ({ title: who || 'Чат', body: text, url: './#/admin/chat/' + m.student_id, tag: 'chat-' + m.student_id }));
+      return json({ sent: n });
+    }
+    const n = await send([m.student_id], (l) => ({ title: TXT.coach[l], body: text, url: './#/chat', tag: 'chat-' + m.student_id }));
+    return json({ sent: n });
+  }
+
   // Подальші типи викликає тригер бази. Дані беремо з бази за id, тож підробити текст неможливо,
   // а прапорці *_notified_at не дають надіслати те саме двічі.
   if (!body.id) return json({ error: 'no_id' }, 400);
@@ -126,9 +155,8 @@ Deno.serve(async (req) => {
   if (body.type === 'new_payment') {
     if (r.status !== 'pending' || r.admin_notified_at) return json({ skipped: true });
     await db.from('payment_requests').update({ admin_notified_at: new Date().toISOString() }).eq('id', r.id);
-    const { data: admins } = await db.from('profiles').select('id').eq('role', 'admin');
     const who = (r.student && (r.student.full_name || r.student.email)) || '';
-    const n = await send((admins || []).map((a) => a.id), (l) => ({
+    const n = await send(await adminsFor('payments'), (l) => ({
       title: TXT.newPay[l],
       body: `${who}: ${pick(r.plan.title, l)} · ${r.plan.price} ${r.plan.currency}`,
       url: './#/admin/payments',

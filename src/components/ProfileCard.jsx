@@ -12,6 +12,8 @@ import useOnline from '../lib/useOnline.js';
 import { supabase } from '../lib/supabase.js';
 import { resetCache } from '../lib/resetCache.js';
 import { useAuth } from '../auth/index.jsx';
+import { useChatUnread } from '../lib/chat.js';
+import AdminPushPrefs from './AdminPushPrefs.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 // Картка профілю: гість із кнопкою входу або увійшов користувач (фото, ім'я, вийти).
@@ -33,6 +35,7 @@ export default function ProfileCard() {
       /* ignore */
     }
   };
+  const chatUnread = useChatUnread();
   const { user, isAdmin, details, signInGoogle, signInLine, signOut, error } = useAuth();
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);
@@ -139,6 +142,7 @@ export default function ProfileCard() {
       <LinkedLogins />
 
       <PushToggle />
+      {isAdmin && <AdminPushPrefs />}
 
       <div className="set-block">
         <button type="button" className="btn-ghost" disabled={clearing} onClick={() => { setClearing(true); resetCache(); }}>
@@ -146,6 +150,18 @@ export default function ProfileCard() {
         </button>
         <span className="muted small">{t('profile.resetCacheHint')}</span>
       </div>
+
+      {user && !isAdmin && (
+        <Link to="/chat" className="set-row link-row">
+          <span className="set-label">
+            {t('chat.title')}
+            {chatUnread > 0 && <span className="badge-count">{chatUnread}</span>}
+          </span>
+          <span className="muted">
+            <Icon name="chevron" size={20} />
+          </span>
+        </Link>
+      )}
 
       {user && !isAdmin && (
         <Link to="/feedback" className="set-row link-row">
@@ -160,6 +176,15 @@ export default function ProfileCard() {
         <>
           <Link to="/admin/students" className="set-row link-row">
             <span className="set-label">{t('students.title')}</span>
+            <span className="muted">
+              <Icon name="chevron" size={20} />
+            </span>
+          </Link>
+          <Link to="/admin/chat" className="set-row link-row">
+            <span className="set-label">
+              {t('chat.inbox')}
+              {chatUnread > 0 && <span className="badge-count">{chatUnread}</span>}
+            </span>
             <span className="muted">
               <Icon name="chevron" size={20} />
             </span>

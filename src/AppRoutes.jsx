@@ -13,6 +13,9 @@ const Plans = lazy(() => import('./pages/Plans.jsx'));
 const MyProgram = lazy(() => import('./pages/MyProgram.jsx'));
 const Equipment = lazy(() => import('./pages/Equipment.jsx'));
 const Feedback = lazy(() => import('./pages/Feedback.jsx'));
+const ChatInbox = lazy(() => import('./admin/ChatInbox.jsx'));
+const ChatAdminThread = lazy(() => import('./admin/ChatAdminThread.jsx'));
+const Chat = lazy(() => import('./pages/Chat.jsx'));
 const PushAdmin = lazy(() => import('./admin/PushAdmin.jsx'));
 const Students = lazy(() => import('./admin/Students.jsx'));
 const ScheduleAdmin = lazy(() => import('./admin/ScheduleAdmin.jsx'));
@@ -31,7 +34,7 @@ export default function AppRoutes({ extra = null }) {
   // Тренеру заздалегідь підвантажуємо адмінські сторінки, щоб перехід не чекав на завантаження (раніше був порожній екран)
   // Сторінки учня вантажаться окремими файлами; після першого показу підтягуємо їх у фоні, щоб перехід був миттєвий
   useEffect(() => {
-    const warm = () => ['Schedule', 'Section', 'Exercise', 'Anatomy', 'Plans', 'MyProgram', 'Equipment', 'Feedback'].forEach((n) => import(`./pages/${n}.jsx`));
+    const warm = () => ['Chat', 'Schedule', 'Section', 'Exercise', 'Anatomy', 'Plans', 'MyProgram', 'Equipment', 'Feedback'].forEach((n) => import(`./pages/${n}.jsx`));
     const id = 'requestIdleCallback' in window ? window.requestIdleCallback(warm, { timeout: 3000 }) : setTimeout(warm, 1200);
     return () => ('cancelIdleCallback' in window ? window.cancelIdleCallback(id) : clearTimeout(id));
   }, []);
@@ -99,6 +102,23 @@ export default function AppRoutes({ extra = null }) {
       element={
         <AdminBoundary>
           <EquipmentAdmin />
+        </AdminBoundary>
+      }
+    />
+    <Route path="/chat" element={<Chat />} />
+    <Route
+      path="/admin/chat"
+      element={
+        <AdminBoundary>
+          <ChatInbox />
+        </AdminBoundary>
+      }
+    />
+    <Route
+      path="/admin/chat/:sid"
+      element={
+        <AdminBoundary>
+          <ChatAdminThread />
         </AdminBoundary>
       }
     />
