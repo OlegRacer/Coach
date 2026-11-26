@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { MESSENGERS } from '../components/Onboarding.jsx';
 import AccessPanel from './AccessPanel.jsx';
 import { TrainerPicker, NotePanel, StudioEditor } from './StudentExtra.jsx';
 import TopBar from '../components/TopBar.jsx';
@@ -187,7 +186,6 @@ export default function Students() {
           const filled = det && det.completed_at;
           const fullName = filled ? [det.first_name, det.last_name].filter(Boolean).join(' ') : '';
           const expanded = open === s.id;
-          const msg = filled && det.contact_messenger ? MESSENGERS.find((m) => m.id === det.contact_messenger) : null;
           return (
             <div key={s.id} className={'student' + (expanded ? ' expanded' : '')}>
               <button type="button" className="student-head" aria-expanded={expanded} onClick={() => setOpen(expanded ? null : s.id)}>
@@ -228,9 +226,6 @@ export default function Students() {
                   {!filled && <p className="muted small">{t('students.noDetails')}</p>}
                   {filled && (
                     <>
-                      {msg && det.contact_handle && (
-                        <p className="small"><b>{t('students.contact')}:</b> {msg.label} · {det.contact_handle}</p>
-                      )}
                       {det.gender && (
                         <p className="small"><b>{t('ob.gender.label')}:</b> {t(`ob.gender.${det.gender}`)}</p>
                       )}

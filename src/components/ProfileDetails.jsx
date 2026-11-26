@@ -1,6 +1,5 @@
 import { createPortal } from 'react-dom';
 import Icon from './Icon.jsx';
-import { MESSENGERS } from './Onboarding.jsx';
 import { useAuth } from '../auth/index.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useStudioData } from '../lib/studios.js';
@@ -15,14 +14,12 @@ export default function ProfileDetails({ onClose, onEdit }) {
   const studioNames = d.studio_other ? t('ob.studio.other') : sd.studios.filter((x) => sd.myStudios.includes(x.id)).map((x) => x.name).join(', ');
   const classNames = d.studio_other ? '' : sd.classes.filter((x) => sd.myClasses.includes(x.id)).map((x) => x.name).join(', ');
   const name = [d.first_name, d.last_name].filter(Boolean).join(' ');
-  const msg = MESSENGERS.find((m) => m.id === d.contact_messenger);
   const body = [d.height_cm && `${d.height_cm} cm`, d.weight_kg && `${d.weight_kg} kg`, d.birth_year && `${d.birth_year}`]
     .filter(Boolean)
     .join(' · ');
   const rows = [
     [t('ob.email'), (user && user.email) || ''],
     [t('ob.firstName') + ' / ' + t('ob.lastName'), name],
-    [t('ob.contact.label'), msg && d.contact_handle ? `${msg.label} · ${d.contact_handle}` : ''],
     [t('ob.studio.label'), studioNames],
     [t('ob.classes.label'), classNames],
     [t('ob.goals.label'), (d.goals || []).map((g) => t(`ob.goal.${g}`)).join(', ')],

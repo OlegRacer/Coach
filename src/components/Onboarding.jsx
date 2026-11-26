@@ -9,15 +9,8 @@ import { useStudioData, saveStudioChoice } from '../lib/studios.js';
 import StudioPicker from './StudioPicker.jsx';
 
 export const GOALS = ['lose_weight', 'muscle', 'mobility', 'recovery', 'maintain'];
-export const MESSENGERS = [
-  { id: 'line', label: 'LINE' },
-  { id: 'telegram', label: 'Telegram' },
-  { id: 'whatsapp', label: 'WhatsApp' },
-  { id: 'instagram', label: 'Instagram' }
-];
 const STEPS = [
   { key: 'name', icon: 'user' },
-  { key: 'contact', icon: 'chat' },
   { key: 'studio', icon: 'barbell' },
   { key: 'goals', icon: 'target' },
   { key: 'body', icon: 'anatomy' },
@@ -33,8 +26,6 @@ export default function Onboarding({ onClose }) {
   const [step, setStep] = useState(0);
   const [first, setFirst] = useState(d.first_name || '');
   const [last, setLast] = useState(d.last_name || '');
-  const [messenger, setMessenger] = useState(d.contact_messenger || '');
-  const [handle, setHandle] = useState(d.contact_handle || '');
   const [goals, setGoals] = useState(d.goals || []);
   const [height, setHeight] = useState(d.height_cm != null ? String(d.height_cm) : '');
   const [weight, setWeight] = useState(d.weight_kg != null ? String(d.weight_kg) : '');
@@ -103,8 +94,6 @@ export default function Onboarding({ onClose }) {
       student_id: user.id,
       first_name: clean(first),
       last_name: clean(last),
-      contact_messenger: messenger && clean(handle) ? messenger : null,
-      contact_handle: messenger ? clean(handle) : null,
       goals,
       height_cm: num(height, 80, 250),
       weight_kg: num(weight, 20, 400),
@@ -207,27 +196,6 @@ export default function Onboarding({ onClose }) {
               <p className="small muted">{t('ob.photo.hint')}</p>
               <input className="field" value={first} maxLength={80} onChange={(e) => setFirst(e.target.value)} placeholder={t('ob.firstName')} autoComplete="given-name" />
               <input className="field" value={last} maxLength={80} onChange={(e) => setLast(e.target.value)} placeholder={t('ob.lastName')} autoComplete="family-name" />
-            </div>
-          )}
-
-          {cur === 'contact' && (
-            <div className="stack">
-              <div className="chips">
-                {MESSENGERS.map((m) => (
-                  <button
-                    type="button"
-                    key={m.id}
-                    className={'chip' + (messenger === m.id ? ' active' : '')}
-                    aria-pressed={messenger === m.id}
-                    onClick={() => setMessenger(messenger === m.id ? '' : m.id)}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
-              {messenger && (
-                <input className="field" value={handle} maxLength={100} onChange={(e) => setHandle(e.target.value)} placeholder={t('ob.contact.handle')} autoCapitalize="none" autoCorrect="off" />
-              )}
             </div>
           )}
 
