@@ -14,23 +14,37 @@ import SectionTile from '../components/SectionIcon.jsx';
 import useSortable from '../lib/useSortable.js';
 import useAddContent from '../admin/useAddContent.js';
 import { supabase } from '../lib/supabase.js';
+import { posterUrl } from '../lib/poster.js';
 
 // Розділ містить підрозділи і/або вправи (на будь-яку глибину). Закрите учень бачить із замком,
 // а відкрите окремо (пакет, «безкоштовно») лишається доступним.
 // Мініатюра-превʼю вправи: квадрат із центру відео (або картинки).
 // Відео стоїть на першому кадрі; тап по квадрату запускає його (не відкриваючи вправу), одночасно грає лише одне.
 let playing = null;
-function Thumb({ src, crop }) {
+function Thumb({ src, preview, crop }) {
   const ref = useRef(null);
   const [on, setOn] = useState(false);
+  const [load, setLoad] = useState(false); // відео підвантажується лише після тапу
+  const [bad, setBad] = useState(false);
   const t0 = startOf(crop);
   const isVideo = /\.(mp4|webm|mov)(\?.*)?$/i.test(src);
+  const poster = isVideo ? posterUrl(preview, crop) : '';
   useEffect(() => () => { if (playing === ref.current) playing = null; }, []);
+  useEffect(() => {
+    if (!load) return;
+    const v = ref.current;
+    if (!v) return;
+    if (playing && playing !== v) playing.pause();
+    playing = v;
+    const p = v.play();
+    if (p && p.catch) p.catch(() => {});
+  }, [load]);
   if (!isVideo) return <img src={src} alt="" loading="lazy" style={cropStyle(crop)} />;
   const toggle = (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
     const v = ref.current;
+    if (!load) { setLoad(true); return; }
     if (!v) return;
     if (!v.paused) { v.pause(); return; }
     if (playing && playing !== v) playing.pause();
@@ -40,9 +54,13 @@ function Thumb({ src, crop }) {
   };
   return (
     <span className="thumb-play" onClick={toggle}>
-      <video ref={ref} src={src + '#t=' + (t0 || 0.001)} muted playsInline preload="metadata" aria-hidden="true" style={cropStyle(crop)}
-        onPlay={() => setOn(true)} onPause={() => setOn(false)}
-        onEnded={(e) => { const v = e.currentTarget; v.currentTime = t0 || 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); }} />
+      {load ? (
+        <video ref={ref} src={src + '#t=' + (t0 || 0.001)} muted playsInline preload="auto" aria-hidden="true" style={cropStyle(crop)}
+          onPlay={() => setOn(true)} onPause={() => setOn(false)}
+          onEnded={(e) => { const v = e.currentTarget; v.currentTime = t0 || 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); }} />
+      ) : poster && !bad ? (
+        <img src={poster} alt="" loading="lazy" style={cropStyle(crop)} onError={() => setBad(true)} />
+      ) : null}
       {!on && <span className="thumb-btn"><Icon name="play" size={18} /></span>}
     </span>
   );
@@ -167,7 +185,7 @@ export default function Section() {
           <div key={e.id} {...(ownById[e.id] ? sortEx.rowProps(e.id) : {})} className={'edit-wrap ' + (ownById[e.id] ? sortEx.rowProps(e.id).className || '' : '')}>
           <Link to={`/exercise/${e.id}`} draggable={false} onClick={(ev) => { if (e.draft && !isAdmin) ev.preventDefault(); }} className={'list-item' + (exerciseOpen(e) ? '' : ' locked-tile')}>
             <span className="ex-thumb">
-              {e.preview && <Thumb src={mediaUrl(e.preview)} crop={e.preview_crop} />}
+              {e.preview && <Thumb src={mediaUrl(e.preview)} preview={e.preview} crop={e.preview_crop} />}
             </span>
             <span className="list-main">
               <span className="list-title">
