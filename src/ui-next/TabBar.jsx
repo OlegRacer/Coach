@@ -153,7 +153,7 @@ export default function TabBar() {
       {TABS.map((x, i) => {
         const active = i === cur;
         return (
-          <NavLink key={x.to} to={x.to} draggable={false} onClick={(e) => go(e, i)} className={'tab' + (active ? ' active' : '')} aria-current={active ? 'page' : undefined}>
+          <NavLink key={x.to} to={x.to} data-tour={'tab-' + x.to} draggable={false} onClick={(e) => go(e, i)} className={'tab' + (active ? ' active' : '')} aria-current={active ? 'page' : undefined}>
             <span className="tab-ic">
               <Icon name={x.icon} size={26} />
             </span>

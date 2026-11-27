@@ -15,6 +15,10 @@ import { useAuth } from '../auth/index.jsx';
 import { useChatUnread } from '../lib/chat.js';
 import AdminPushPrefs from './AdminPushPrefs.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import LangSwitcher from './LangSwitcher.jsx';
+import ShareLink from './ShareLink.jsx';
+import UpdateRow from './UpdateRow.jsx';
+import { startTour } from '../tour/Tour.jsx';
 import useSortable from '../lib/useSortable.js';
 
 const ORDER_KEY = 'profile-order';
@@ -42,7 +46,7 @@ function saveOrder(ids) {
 
 // Картка профілю: гість із кнопкою входу або увійшов користувач (фото, ім'я, вийти).
 // Тренеру (адміну) додатково показується перехід до списку учнів.
-export default function ProfileCard() {
+export default function ProfileCard({ tail = false }) {
   const { t } = useI18n();
   const [pendingPay, setPendingPayRaw] = useState(() => {
     try {
@@ -133,6 +137,20 @@ export default function ProfileCard() {
     aequip: isAdmin ? links('/admin/equipment', t('equip.admin')) : null,
     astorage: isAdmin ? links('/admin/storage', t('mem.title')) : null,
     afeedback: isAdmin ? links('/admin/feedback', t('fb.admin'), cnt(newFb)) : null,
+    howto: tail ? (
+      <button type="button" className="set-row link-row" onClick={startTour}>
+        <span className="set-label">{t('tour.howto')}</span>
+        <span className="muted"><Icon name="chevron" size={20} /></span>
+      </button>
+    ) : null,
+    lang: tail ? (
+      <div className="set-row">
+        <span className="set-label">{t('settings.language')}</span>
+        <LangSwitcher />
+      </div>
+    ) : null,
+    share: tail ? <ShareLink /> : null,
+    update: tail ? <UpdateRow /> : null,
     aschedule: isAdmin ? links('/admin/schedule', t('sa.link')) : null
   };
   const defaults = Object.keys(blocks).filter((k) => blocks[k]);
@@ -198,7 +216,7 @@ export default function ProfileCard() {
         </p>
       )}
 
-      {order.map((id) => (blocks[id] ? <div key={id} {...rowProps(id)}>{blocks[id]}</div> : null))}
+      {order.map((id) => (blocks[id] ? <div key={id} {...rowProps(id)} data-tour={'p-' + id}>{blocks[id]}</div> : null))}
       <span className="muted small">{t('profile.reorderHint')}</span>
     </div>
   );

@@ -10,6 +10,7 @@ import './ui-next/next-type.css';
 import './ui-next/next.css';
 import ProfilePage from './ui-next/ProfilePage.jsx';
 import { useEffect } from 'react';
+import Tour from './tour/Tour.jsx';
 import PushBanner from './components/PushBanner.jsx';
 import { Route, useNavigate } from 'react-router-dom';
 
@@ -43,6 +44,7 @@ export default function App() {
       <PayWatcher />
       <PushOpen />
       <PushBanner />
+      <Tour />
       <AppRoutes extra={<><Route path="/" element={<NextHome />} /><Route path="/profile" element={<ProfilePage />} /></>} />
       <TabBar />
     </div>
