@@ -6,7 +6,13 @@ self.addEventListener('push', (event) => {
   } catch (e) {
     d = { title: 'CoachApp', body: event.data ? event.data.text() : '' };
   }
-  event.waitUntil(
+  // якщо додаток зараз відкритий і на екрані, він покаже власну плашку зверху
+  const inApp = self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+    list.forEach((c) => {
+      if (c.visibilityState === 'visible') c.postMessage({ type: 'push-received', title: d.title || '', body: d.body || '', url: d.url || './' });
+    });
+  });
+  event.waitUntil(inApp.then(() =>
     self.registration.showNotification(d.title || 'CoachApp', {
       body: d.body || '',
       icon: 'icon-192.png',
@@ -14,7 +20,7 @@ self.addEventListener('push', (event) => {
       tag: d.tag,
       data: { url: d.url || './' }
     })
-  );
+  ));
 });
 
 self.addEventListener('notificationclick', (event) => {
