@@ -36,14 +36,16 @@ export default function ChatInbox() {
         </div>
       )}
       {pick && (
-        <div className="stack">
-          <input className="field" autoFocus value={q} placeholder={t('aud.search')} onChange={(e) => setQ(e.target.value)} />
+        <div className="bc-wrap" style={{ paddingInline: 16 }}>
+          <input className="field" type="search" autoFocus value={q} placeholder={t('aud.search')} onChange={(e) => setQ(e.target.value)} />
           {!students && <p className="muted">{t('admin.loading')}</p>}
-          {found.slice(0, 50).map((p) => (
-            <button type="button" key={p.id} className="list-item" onClick={() => nav('/admin/chat/' + p.id)}>
-              <span className="list-main"><b>{displayName(p)}</b></span>
-            </button>
-          ))}
+          <div className="also-list" style={{ maxHeight: 'none' }}>
+            {found.map((p) => (
+              <button type="button" key={p.id} className="also-row chat-pick" onClick={() => nav('/admin/chat/' + p.id)}>
+                <span>{displayName(p)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
       {groups.rows && groups.rows.length > 0 && (

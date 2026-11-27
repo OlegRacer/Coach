@@ -455,3 +455,4 @@ html[data-chat] .tabbar, html[data-chat] .tab-add { display: none !important; }
 html[data-chat] .chat-compose { bottom: 0; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
 html[data-chat] main.page { padding-bottom: 0; }
 .chat-plus { font-size: 1.4rem; line-height: 1; padding-inline: 14px; }
+.chat-pick { border: 0; width: 100%; text-align: left; color: inherit; cursor: pointer; font: inherit; font-size: .92rem; }
