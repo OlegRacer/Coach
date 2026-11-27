@@ -48,6 +48,7 @@ export function AuthProvider({ children }) {
   const [session, setSession] = useState(storedSession);
   const [profile, setProfile] = useState(null);
   const [linkMsg, setLinkMsg] = useState('');
+  const [lineHandoff, setLineHandoff] = useState(false);
   const [ready, setReady] = useState(false);
   // Якщо вхід провалився на боці Supabase/провайдера, помилка приходить в адресі повернення: показуємо її текстом.
   const [error, setError] = useState(() => {
@@ -245,6 +246,7 @@ export function AuthProvider({ children }) {
     }
     try {
       localStorage.setItem('line-state', data.state);
+      localStorage.setItem('line-ts', String(Date.now()));
       if (mode === 'link') localStorage.setItem('line-mode', 'link');
       else localStorage.removeItem('line-mode');
     } catch {
@@ -253,7 +255,30 @@ export function AuthProvider({ children }) {
     window.location.assign(data.url);
   }, []);
 
+  // Завершення входу з кодом LINE (код одноразовий, тому викликаємо лише один раз).
+  const finishLine = useCallback(async (code, state, mode) => {
+    const { data, error: e } = await supabase.functions.invoke('line-login', {
+      body: { action: 'login', mode, code, state, redirect_uri: lineRedirect() }
+    });
+    if (mode === 'link') {
+      if (e || !data || !data.linked) setError(await fnError(e, data));
+      else {
+        setLinkMsg('line');
+        window.dispatchEvent(new Event('logins-changed'));
+      }
+      return;
+    }
+    if (e || !data || !data.token_hash) {
+      setError(await fnError(e, data));
+      return;
+    }
+    const { error: ve } = await supabase.auth.verifyOtp({ token_hash: data.token_hash, type: 'magiclink' });
+    if (ve) setError(ve.message);
+  }, []);
+
   // Повернення з LINE: сторінка line-callback.html перекидає сюди як #/line-callback?code=…&state=…
+  // Якщо це інший браузер (iPhone: LINE відкрив Safari, а додаток встановлений окремо), стану тут немає:
+  // тоді лише передаємо код додатку через сервер, а додаток сам завершує вхід.
   useEffect(() => {
     const m = window.location.hash.match(/^#\/line-callback\?(.*)$/);
     if (!m || lineBusy.v) return;
@@ -271,34 +296,86 @@ export function AuthProvider({ children }) {
       try {
         saved = localStorage.getItem('line-state') || '';
         mode = localStorage.getItem('line-mode') || '';
+      } catch {
+        /* ignore */
+      }
+      if (!saved) {
+        const { data, error: e } = await supabase.functions.invoke('line-login', {
+          body: { action: 'stash', code: q.get('code'), state: q.get('state'), redirect_uri: lineRedirect() }
+        });
+        if (e || !data || !data.ok) setError(await fnError(e, data));
+        else setLineHandoff(true);
+        return;
+      }
+      try {
         localStorage.removeItem('line-state');
         localStorage.removeItem('line-mode');
       } catch {
-        /* вхід міг продовжитись в іншому браузері: тоді перевіряє лише підпис state на сервері */
+        /* ignore */
       }
-      if (saved && saved !== q.get('state')) {
+      if (saved !== q.get('state')) {
         setError('LINE: state не збігається, спробуйте ще раз');
         return;
       }
-      const { data, error: e } = await supabase.functions.invoke('line-login', {
-        body: { action: 'login', mode, code: q.get('code'), state: q.get('state'), redirect_uri: lineRedirect() }
-      });
-      if (mode === 'link') {
-        if (e || !data || !data.linked) setError(await fnError(e, data));
-        else {
-          setLinkMsg('line');
-          window.dispatchEvent(new Event('logins-changed'));
-        }
-        return;
-      }
-      if (e || !data || !data.token_hash) {
-        setError(await fnError(e, data));
-        return;
-      }
-      const { error: ve } = await supabase.auth.verifyOtp({ token_hash: data.token_hash, type: 'magiclink' });
-      if (ve) setError(ve.message);
+      await finishLine(q.get('code'), q.get('state'), mode);
     })();
-  }, []);
+  }, [finishLine]);
+
+  // Додаток чекає на код, який браузер залишив на сервері (див. вище). Перевіряємо при поверненні у додаток і кожні 2 с.
+  useEffect(() => {
+    let stop = false;
+    let busy = false;
+    const tick = async () => {
+      let st = '';
+      try {
+        st = localStorage.getItem('line-state') || '';
+      } catch {
+        /* ignore */
+      }
+      try {
+        if (st && Date.now() - Number(localStorage.getItem('line-ts') || 0) > 14 * 60 * 1000) {
+          localStorage.removeItem('line-state');
+          localStorage.removeItem('line-mode');
+          st = '';
+        }
+      } catch {
+        /* ignore */
+      }
+      if (!st || busy || stop || lineBusy.v) return;
+      busy = true;
+      try {
+        const { data } = await supabase.functions.invoke('line-login', {
+          body: { action: 'poll', state: st, redirect_uri: lineRedirect() }
+        });
+        if (data && data.code && !stop) {
+          let mode = '';
+          try {
+            mode = localStorage.getItem('line-mode') || '';
+            localStorage.removeItem('line-state');
+            localStorage.removeItem('line-mode');
+          } catch {
+            /* ignore */
+          }
+          lineBusy.v = true;
+          await finishLine(data.code, st, mode);
+          lineBusy.v = false;
+        }
+      } catch {
+        /* ignore */
+      }
+      busy = false;
+    };
+    const id = setInterval(tick, 2000);
+    const vis = () => document.visibilityState === 'visible' && tick();
+    document.addEventListener('visibilitychange', vis);
+    window.addEventListener('focus', tick);
+    return () => {
+      stop = true;
+      clearInterval(id);
+      document.removeEventListener('visibilitychange', vis);
+      window.removeEventListener('focus', tick);
+    };
+  }, [finishLine]);
 
   // Додати Google до акаунта, у який учень уже увійшов (потрібне «Allow manual linking» у Supabase).
   const linkGoogle = useCallback(async () => {
@@ -361,6 +438,20 @@ export function AuthProvider({ children }) {
     };
   }, [linkGoogle, linkMsg, access, exAccess, accessLoaded, refreshAccess, session, profile, ready, userId, signInGoogle, signInLine, signOut, error, details, detailsLoaded, dismissed, refreshDetails, dismissOnboarding]);
 
+  if (lineHandoff) {
+    const l = (navigator.language || 'en').toLowerCase();
+    const msg = l.startsWith('uk')
+      ? ['Готово!', 'Поверніться у додаток — вхід завершиться автоматично. Це вікно можна закрити.']
+      : l.startsWith('zh')
+        ? ['完成！', '請回到應用程式，登入會自動完成。可以關閉此視窗。']
+        : ['Done!', 'Go back to the app — sign-in will finish automatically. You can close this window.'];
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, padding: 24, textAlign: 'center', background: '#0e1016', color: '#e6e9ef', font: '16px system-ui,sans-serif' }}>
+        <div style={{ fontSize: 22, fontWeight: 700 }}>{msg[0]}</div>
+        <div style={{ color: '#9aa3b2', maxWidth: 320 }}>{msg[1]}</div>
+      </div>
+    );
+  }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

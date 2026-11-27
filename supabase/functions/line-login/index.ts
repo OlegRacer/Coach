@@ -79,6 +79,23 @@ Deno.serve(async (req) => {
     return json({ url: `https://access.line.me/oauth2/v2.1/authorize?${q}`, state });
   }
 
+  // 1б) Інший браузер (iPhone: LINE відкрив Safari, а додаток встановлений окремо) лишає код на сервері,
+  // а додаток забирає його за своїм state (state знає лише додаток).
+  if (body.action === 'stash') {
+    if (!(await checkState(body.state)) || !body.code) return json({ error: 'state недійсний або прострочений, спробуйте ще раз' }, 400);
+    await db.from('line_handoff').delete().lt('created_at', new Date(Date.now() - 20 * 60 * 1000).toISOString());
+    const { error: se } = await db.from('line_handoff').upsert({ state: body.state, code: String(body.code) });
+    if (se) return json({ error: `handoff: ${se.message}` }, 500);
+    return json({ ok: true });
+  }
+  if (body.action === 'poll') {
+    if (!(await checkState(body.state))) return json({ code: null });
+    const { data } = await db.from('line_handoff').select('code').eq('state', body.state).maybeSingle();
+    if (!data) return json({ code: null });
+    await db.from('line_handoff').delete().eq('state', body.state);
+    return json({ code: data.code });
+  }
+
   // 2) Обмін коду на токен, перевірка і видача входу
   if (body.action === 'login') {
     if (!(await checkState(body.state))) return json({ error: 'state недійсний або прострочений, спробуйте ще раз' }, 400);
