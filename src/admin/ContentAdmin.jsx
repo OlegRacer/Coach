@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase.js';
 import { useAuth } from '../auth/index.jsx';
 import { LANGS, useI18n } from '../i18n/index.jsx';
 import { useContent } from '../lib/content.jsx';
+import { ensurePoster } from '../lib/poster.js';
 
 // Адмінка «Переклад»: експорт українських текстів, переклад ШІ та імпорт назад.
 export default function ContentAdmin() {
@@ -13,8 +14,37 @@ export default function ContentAdmin() {
   return (
     <main className="page">
       <TopBar title={t('content.link')} to="/" />
-      {isAdmin ? <Translate /> : <p className="muted">{t('students.noAccess')}</p>}
+      {isAdmin ? <><Posters /><Translate /></> : <p className="muted">{t('students.noAccess')}</p>}
     </main>
+  );
+}
+
+// Мініатюри-кадри для відео, які були завантажені раніше (нові створюються при збереженні вправи).
+function Posters() {
+  const { t } = useI18n();
+  const { exercises } = useContent();
+  const [state, setState] = useState(null);
+  const run = async () => {
+    const list = exercises.filter((e) => e.preview);
+    let made = 0;
+    let fail = 0;
+    for (let i = 0; i < list.length; i += 1) {
+      setState({ i: i + 1, n: list.length, made, fail });
+      try {
+        if (await ensurePoster(list[i].preview, list[i].preview_crop)) made += 1;
+      } catch {
+        fail += 1;
+      }
+    }
+    setState({ done: true, made, fail });
+  };
+  return (
+    <div className="stack" style={{ paddingInline: 16 }}>
+      <button type="button" className="btn-ghost" disabled={!!state && !state.done} onClick={run}>{t('content.posters')}</button>
+      <span className="muted small">
+        {state && !state.done ? t('content.postersProgress', { i: state.i, n: state.n }) : state && state.done ? t('content.postersDone', { made: state.made, fail: state.fail }) : t('content.postersHint')}
+      </span>
+    </div>
   );
 }
 

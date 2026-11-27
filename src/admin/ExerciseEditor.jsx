@@ -1,3 +1,4 @@
+import { ensurePoster } from '../lib/poster.js';
 import { fixMp4 } from '../lib/mp4fix.js';
 import { canConvertVideo, convertVideo, MAX_SECONDS } from '../lib/videoConvert.js';
 import { useEffect, useRef, useState } from 'react';
@@ -237,6 +238,13 @@ export default function ExerciseEditor() {
       })
       .filter((v) => v.id);
     setBusy(true);
+    if (on.preview && f.preview) {
+      try {
+        await ensurePoster(f.preview, f.preview_crop);
+      } catch {
+        /* мініатюру можна створити пізніше кнопкою в «Переклад» */
+      }
+    }
     const { error } = await supabase
       .from('content_exercises')
       .update({
