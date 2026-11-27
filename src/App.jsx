@@ -10,6 +10,7 @@ import './ui-next/next-type.css';
 import './ui-next/next.css';
 import ProfilePage from './ui-next/ProfilePage.jsx';
 import { useEffect } from 'react';
+import PushBanner from './components/PushBanner.jsx';
 import { Route, useNavigate } from 'react-router-dom';
 
 // Тап по пушу, коли додаток уже відкритий: сервіс-воркер надсилає адресу, переходимо прямо в діалог.
@@ -41,6 +42,7 @@ export default function App() {
       <UpdateBanner />
       <PayWatcher />
       <PushOpen />
+      <PushBanner />
       <AppRoutes extra={<><Route path="/" element={<NextHome />} /><Route path="/profile" element={<ProfilePage />} /></>} />
       <TabBar />
     </div>

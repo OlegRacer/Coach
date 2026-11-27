@@ -460,3 +460,18 @@ html[data-chat] main.page { padding-bottom: 0; }
 html[data-chat] main.page { min-height: 100dvh; padding-bottom: 0 !important; gap: 8px; }
 html[data-chat] .chat { flex: 1 1 auto; }
 html[data-chat] .chat-compose { margin-top: auto; bottom: 0 !important; padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); }
+
+/* Плашка пуша зверху (поки програма відкрита) */
+.push-banner {
+  position: fixed; left: 50%; top: max(10px, env(safe-area-inset-top)); translate: -50% 0; z-index: 80;
+  width: calc(100% - 32px); max-width: 488px; display: flex; align-items: center; gap: 10px;
+  background: var(--card-2); border-radius: 18px; padding: 10px 8px 10px 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45); transition: translate .5s cubic-bezier(0.22, 1, 0.36, 1), opacity .4s ease;
+  animation: pushin .45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes pushin { from { translate: -50% -150%; opacity: 0; } }
+html[data-bar="hide"] .push-banner { translate: -50% -200%; opacity: 0; pointer-events: none; }
+.push-banner-main { all: unset; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
+.push-banner-main b { font-size: .92rem; }
+.push-banner-main span { font-size: .85rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.push-banner-x { all: unset; cursor: pointer; font-size: 1.5rem; line-height: 1; padding: 6px 12px; color: var(--muted); }
