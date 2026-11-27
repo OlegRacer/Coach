@@ -52,11 +52,26 @@ export function UpdateProvider({ children }) {
     setUpToDate(true);
   }, [ping]);
 
-  const apply = useCallback(() => updateServiceWorker(true), [updateServiceWorker]);
+  // Після натискання «Оновити» ще хвилину не показуємо плашку знову: CDN (GitHub Pages) може коротко віддавати стару версію.
+  const apply = useCallback(() => {
+    try {
+      localStorage.setItem('upd-applied', String(Date.now()));
+    } catch {
+      /* ignore */
+    }
+    return updateServiceWorker(true);
+  }, [updateServiceWorker]);
+  const justApplied = (() => {
+    try {
+      return Date.now() - Number(localStorage.getItem('upd-applied') || 0) < 90 * 1000;
+    } catch {
+      return false;
+    }
+  })();
 
   const value = useMemo(
-    () => ({ needRefresh, apply, check, checking, upToDate }),
-    [needRefresh, apply, check, checking, upToDate]
+    () => ({ needRefresh: needRefresh && !justApplied, apply, check, checking, upToDate }),
+    [needRefresh, justApplied, apply, check, checking, upToDate]
   );
   return <UpdateContext.Provider value={value}>{children}</UpdateContext.Provider>;
 }
