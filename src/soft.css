@@ -487,3 +487,4 @@ html[data-bar="hide"] .push-banner { translate: -50% -200%; opacity: 0; pointer-
 .tour-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
 .tour-dots { margin-right: auto; color: var(--muted); font-size: .8rem; }
 .tour-skip { all: unset; cursor: pointer; color: var(--muted); font-size: .85rem; padding: 6px 4px; }
+html[data-tour] .tabbar, html[data-tour] .tab-add { translate: 0 0 !important; opacity: 1 !important; pointer-events: none; }

@@ -13,6 +13,12 @@ export default function TourOverlay({ steps, onClose }) {
   const elRef = useRef(null);
   const step = steps[i];
 
+  // на час гіду нижня панель завжди на місці (не ховається при скролі)
+  useEffect(() => {
+    document.documentElement.dataset.tour = '1';
+    return () => { delete document.documentElement.dataset.tour; };
+  }, []);
+
   const measure = useCallback(() => {
     const el = elRef.current;
     if (!el || !el.isConnected) return setRect(null);
@@ -35,7 +41,7 @@ export default function TourOverlay({ steps, onClose }) {
       const el = document.querySelector(step.sel);
       if (el) {
         elRef.current = el;
-        el.scrollIntoView({ block: 'center', behavior: 'auto' });
+        if (!el.closest('.tabbar')) el.scrollIntoView({ block: 'center', behavior: 'auto' });
         requestAnimationFrame(measure);
         return;
       }
