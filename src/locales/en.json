@@ -785,5 +785,6 @@
   "chat.groupReadonly": "Only the coach can write in this group.",
   "chat.groupReadonlyAdmin": "Students cannot write in this group. You can.",
   "chat.new": "New chat",
-  "chat.newPersonal": "Chat with a student"
+  "chat.newPersonal": "Chat with a student",
+  "profile.reorderHint": "Hold and drag a block to reorder."
 }

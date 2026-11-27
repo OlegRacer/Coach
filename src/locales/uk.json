@@ -781,5 +781,6 @@
   "chat.groupReadonly": "У цій групі пише лише тренер.",
   "chat.groupReadonlyAdmin": "Учні не можуть писати в цій групі. Ти можеш писати.",
   "chat.new": "Новий чат",
-  "chat.newPersonal": "Чат з учнем"
+  "chat.newPersonal": "Чат з учнем",
+  "profile.reorderHint": "Блоки можна міняти місцями: потримайте й перетягніть."
 }

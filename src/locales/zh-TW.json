@@ -785,5 +785,6 @@
   "chat.groupReadonly": "此群組僅教練可發言。",
   "chat.groupReadonlyAdmin": "學員無法在此群組發言，你可以。",
   "chat.new": "新增聊天",
-  "chat.newPersonal": "與學員聊天"
+  "chat.newPersonal": "與學員聊天",
+  "profile.reorderHint": "長按並拖曳區塊即可調整順序。"
 }
