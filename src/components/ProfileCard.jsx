@@ -15,6 +15,30 @@ import { useAuth } from '../auth/index.jsx';
 import { useChatUnread } from '../lib/chat.js';
 import AdminPushPrefs from './AdminPushPrefs.jsx';
 import { useI18n } from '../i18n/index.jsx';
+import useSortable from '../lib/useSortable.js';
+
+const ORDER_KEY = 'profile-order';
+function readOrder() {
+  try {
+    const v = JSON.parse(localStorage.getItem(ORDER_KEY));
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+// збережений порядок + нові блоки (яких ще немає в ньому) в кінець
+function mergeOrder(saved, defaults) {
+  const keep = saved.filter((id) => defaults.includes(id));
+  return [...keep, ...defaults.filter((id) => !keep.includes(id))];
+}
+function saveOrder(ids) {
+  try {
+    localStorage.setItem(ORDER_KEY, JSON.stringify(ids));
+  } catch {
+    /* ignore */
+  }
+  supabase.auth.updateUser({ data: { profile_order: ids } }).catch(() => {});
+}
 
 // Картка профілю: гість із кнопкою входу або увійшов користувач (фото, ім'я, вийти).
 // Тренеру (адміну) додатково показується перехід до списку учнів.
@@ -40,6 +64,15 @@ export default function ProfileCard() {
   const [mode, setMode] = useState(null); // null | 'view' | 'edit'
   const [notice, setNotice] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [saved, setSaved] = useState(readOrder);
+  // порядок з акаунта (щоб був однаковий на всіх пристроях тренера)
+  useEffect(() => {
+    if (!isAdmin) return;
+    supabase.auth.getSession().then(({ data }) => {
+      const m = data && data.session && data.session.user && data.session.user.user_metadata;
+      if (m && Array.isArray(m.profile_order)) setSaved(m.profile_order);
+    });
+  }, [isAdmin]);
   const filled = !!(details && details.completed_at);
   const online = useOnline();
   useEffect(() => {
@@ -63,6 +96,51 @@ export default function ProfileCard() {
 
   const Tag = canOpen ? 'button' : 'div';
   const tagProps = canOpen ? { type: 'button', onClick: () => setMode(filled ? 'view' : 'edit') } : {};
+
+
+  // Блоки налаштувань: порядок можна міняти перетягуванням (лише тренер), зберігається в акаунті й на пристрої.
+  const links = (to, label, badge) => (
+    <Link to={to} className="set-row link-row">
+      <span className="set-label">{label}{badge}</span>
+      <span className="muted"><Icon name="chevron" size={20} /></span>
+    </Link>
+  );
+  const cnt = (n) => (n > 0 ? <span className="badge-count">{n}</span> : null);
+  const blocks = {
+    pay: user && !isAdmin ? links('/plans', t('pay.title')) : null,
+    equip: links('/equipment', t('equip.mine')),
+    ui: <UiSwitch />,
+    theme: <ThemeSwitch />,
+    logins: <LinkedLogins />,
+    push: <PushToggle />,
+    pushprefs: isAdmin ? <AdminPushPrefs /> : null,
+    reset: (
+      <div className="set-block">
+        <button type="button" className="btn-ghost" disabled={clearing} onClick={() => { setClearing(true); resetCache(); }}>
+          {clearing ? t('profile.resetting') : t('profile.resetCache')}
+        </button>
+        <span className="muted small">{t('profile.resetCacheHint')}</span>
+      </div>
+    ),
+    chat: user && !isAdmin ? links('/chat', t('chat.title'), cnt(chatUnread)) : null,
+    feedback: user && !isAdmin ? links('/feedback', t('fb.title')) : null,
+    students: isAdmin ? links('/admin/students', t('students.title')) : null,
+    achat: isAdmin ? links('/admin/chat', t('chat.inbox'), cnt(chatUnread)) : null,
+    apay: isAdmin ? links('/admin/payments', t('pay.admin'), cnt(pendingPay)) : null,
+    apush: isAdmin ? links('/admin/push', t('bc.title')) : null,
+    achal: isAdmin ? links('/admin/challenges', t('chal.admin')) : null,
+    acontent: isAdmin ? links('/admin/content', t('content.link')) : null,
+    aequip: isAdmin ? links('/admin/equipment', t('equip.admin')) : null,
+    astorage: isAdmin ? links('/admin/storage', t('mem.title')) : null,
+    afeedback: isAdmin ? links('/admin/feedback', t('fb.admin'), cnt(newFb)) : null,
+    aschedule: isAdmin ? links('/admin/schedule', t('sa.link')) : null
+  };
+  const defaults = Object.keys(blocks).filter((k) => blocks[k]);
+  const { order, rowProps } = useSortable(
+    mergeOrder(saved, defaults),
+    (ids) => { setSaved(ids); saveOrder(ids); },
+    isAdmin
+  );
 
   return (
     <div className="profile-wrap">
@@ -120,131 +198,8 @@ export default function ProfileCard() {
         </p>
       )}
 
-      {user && !isAdmin && (
-        <Link to="/plans" className="set-row link-row">
-          <span className="set-label">{t('pay.title')}</span>
-          <span className="muted">
-            <Icon name="chevron" size={20} />
-          </span>
-        </Link>
-      )}
-
-      <Link to="/equipment" className="set-row link-row">
-        <span className="set-label">{t('equip.mine')}</span>
-        <span className="muted">
-          <Icon name="chevron" size={20} />
-        </span>
-      </Link>
-
-      <UiSwitch />
-      <ThemeSwitch />
-
-      <LinkedLogins />
-
-      <PushToggle />
-      {isAdmin && <AdminPushPrefs />}
-
-      <div className="set-block">
-        <button type="button" className="btn-ghost" disabled={clearing} onClick={() => { setClearing(true); resetCache(); }}>
-          {clearing ? t('profile.resetting') : t('profile.resetCache')}
-        </button>
-        <span className="muted small">{t('profile.resetCacheHint')}</span>
-      </div>
-
-      {user && !isAdmin && (
-        <Link to="/chat" className="set-row link-row">
-          <span className="set-label">
-            {t('chat.title')}
-            {chatUnread > 0 && <span className="badge-count">{chatUnread}</span>}
-          </span>
-          <span className="muted">
-            <Icon name="chevron" size={20} />
-          </span>
-        </Link>
-      )}
-
-      {user && !isAdmin && (
-        <Link to="/feedback" className="set-row link-row">
-          <span className="set-label">{t('fb.title')}</span>
-          <span className="muted">
-            <Icon name="chevron" size={20} />
-          </span>
-        </Link>
-      )}
-
-      {isAdmin && (
-        <>
-          <Link to="/admin/students" className="set-row link-row">
-            <span className="set-label">{t('students.title')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/chat" className="set-row link-row">
-            <span className="set-label">
-              {t('chat.inbox')}
-              {chatUnread > 0 && <span className="badge-count">{chatUnread}</span>}
-            </span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/payments" className="set-row link-row">
-            <span className="set-label">
-              {t('pay.admin')}
-              {pendingPay > 0 && <span className="badge-count">{pendingPay}</span>}
-            </span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/push" className="set-row link-row">
-            <span className="set-label">{t('bc.title')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/challenges" className="set-row link-row">
-            <span className="set-label">{t('chal.admin')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/content" className="set-row link-row">
-            <span className="set-label">{t('content.link')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/equipment" className="set-row link-row">
-            <span className="set-label">{t('equip.admin')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/storage" className="set-row link-row">
-            <span className="set-label">{t('mem.title')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/feedback" className="set-row link-row">
-            <span className="set-label">
-              {t('fb.admin')}
-              {newFb > 0 && <span className="badge-count">{newFb}</span>}
-            </span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-          <Link to="/admin/schedule" className="set-row link-row">
-            <span className="set-label">{t('sa.link')}</span>
-            <span className="muted">
-              <Icon name="chevron" size={20} />
-            </span>
-          </Link>
-        </>
-      )}
+      {order.map((id) => (blocks[id] ? <div key={id} {...rowProps(id)}>{blocks[id]}</div> : null))}
+      {isAdmin && <span className="muted small">{t('profile.reorderHint')}</span>}
     </div>
   );
 }
