@@ -786,5 +786,9 @@
   "chat.groupReadonlyAdmin": "學員無法在此群組發言，你可以。",
   "chat.new": "新增聊天",
   "chat.newPersonal": "與學員聊天",
-  "profile.reorderHint": "長按並拖曳區塊即可調整順序。"
+  "profile.reorderHint": "長按並拖曳區塊即可調整順序。",
+  "content.posters": "建立影片縮圖",
+  "content.postersProgress": "建立縮圖：{i} / {n}…",
+  "content.postersDone": "完成：已建立 {made}，失敗 {fail}",
+  "content.postersHint": "縮圖是列表中顯示的小張首幀，影片只在點擊時載入。新影片儲存動作時自動建立，此按鈕用於舊影片。"
 }
