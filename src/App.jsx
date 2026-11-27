@@ -9,7 +9,29 @@ import './ui-next/widgets.css';
 import './ui-next/next-type.css';
 import './ui-next/next.css';
 import ProfilePage from './ui-next/ProfilePage.jsx';
-import { Route } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Route, useNavigate } from 'react-router-dom';
+
+// Тап по пушу, коли додаток уже відкритий: сервіс-воркер надсилає адресу, переходимо прямо в діалог.
+function PushOpen() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return undefined;
+    const on = (e) => {
+      const d = e.data;
+      if (!d || d.type !== 'push-open' || !d.url) return;
+      try {
+        const h = new URL(d.url).hash;
+        if (h && h.startsWith('#/')) navigate(h.slice(1));
+      } catch {
+        /* ignore */
+      }
+    };
+    navigator.serviceWorker.addEventListener('message', on);
+    return () => navigator.serviceWorker.removeEventListener('message', on);
+  }, [navigate]);
+  return null;
+}
 
 export default function App() {
   return (
@@ -18,6 +40,7 @@ export default function App() {
       <OnboardingGate />
       <UpdateBanner />
       <PayWatcher />
+      <PushOpen />
       <AppRoutes extra={<><Route path="/" element={<NextHome />} /><Route path="/profile" element={<ProfilePage />} /></>} />
       <TabBar />
     </div>

@@ -24,6 +24,7 @@ self.addEventListener('notificationclick', (event) => {
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
       for (const c of list) {
         if ('focus' in c) {
+          c.postMessage({ type: 'push-open', url });
           if ('navigate' in c) c.navigate(url).catch(() => {});
           return c.focus();
         }
