@@ -67,12 +67,12 @@ export default function ProfileCard() {
   const [saved, setSaved] = useState(readOrder);
   // порядок з акаунта (щоб був однаковий на всіх пристроях тренера)
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!user) return;
     supabase.auth.getSession().then(({ data }) => {
       const m = data && data.session && data.session.user && data.session.user.user_metadata;
       if (m && Array.isArray(m.profile_order)) setSaved(m.profile_order);
     });
-  }, [isAdmin]);
+  }, [user]);
   const filled = !!(details && details.completed_at);
   const online = useOnline();
   useEffect(() => {
@@ -98,7 +98,7 @@ export default function ProfileCard() {
   const tagProps = canOpen ? { type: 'button', onClick: () => setMode(filled ? 'view' : 'edit') } : {};
 
 
-  // Блоки налаштувань: порядок можна міняти перетягуванням (лише тренер), зберігається в акаунті й на пристрої.
+  // Блоки налаштувань: порядок можна міняти перетягуванням , зберігається в акаунті й на пристрої.
   const links = (to, label, badge) => (
     <Link to={to} className="set-row link-row">
       <span className="set-label">{label}{badge}</span>
@@ -139,7 +139,7 @@ export default function ProfileCard() {
   const { order, rowProps } = useSortable(
     mergeOrder(saved, defaults),
     (ids) => { setSaved(ids); saveOrder(ids); },
-    isAdmin
+    true
   );
 
   return (
@@ -199,7 +199,7 @@ export default function ProfileCard() {
       )}
 
       {order.map((id) => (blocks[id] ? <div key={id} {...rowProps(id)}>{blocks[id]}</div> : null))}
-      {isAdmin && <span className="muted small">{t('profile.reorderHint')}</span>}
+      <span className="muted small">{t('profile.reorderHint')}</span>
     </div>
   );
 }
