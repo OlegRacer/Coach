@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
     const reachable = new Set((subs || []).map((r) => r.user_id)).size;
     if (body.dry) return json({ recipients: users.length, reachable });
     const text = String(body.text || '').trim().slice(0, 300);
-    const title = String(body.title || '').trim().slice(0, 80) || 'Тренування';
+    const title = 'CoachApp';
     if (!text) return json({ error: 'empty' }, 400);
     const sent = await send(users, () => ({ title, body: text, url: './', tag: 'bc-' + Date.now() }));
     return json({ recipients: users.length, reachable, sent });

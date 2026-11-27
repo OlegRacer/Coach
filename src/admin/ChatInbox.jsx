@@ -1,4 +1,7 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase.js';
+import { DETAILS, displayName } from '../lib/names.js';
 import TopBar from '../components/TopBar.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { useAuth } from '../auth/index.jsx';
@@ -10,12 +13,39 @@ export default function ChatInbox() {
   const { isAdmin } = useAuth();
   const { rows } = useThreads();
   const groups = useGroups();
+  const nav = useNavigate();
+  const [menu, setMenu] = useState(false);
+  const [pick, setPick] = useState(false);
+  const [q, setQ] = useState('');
+  const [students, setStudents] = useState(null);
+  useEffect(() => {
+    if (!pick || students) return;
+    supabase.from('profiles').select('id, full_name, email, role, ' + DETAILS).order('full_name').then(({ data }) => setStudents((data || []).filter((p) => p.role !== 'admin')));
+  }, [pick, students]);
+  const found = (students || []).filter((p) => !q || `${displayName(p)} ${p.email || ''}`.toLowerCase().includes(q.toLowerCase()));
   const locale = lang === 'zh-TW' ? 'zh-TW' : lang === 'en' ? 'en-GB' : 'uk-UA';
   if (!isAdmin) return null;
   const fmt = (iso) => new Date(iso).toLocaleString(locale, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   return (
     <main className="page">
-      <TopBar title={t('chat.inbox')} to="/profile" action={<Link to="/admin/chat/new" className="btn-ghost btn-small">{t('chat.newGroup')}</Link>} />
+      <TopBar title={t('chat.inbox')} to="/profile" action={<button type="button" className="btn-ghost btn-small chat-plus" aria-label={t('chat.new')} onClick={() => setMenu((v) => !v)}>+</button>} />
+      {menu && (
+        <div className="stack">
+          <button type="button" className="list-item" onClick={() => { setMenu(false); setPick(true); }}><span className="list-main"><b>{t('chat.newPersonal')}</b></span></button>
+          <Link to="/admin/chat/new" className="list-item"><span className="list-main"><b>{t('chat.newGroup')}</b></span></Link>
+        </div>
+      )}
+      {pick && (
+        <div className="stack">
+          <input className="field" autoFocus value={q} placeholder={t('aud.search')} onChange={(e) => setQ(e.target.value)} />
+          {!students && <p className="muted">{t('admin.loading')}</p>}
+          {found.slice(0, 50).map((p) => (
+            <button type="button" key={p.id} className="list-item" onClick={() => nav('/admin/chat/' + p.id)}>
+              <span className="list-main"><b>{displayName(p)}</b></span>
+            </button>
+          ))}
+        </div>
+      )}
       {groups.rows && groups.rows.length > 0 && (
         <>
           <span className="muted small chat-section">{t('chat.groups')}</span>

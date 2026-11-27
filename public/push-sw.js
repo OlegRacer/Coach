@@ -4,10 +4,10 @@ self.addEventListener('push', (event) => {
   try {
     d = event.data ? event.data.json() : {};
   } catch (e) {
-    d = { title: 'Тренування', body: event.data ? event.data.text() : '' };
+    d = { title: 'CoachApp', body: event.data ? event.data.text() : '' };
   }
   event.waitUntil(
-    self.registration.showNotification(d.title || 'Тренування', {
+    self.registration.showNotification(d.title || 'CoachApp', {
       body: d.body || '',
       icon: 'icon-192.png',
       badge: 'icon-192.png',

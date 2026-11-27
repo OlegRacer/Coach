@@ -26,8 +26,8 @@ export default defineConfig({
       registerType: 'prompt',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'Тренування',
-        short_name: 'Тренування',
+        name: 'CoachApp',
+        short_name: 'CoachApp',
         description: 'Програма тренувань, розклад, вправи та анатомія',
         lang: 'uk',
         start_url: './',

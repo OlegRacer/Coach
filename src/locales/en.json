@@ -723,8 +723,6 @@
   "bc.mode.classes": "Classes",
   "bc.mode.students": "Students",
   "bc.none": "The list is empty.",
-  "bc.titleField": "Title (optional)",
-  "bc.titlePh": "Training",
   "bc.text": "Message",
   "bc.textPh": "For example: an update is out, please refresh the app",
   "bc.count": "Will receive: {r} of {n}",
@@ -785,5 +783,7 @@
   "chat.deleteGroup": "Delete group",
   "chat.deleteGroupConfirm": "Delete the group with all its messages?",
   "chat.groupReadonly": "Only the coach can write in this group.",
-  "chat.groupReadonlyAdmin": "Students cannot write in this group. You can."
+  "chat.groupReadonlyAdmin": "Students cannot write in this group. You can.",
+  "chat.new": "New chat",
+  "chat.newPersonal": "Chat with a student"
 }

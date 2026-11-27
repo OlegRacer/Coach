@@ -17,7 +17,6 @@ export default function PushAdmin() {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
   const [q, setQ] = useState('');
-  const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [count, setCount] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -54,7 +53,7 @@ export default function PushAdmin() {
     setRes(null);
     if (!window.confirm(t('bc.confirm', { n: count ? count.reachable : 0 }))) return;
     setBusy(true);
-    const { data, error } = await supabase.functions.invoke('push', { body: { type: 'broadcast', mode, ids, title, text } });
+    const { data, error } = await supabase.functions.invoke('push', { body: { type: 'broadcast', mode, ids, text } });
     setBusy(false);
     if (error || !data || data.error) return setErr(t('bc.fail') + (data && data.error ? ` (${data.error})` : ''));
     setRes(data);
@@ -113,8 +112,6 @@ export default function PushAdmin() {
           </>
         )}
 
-        <span className="muted small">{t('bc.titleField')}</span>
-        <input className="field" value={title} maxLength={80} placeholder={t('bc.titlePh')} onChange={(e) => setTitle(e.target.value)} />
         <span className="muted small">{t('bc.text')}</span>
         <textarea className="field" rows={4} maxLength={300} value={text} placeholder={t('bc.textPh')} onChange={(e) => setText(e.target.value)} />
         <span className="muted small">{text.length}/300</span>

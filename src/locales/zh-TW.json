@@ -723,8 +723,6 @@
   "bc.mode.classes": "課程",
   "bc.mode.students": "學員",
   "bc.none": "清單是空的。",
-  "bc.titleField": "標題（選填）",
-  "bc.titlePh": "訓練",
   "bc.text": "內容",
   "bc.textPh": "例如：已有更新，請重新整理應用程式",
   "bc.count": "將收到：{n} 人中的 {r} 人",
@@ -785,5 +783,7 @@
   "chat.deleteGroup": "刪除群組",
   "chat.deleteGroupConfirm": "要刪除群組及其所有訊息嗎？",
   "chat.groupReadonly": "此群組僅教練可發言。",
-  "chat.groupReadonlyAdmin": "學員無法在此群組發言，你可以。"
+  "chat.groupReadonlyAdmin": "學員無法在此群組發言，你可以。",
+  "chat.new": "新增聊天",
+  "chat.newPersonal": "與學員聊天"
 }

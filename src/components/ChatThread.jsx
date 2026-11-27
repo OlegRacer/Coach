@@ -7,6 +7,11 @@ const dayKey = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 // Розмова: бульбашки, поле вводу, редагування/видалення своїх, для тренера ще закріплення й мут.
 export default function ChatThread({ studentId, groupId, admin = false }) {
+  // у розмові нижня панель вкладок ховається (як у месенджерах), поле вводу стоїть унизу екрана
+  useEffect(() => {
+    document.documentElement.dataset.chat = '1';
+    return () => { delete document.documentElement.dataset.chat; };
+  }, []);
   const { t, lang } = useI18n();
   const { user } = useAuth();
   const personal = useThread(groupId ? null : studentId);

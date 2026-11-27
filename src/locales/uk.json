@@ -719,8 +719,6 @@
   "bc.mode.classes": "Класи",
   "bc.mode.students": "Учні",
   "bc.none": "Список порожній.",
-  "bc.titleField": "Заголовок (необов’язково)",
-  "bc.titlePh": "Тренування",
   "bc.text": "Текст",
   "bc.textPh": "Наприклад: вийшло оновлення, онови додаток",
   "bc.count": "Отримають: {r} із {n}",
@@ -781,5 +779,7 @@
   "chat.deleteGroup": "Видалити групу",
   "chat.deleteGroupConfirm": "Видалити групу разом з усіма повідомленнями?",
   "chat.groupReadonly": "У цій групі пише лише тренер.",
-  "chat.groupReadonlyAdmin": "Учні не можуть писати в цій групі. Ти можеш писати."
+  "chat.groupReadonlyAdmin": "Учні не можуть писати в цій групі. Ти можеш писати.",
+  "chat.new": "Новий чат",
+  "chat.newPersonal": "Чат з учнем"
 }
