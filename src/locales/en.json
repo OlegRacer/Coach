@@ -852,5 +852,6 @@
   "cal.lv.high.d": "Hard workouts 6–7 times a week",
   "cal.lv.extra": "Very high",
   "cal.lv.extra.d": "Heavy physical work and daily workouts",
-  "cal.disclaimer": "This is an estimate using the Mifflin–St Jeor equation, not medical advice. If you are pregnant, ill or have special conditions, consult a doctor."
+  "cal.disclaimer": "This is an estimate using the Mifflin–St Jeor equation, not medical advice. If you are pregnant, ill or have special conditions, consult a doctor.",
+  "cal.dayTitle": "Daily needs"
 }

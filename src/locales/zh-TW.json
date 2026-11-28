@@ -852,5 +852,6 @@
   "cal.lv.high.d": "每週高強度運動 6–7 次",
   "cal.lv.extra": "非常高",
   "cal.lv.extra.d": "重體力工作且每天運動",
-  "cal.disclaimer": "這是依 Mifflin–St Jeor 公式的估算，並非醫療建議。懷孕、生病或有特殊狀況請諮詢醫師。"
+  "cal.disclaimer": "這是依 Mifflin–St Jeor 公式的估算，並非醫療建議。懷孕、生病或有特殊狀況請諮詢醫師。",
+  "cal.dayTitle": "每日需求"
 }

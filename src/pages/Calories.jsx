@@ -116,11 +116,12 @@ export default function Calories() {
       {ok && !editing && (
         <>
           <section className="card stack">
-            <h2 className="h2">{t('cal.baseTitle')}</h2>
-            <div className="row between">
-              <span className="muted">{t('cal.baseHint')}</span>
-              <b style={{ fontSize: '1.6rem', whiteSpace: 'nowrap' }}>{fmt(base)} {t('cal.unit')}</b>
+            <h2 className="h2">{tdee > 0 ? t('cal.dayTitle') : t('cal.baseTitle')}</h2>
+            <div className="row between cal-top">
+              <span className="muted">{tdee > 0 ? t('cal.maintain') : t('cal.baseHint')}</span>
+              <b className="cal-num">{fmt(tdee > 0 ? tdee : base)} {t('cal.unit')}</b>
             </div>
+            {tdee > 0 && <span className="muted small">{t('cal.base')}: {fmt(base)} {t('cal.unit')}</span>}
             <button type="button" className="btn-ghost btn-small" onClick={() => setEditing(true)}>{t('cal.edit')}</button>
           </section>
 
@@ -144,16 +145,16 @@ export default function Calories() {
               <h2 className="h2">{t('cal.resultTitle')}</h2>
               <div className="row between">
                 <span>{t('cal.base')}</span>
-                <b>{fmt(base)} {t('cal.unit')}</b>
+                <b className="cal-val">{fmt(base)} {t('cal.unit')}</b>
               </div>
               <div className="row between">
                 <span>{t('cal.maintain')}</span>
-                <b>{fmt(tdee)} {t('cal.unit')}</b>
+                <b className="cal-val">{fmt(tdee)} {t('cal.unit')}</b>
               </div>
               {rows.map((r) => (
                 <div className="row between" key={r.k}>
                   <span>{t(`cal.goal.${r.k}`)}</span>
-                  <b>{fmt(r.v)} {t('cal.unit')}</b>
+                  <b className="cal-val">{fmt(r.v)} {t('cal.unit')}</b>
                 </div>
               ))}
             </section>

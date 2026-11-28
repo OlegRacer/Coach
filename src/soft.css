@@ -498,3 +498,8 @@ html[data-tour] .tabbar, html[data-tour] .tab-add { translate: 0 0 !important; o
 .tour-row .btn-ghost, .tour-row .btn-primary {
   min-height: 44px; height: 44px; padding: 0 20px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
 }
+
+/* Калорії: число й «ккал» не переносяться на другий рядок */
+.cal-num { font-size: 1.6rem; white-space: nowrap; }
+.cal-val { white-space: nowrap; }
+.cal-top > .muted, .row.between > span:first-child { min-width: 0; }
