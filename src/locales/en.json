@@ -823,5 +823,7 @@
   "tour.achat.b": "The \"+\" button on top: a new chat with a student or a group.",
   "tour.acontent.t": "Thumbnails and translation",
   "tour.acontent.b": "Create video thumbnails here (so students do not download videos for nothing) and manage translations.",
-  "tour.howto": "How to use"
+  "tour.howto": "How to use",
+  "content.copyTap": "Could not copy automatically ({n}). Tap “Copy”.",
+  "content.copyBtn": "Copy"
 }

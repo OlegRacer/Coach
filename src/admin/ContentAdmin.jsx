@@ -80,6 +80,31 @@ function Translate() {
     return out;
   };
 
+  // Копіювання в буфер: спершу сучасний спосіб, потім запасний (прихований textarea), інакше лишається кнопка «Скопіювати».
+  const writeClipboard = async (str) => {
+    try {
+      await navigator.clipboard.writeText(str);
+      return true;
+    } catch {
+      /* пробуємо запасний спосіб */
+    }
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = str;
+      ta.setAttribute('readonly', '');
+      ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, str.length);
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  const [pending, setPending] = useState('');
   const copy = async () => {
     const out = exportKeys();
     const n = Object.keys(out).length;
@@ -89,11 +114,20 @@ function Translate() {
     }
     const json = JSON.stringify(out, null, 2);
     setText(json);
-    try {
-      await navigator.clipboard.writeText(json);
+    if (await writeClipboard(json)) {
+      setPending('');
       setMsg(t('content.copied', { n }));
-    } catch {
-      setMsg(t('content.copyManual', { n }));
+    } else {
+      setPending(json);
+      setMsg(t('content.copyTap', { n }));
+    }
+  };
+  const copyAgain = async () => {
+    if (await writeClipboard(pending)) {
+      setMsg(t('content.copied', { n: Object.keys(JSON.parse(pending)).length }));
+      setPending('');
+    } else {
+      setMsg(t('content.copyManual', { n: Object.keys(JSON.parse(pending)).length }));
     }
   };
 
@@ -162,6 +196,11 @@ function Translate() {
       <button type="button" className="btn-ghost" onClick={copy}>
         {t('content.export')}
       </button>
+      {pending && (
+        <button type="button" className="btn-primary" onClick={copyAgain}>
+          {t('content.copyBtn')}
+        </button>
+      )}
       <textarea className="field" rows={6} value={text} placeholder={t('content.pasteHere')} onChange={(e) => setText(e.target.value)} />
       <button type="button" className="btn-primary" disabled={!text.trim()} onClick={apply}>
         {t('content.import')}
