@@ -106,6 +106,31 @@ function CropBox({ src, crop, onChange }) {
   );
 }
 
+// Розділи у порядку дерева: батько, одразу за ним його підрозділи (за позицією), так само як у додатку.
+function treeOrder(list) {
+  const kids = new Map();
+  list.forEach((x) => {
+    const k = x.parent_id || '';
+    kids.set(k, [...(kids.get(k) || []), x]);
+  });
+  const out = [];
+  const walk = (pid, depth, seen) => {
+    (kids.get(pid) || [])
+      .slice()
+      .sort((a, b) => (a.position || 0) - (b.position || 0))
+      .forEach((s) => {
+        if (seen.has(s.id)) return;
+        out.push({ s, depth });
+        walk(s.id, depth + 1, new Set([...seen, s.id]));
+      });
+  };
+  walk('', 0, new Set());
+  // розділи з «битим» батьком теж показуємо в кінці
+  const have = new Set(out.map((o) => o.s.id));
+  list.filter((x) => !have.has(x.id)).forEach((s) => out.push({ s, depth: 0 }));
+  return out;
+}
+
 export default function ExerciseEditor() {
   const { sid, eid } = useParams();
   const { t } = useI18n();
@@ -369,10 +394,10 @@ export default function ExerciseEditor() {
       <Fold title={t('content.alsoIn')} summary={(f.also_in || []).length ? String(f.also_in.length) : ''} defaultOpen={(f.also_in || []).length > 0}>
         <p className="muted small">{t('content.alsoInHint')}</p>
         <div className="also-list">
-          {rawSections.filter((s) => s.id !== ex.section_id && s.kind !== 'anatomy').map((s) => {
+          {treeOrder(rawSections).filter(({ s }) => s.id !== ex.section_id && s.kind !== 'anatomy').map(({ s, depth }) => {
             const on2 = (f.also_in || []).includes(s.id);
             return (
-              <label key={s.id} className={'also-row' + (on2 ? ' on' : '')}>
+              <label key={s.id} className={'also-row' + (on2 ? ' on' : '')} style={{ marginLeft: Math.min(depth, 4) * 14 }}>
                 <input type="checkbox" checked={on2} onChange={() => set('also_in', on2 ? f.also_in.filter((x) => x !== s.id) : [...(f.also_in || []), s.id])} />
                 <span>{chainOf(s.id).map((a) => L(a.title)).join(' › ')}</span>
               </label>
