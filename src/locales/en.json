@@ -825,5 +825,6 @@
   "tour.acontent.b": "Create video thumbnails here (so students do not download videos for nothing) and manage translations.",
   "tour.howto": "How to use",
   "content.copyTap": "Could not copy automatically ({n}). Tap “Copy”.",
-  "content.copyBtn": "Copy"
+  "content.copyBtn": "Copy",
+  "content.clear": "Clear field"
 }

@@ -113,7 +113,6 @@ function Translate() {
       return;
     }
     const json = JSON.stringify(out, null, 2);
-    setText(json);
     if (await writeClipboard(json)) {
       setPending('');
       setMsg(t('content.copied', { n }));
@@ -127,6 +126,7 @@ function Translate() {
       setMsg(t('content.copied', { n: Object.keys(JSON.parse(pending)).length }));
       setPending('');
     } else {
+      setText(pending); // крайній випадок: показуємо текст, щоб скопіювати вручну
       setMsg(t('content.copyManual', { n: Object.keys(JSON.parse(pending)).length }));
     }
   };
@@ -205,6 +205,11 @@ function Translate() {
       <button type="button" className="btn-primary" disabled={!text.trim()} onClick={apply}>
         {t('content.import')}
       </button>
+      {text && (
+        <button type="button" className="btn-ghost" onClick={() => { setText(''); setMsg(''); }}>
+          {t('content.clear')}
+        </button>
+      )}
       {msg && <p className="muted small" role="status">{msg}</p>}
     </section>
   );

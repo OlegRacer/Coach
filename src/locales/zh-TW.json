@@ -825,5 +825,6 @@
   "tour.acontent.b": "在這裡建立影片縮圖（避免學員白白下載影片）並管理翻譯。",
   "tour.howto": "使用說明",
   "content.copyTap": "無法自動複製（{n}）。請點「複製」。",
-  "content.copyBtn": "複製"
+  "content.copyBtn": "複製",
+  "content.clear": "清除欄位"
 }
