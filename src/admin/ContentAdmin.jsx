@@ -60,7 +60,7 @@ function Translate() {
   const targets = LANGS.filter((l) => l.code !== 'uk');
   const rows = [
     ...rawSections.map((s) => ({ table: 'content_sections', pre: 's', row: s, fields: ['title', 'hint'] })),
-    ...exercises.map((e) => ({ table: 'content_exercises', pre: 'e', row: e, fields: ['title', 'description', 'sets'] }))
+    ...exercises.map((e) => ({ table: 'content_exercises', pre: 'e', row: e, fields: ['title', 'description'] }))
   ];
 
   const exportKeys = () => {
