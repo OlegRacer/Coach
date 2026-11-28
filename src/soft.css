@@ -488,3 +488,13 @@ html[data-bar="hide"] .push-banner { translate: -50% -200%; opacity: 0; pointer-
 .tour-dots { margin-right: auto; color: var(--muted); font-size: .8rem; }
 .tour-skip { all: unset; cursor: pointer; color: var(--muted); font-size: .85rem; padding: 6px 4px; }
 html[data-tour] .tabbar, html[data-tour] .tab-add { translate: 0 0 !important; opacity: 1 !important; pointer-events: none; }
+/* Гід: усі елементи нижнього ряду мають однаковий шрифт, розмір і висоту */
+.tour-row { gap: 6px; }
+.tour-row .tour-skip, .tour-row .tour-dots, .tour-row button {
+  font-family: inherit; font-size: 1rem; font-weight: 600; line-height: 1; letter-spacing: 0;
+}
+.tour-row .tour-skip, .tour-row .tour-dots { color: var(--muted); padding: 0; }
+.tour-row .tour-skip { padding-right: 6px; }
+.tour-row .btn-ghost, .tour-row .btn-primary {
+  min-height: 44px; height: 44px; padding: 0 20px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+}
