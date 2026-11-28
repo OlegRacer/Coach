@@ -156,10 +156,10 @@ export default function NextHome() {
 
   const tile = (x) => {
     const full = sectionOpen(x.id);
-    const partN = !full && x.kind !== 'anatomy' ? openCount(x.id) : 0;
+    const partN = !full && x.kind === 'exercises' ? openCount(x.id) : 0;
     const open = full || partN > 0;
     const until = !isAdmin && full && access[x.id] ? new Date(access[x.id]).toLocaleDateString(locale, { day: 'numeric', month: 'short' }) : '';
-    const to = x.kind === 'anatomy' ? '/anatomy' : `/section/${x.id}`;
+    const to = x.kind === 'anatomy' ? '/anatomy' : x.kind === 'calories' ? '/calories' : `/section/${x.id}`;
     const sub = !x.published ? t('content.draft') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : L(x.hint)) : t('access.closed');
     return (
       <>
@@ -170,7 +170,7 @@ export default function NextHome() {
             <span className={'muted small' + (x.published ? '' : ' draft')}>{sub}</span>
           </span>
         </Link>
-        {!editing && x.kind !== 'anatomy' && <EditFab to={`/admin/content/${x.id}`} />}
+        {!editing && x.kind === 'exercises' && <EditFab to={`/admin/content/${x.id}`} />}
       </>
     );
   };

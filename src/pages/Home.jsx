@@ -87,12 +87,12 @@ export default function Home() {
       <div className="tiles">
         {sections.filter((x) => sorting || ui !== 'next' || !widgets.isHidden('sec:' + x.id)).map((x, i) => {
           const full = sectionOpen(x.id);
-          const partN = !full && x.kind !== 'anatomy' ? openCount(x.id) : 0;
+          const partN = !full && x.kind === 'exercises' ? openCount(x.id) : 0;
           const open = full || partN > 0;
           const until = !isAdmin && full && access[x.id]
             ? new Date(access[x.id]).toLocaleDateString(locale, { day: 'numeric', month: 'short' })
             : '';
-          const to = x.kind === 'anatomy' ? '/anatomy' : `/section/${x.id}`;
+          const to = x.kind === 'anatomy' ? '/anatomy' : x.kind === 'calories' ? '/calories' : `/section/${x.id}`;
           const hint = L(x.hint);
           const sub = !x.published ? t('content.draft') : partN > 0 ? t('access.partial', { n: partN }) : open ? (until ? t('access.until', { date: until }) : hint) : t('access.closed');
           const body = (
@@ -127,7 +127,7 @@ export default function Home() {
                   <Icon name={open ? 'chevron' : 'lock'} size={22} />
                 </span>
               </Link>
-              {x.kind !== 'anatomy' && <EditFab to={`/admin/content/${x.id}`} />}
+              {x.kind === 'exercises' && <EditFab to={`/admin/content/${x.id}`} />}
             </div>
           );
         })}

@@ -9,6 +9,7 @@ const Schedule = lazy(() => import('./pages/Schedule.jsx'));
 const Section = lazy(() => import('./pages/Section.jsx'));
 const Exercise = lazy(() => import('./pages/Exercise.jsx'));
 const Anatomy = lazy(() => import('./pages/Anatomy.jsx'));
+const Calories = lazy(() => import('./pages/Calories.jsx'));
 const Plans = lazy(() => import('./pages/Plans.jsx'));
 const MyProgram = lazy(() => import('./pages/MyProgram.jsx'));
 const Equipment = lazy(() => import('./pages/Equipment.jsx'));
@@ -172,6 +173,7 @@ export default function AppRoutes({ extra = null }) {
       }
     />
     <Route path="/anatomy" element={<Anatomy />} />
+    <Route path="/calories" element={<Calories />} />
     <Route
       path="/admin/students"
       element={

@@ -11,7 +11,7 @@ import { useI18n } from '../i18n/index.jsx';
 
 // Нижня панель вкладок у стилі iOS 26/27: плаваюча «скляна» капсула.
 const TABS = [
-  { to: '/', icon: 'barbell', key: 'nav.workouts', end: true, also: ['/section', '/exercise', '/program', '/anatomy', '/equipment'] },
+  { to: '/', icon: 'barbell', key: 'nav.workouts', end: true, also: ['/section', '/exercise', '/program', '/anatomy', '/calories', '/equipment'] },
   { to: '/schedule', icon: 'calendar', key: 'nav.schedule' },
   { to: '/plans', icon: 'ticket', key: 'nav.plans' },
   { to: '/profile', icon: 'user', key: 'nav.profile' }

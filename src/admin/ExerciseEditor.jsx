@@ -394,7 +394,7 @@ export default function ExerciseEditor() {
       <Fold title={t('content.alsoIn')} summary={(f.also_in || []).length ? String(f.also_in.length) : ''} defaultOpen={(f.also_in || []).length > 0}>
         <p className="muted small">{t('content.alsoInHint')}</p>
         <div className="also-list">
-          {treeOrder(rawSections).filter(({ s }) => s.id !== ex.section_id && s.kind !== 'anatomy').map(({ s, depth }) => {
+          {treeOrder(rawSections).filter(({ s }) => s.id !== ex.section_id && s.kind === 'exercises').map(({ s, depth }) => {
             const on2 = (f.also_in || []).includes(s.id);
             return (
               <label key={s.id} className={'also-row' + (on2 ? ' on' : '')} style={{ marginLeft: Math.min(depth, 4) * 14 }}>
