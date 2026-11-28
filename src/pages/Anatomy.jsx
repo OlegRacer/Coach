@@ -203,7 +203,6 @@ export default function Anatomy() {
               <Link key={e.id} to={`/exercise/${e.id}`} className="list-item">
                 <span className="list-main">
                   <span className="list-title">{L(e.title)}</span>
-                  <span className="muted small">{L(e.sets)}</span>
                 </span>
               </Link>
             ))}

@@ -51,14 +51,8 @@ export default function Exercise() {
 
       {ex.preview && <Media src={mediaUrl(ex.preview)} title={title} />}
 
-      {(hasText(ex.sets) || hasText(ex.description)) && (
+      {hasText(ex.description) && (
         <section className="card">
-          {hasText(ex.sets) && (
-            <div className="row between">
-              <h2 className="h2">{t('exercise.sets')}</h2>
-              <b>{L(ex.sets)}</b>
-            </div>
-          )}
           {hasText(ex.description) && <p className="body pre">{L(ex.description)}</p>}
         </section>
       )}
